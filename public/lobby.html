@@ -27,7 +27,7 @@
     <script>
         var socket = io();
 
-        socket.emit('startHost', {
+        socket.emit('startHosting', {
             game: 'exposed'
         });
 
@@ -42,7 +42,7 @@
             qrcode.makeCode(link);
         });
 
-        socket.on('updatePlayers',function(data){
+        socket.on('updateLobby',function(data){
             console.log('players on game ');
             console.log(data);
         });

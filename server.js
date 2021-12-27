@@ -5,6 +5,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 const { gatewayIp } = require('./utils/ip');
 const { LiveGames } = require('./utils/LiveGames');
+const { Player} = require('./utils/Player');
 
 const publicPath = path.join(__dirname, 'public');
 var app = express();
@@ -22,7 +23,7 @@ server.listen(3000, () => {
 io.on('connection', (socket) => {
     console.log(`Connected ${socket.id}`);
 
-    socket.on('startHost', function (data) {
+    socket.on('startHosting', function (data) {
         console.log(`start hosting ${data.game}`);
         let game = liveGames.addGame(data.game, socket.id);
         socket.join(`${game.pin}-host`);
@@ -30,25 +31,25 @@ io.on('connection', (socket) => {
     });
 
     socket.on('joinPlayer', function (data){
-        console.log('joinplayer');
-        console.log(data);
-        console.log(liveGames.games);
         socket.join(data.pin);
-        liveGames.addPlayerToGame(data.player, socket.id, data.pin);
-        socket.to(`${data.pin}-host`).emit('updatePlayers',liveGames.getPlayers(data.pin));
-        console.log('player joined game');
+        liveGames.addPlayerToGame(new Player(data.player, socket.id), data.pin);
+        socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
+        console.log(`Player ${data.player} joined ${data.pin}`);
     });
 
     socket.on('disconnect', () =>{
-        console.log(`Disconnected ${socket.id}`);
+        socket.leave(data.pin);
+        liveGames.removePlayerFromGame(new Player(data.player, socket.id), data.pin);
+        socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
+        console.log(`Player ${data.player} left ${data.pin}`);
     });
 
-    socket.on('updatePlayers', function(data){
-        socket.to(data.pin).emit('updatePlayers',data);
+    socket.on('messagePlayers', function(data){
+        socket.to(data.pin).emit('messagePlayers',data);
     });
 
-    socket.on('updateHost', function(data){
-        socket.to(`${data.pin}-host`).emit('updatePlayers',data);
+    socket.on('messageHost', function(data){
+        socket.to(`${data.pin}-host`).emit('messageHost',data);
     });
 
     socket.on('readDatabase', function(data){
@@ -56,8 +57,6 @@ io.on('connection', (socket) => {
     });
 
 });
-
-
 
 app.get('/join/:game/:pin', (req, res)=>{
     console.log(req.params.pin);

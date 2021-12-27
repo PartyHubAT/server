@@ -21,23 +21,26 @@ class LiveGames {
         return game;
     }
     getGame(pin){
-        return this.games.filter((game) => game.pin === pin)[0]
+        return this.games.find((game) => game.pin === pin);
     }
     getPlayers(pin){
         let players = [];
-        players = this.games.filter(g => g.pin == pin)[0].players;
+        players = this.games.find(g => g.pin === pin).players;
         return players;
     }
     startGame(pin){
-        
+        let g = this.games.find(g => g.pin === pin);
+        if(g) g.live = true;
     }
-    addPlayerToGame(playername, socketId, pin){
+    addPlayerToGame(player, pin){
         console.log(`pin search ${pin}`);
         console.log(`games search ${JSON.stringify(this.games)}`);
-        let player = new Player(socketId, playername);
-        let g = this.games.filter(g => g.pin == pin)[0];
+        let g = this.games.find(g => g.pin === pin);
         if(g) g.players.push(player);
-        console.log(JSON.stringify(this.games));
+    }
+    removePlayerFromGame(removePlayer,pin){
+        let g = this.games.find(g => g.pin == pin);
+        if(g) g.players = g.players.filter((player) => player.socketId !== removePlayer.socketId);
     }
     leftPadWithZeros(number, length){
         let str = '' + number;
