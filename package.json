@@ -1,0 +1,24 @@
+{
+  "name": "partyhub2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukasganster/partyhub2022.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lukasganster/partyhub2022/issues"
+  },
+  "homepage": "https://github.com/lukasganster/partyhub2022#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "qrcode": "^1.5.0",
+    "socketio": "^1.0.0"
+  }
+}
