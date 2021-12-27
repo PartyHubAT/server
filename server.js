@@ -17,7 +17,7 @@ app.use(express.static(publicPath));
 
 //Starting server on port 3000
 server.listen(3000, () => {
-    console.log("Server started on port 3000");
+    console.log("PartyHub-Server started on port 3000");
 });
 
 io.on('connection', (socket) => {
@@ -25,7 +25,7 @@ io.on('connection', (socket) => {
 
     socket.on('startHosting', function (data) {
         console.log(`start hosting ${data.game}`);
-        let game = liveGames.addGame(data.game, socket.id);
+        let game = liveGames.addGame(data.game);
         socket.join(`${game.pin}-host`);
         socket.emit('hostPin', {game: game, ip:gatewayIp});
     });
@@ -34,18 +34,19 @@ io.on('connection', (socket) => {
         socket.join(data.pin);
         liveGames.addPlayerToGame(new Player(data.player, socket.id), data.pin);
         socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
-        console.log(`Player ${data.player} joined ${data.pin}`);
+        console.log(`Player ${data.player} (${socket.id})  joined ${data.pin}`);
     });
 
-    socket.on('disconnect', () =>{
-        socket.leave(data.pin);
-        liveGames.removePlayerFromGame(new Player(data.player, socket.id), data.pin);
-        socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
-        console.log(`Player ${data.player} left ${data.pin}`);
+    socket.on('startGame', function(data){
+        liveGames.startGame(data.pin);
+        socket.to(data.pin).emit('startGame',
+        {
+            players: liveGames.getPlayers(data.pin)
+        })
     });
 
     socket.on('messagePlayers', function(data){
-        socket.to(data.pin).emit('messagePlayers',data);
+        socket.to(`${data.pin}-players`).emit('messagePlayers',data);
     });
 
     socket.on('messageHost', function(data){
@@ -54,6 +55,14 @@ io.on('connection', (socket) => {
 
     socket.on('readDatabase', function(data){
         socket.to(`${data.pin}-host`).emit('updatePlayers',data);
+    });
+
+    socket.on('disconnect', (data) =>{
+        if(!data || typeof(data) !== 'object') return;
+        socket.leave(data.pin);
+        liveGames.removePlayerFromGame(new Player(data.player, socket.id), data.pin);
+        socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
+        console.log(`Player ${data.player} (${socket.id}) left ${data.pin}`);
     });
 
 });
