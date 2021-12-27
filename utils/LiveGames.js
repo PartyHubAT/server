@@ -46,9 +46,17 @@ class LiveGames {
         let g = this.games.filter(g => g.pin === pin)[0];
         if(g) g.players.push(player);
     }
-    removePlayerFromGame(removePlayer,pin){
-        let g = this.games.filter(g => g.pin == pin)[0];
-        if(g) g.players = g.players.filter((player) => player.socketId != removePlayer.socketId);
+    removePlayerFromGame(socketId){
+        let g = this.games.filter(function(game) {
+            return game.players.some(player => player.socketId == socketId);
+        })[0];
+        if(g){
+            let player = g.players.filter((player) => player.socketId == socketId)[0];
+            player.pin = g.pin;
+            g.players = g.players.filter((player) => player.socketId != socketId);
+            return player;
+        }
+        
     }
     addHostToGame(socketId, pin){
         let g = this.games.filter(g => g.pin === pin)[0];

@@ -20,6 +20,11 @@
             pin: pin,
             player: player
         });
+        socket.emit('disconnect', {
+            game: 'exposed',
+            pin: pin,
+            player: player
+        });
     </script>
 
 </body>

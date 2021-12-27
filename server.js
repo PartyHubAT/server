@@ -58,11 +58,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', (data) =>{
-        if(!data || typeof(data) !== 'object') return;
-        socket.leave(data.pin);
-        liveGames.removePlayerFromGame(new Player(socket.id,data.player), data.pin);
-        socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
-        console.log(`Player ${data.player} (${socket.id}) left ${data.pin}`);
+        let playerLeft = liveGames.removePlayerFromGame(socket.id);
+        socket.to(`${playerLeft.pin}-host`).emit('updateLobby',liveGames.getPlayers(playerLeft.pin));
+        console.log(`Player ${playerLeft.name} (${socket.id}) left ${playerLeft.pin}`);
     });
 
 });
