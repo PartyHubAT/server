@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
 
     socket.on('joinPlayer', function (data){
         socket.join(data.pin);
-        liveGames.addPlayerToGame(new Player(data.player, socket.id), data.pin);
+        liveGames.addPlayerToGame(new Player(socket.id,data.player), data.pin);
         socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
         console.log(`Player ${data.player} (${socket.id})  joined ${data.pin}`);
     });
@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', (data) =>{
         if(!data || typeof(data) !== 'object') return;
         socket.leave(data.pin);
-        liveGames.removePlayerFromGame(new Player(data.player, socket.id), data.pin);
+        liveGames.removePlayerFromGame(new Player(socket.id,data.player), data.pin);
         socket.to(`${data.pin}-host`).emit('updateLobby',liveGames.getPlayers(data.pin));
         console.log(`Player ${data.player} (${socket.id}) left ${data.pin}`);
     });

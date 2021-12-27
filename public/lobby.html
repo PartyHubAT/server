@@ -15,6 +15,7 @@
             <a href="host.html">Host Game</a>
         </li>
     </ul>
+    <ul id="players"></ul>
     <div id="qrcode"></div>
     <a id="link">link</a>
     <button>
@@ -45,6 +46,12 @@
         socket.on('updateLobby',function(data){
             console.log('players on game ');
             console.log(data);
+            let playerList = document.getElementById('players');
+            let str = "";
+            data.forEach(element => {
+                str += `<li>${element.name}</li>`;
+            });
+            playerList.innerHTML = str;
         });
     </script>
 
