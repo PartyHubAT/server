@@ -18,7 +18,7 @@
     <ul id="players"></ul>
     <div id="qrcode"></div>
     <a id="link">link</a>
-    <button onclick="startGame()">
+    <button onclick="startHost()">
         Start Game
     </button>
 
@@ -28,8 +28,9 @@
     <script>
         var socket = io();
         var pin;
-        socket.emit('startHosting', {
-            game: 'exposed'
+        var game = 'exposed';
+        socket.emit('startLobby', {
+            game: game
         });
 
         socket.on('hostPin', function(data){
@@ -55,9 +56,10 @@
             playerList.innerHTML = str;
         });
 
-        function startGame(){
-            console.log('starting game');
-            socket.emit('startGame', {pin});
+        function startHost(){
+            console.log('starting host');
+            window.location.href='http://' + window.location.host + '/host/' + game;
+            localStorage.setItem('pin',pin);
         }
     </script>
 

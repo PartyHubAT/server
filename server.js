@@ -24,8 +24,8 @@ server.listen(3000, () => {
 io.on('connection', (socket) => {
     console.log(`Connected ${socket.id}`);
 
-    socket.on('startHosting', function (data) {
-        console.log(`start hosting ${data.game}`);
+    socket.on('startLobby', function (data) {
+        console.log(`start lobby for ${data.game}`);
         let game = liveGames.addGame(data.game);
         socket.join(`${game.pin}-host`);
         socket.emit('hostPin', {game: game, ip:gatewayIp});
@@ -40,10 +40,14 @@ io.on('connection', (socket) => {
 
     socket.on('startGame', function(data){
         liveGames.startGame(data.pin);
-        socket.to(data.pin).emit('startGame',
+        socket.emit('startGame',
         {
             players: liveGames.getPlayers(data.pin)
-        })
+        });
+        socket.broadcast.to(data.pin).emit('startGame',        
+        {
+            players: liveGames.getPlayers(data.pin)
+        });
     });
 
     socket.on('messagePlayers', function(data){
@@ -74,7 +78,10 @@ app.get('/join/:game/:pin', (req, res)=>{
 });
 
 config.games.forEach(game => {
-    app.get(`/${game.name}`, (req, res)=>{
-        res.sendFile(publicPath + '/exposed/index.html');
+    app.get(`/player/${game.name}`, (req, res)=>{
+        res.sendFile(publicPath + game.publicPlayer);
+    });
+    app.get(`/host/${game.name}`, (req, res)=>{
+        res.sendFile(publicPath + game.publicHost);
     });
 });

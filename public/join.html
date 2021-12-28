@@ -15,15 +15,13 @@
         <button type="submit">Join game</button>
     </form>
     <script>
-        console.log(window.location);
-
         let str = window.location.pathname;
         let params = str.split("/");
-        console.log(params);
         let game = params[2];
         let pin = params[3];    
 
         let form = document.getElementById('form');
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             let player = document.getElementById('player').value.trim();
@@ -31,7 +29,7 @@
             localStorage.setItem('player',player);
             localStorage.setItem('pin',pin);
             localStorage.setItem('game',game);
-            window.location.href='http://' + window.location.host + '/' + game;
+            window.location.href='http://' + window.location.host + '/player/' + game;
         });     
     </script>
 </body>

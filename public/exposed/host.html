@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>exposed</title>
+</head>
+<body>
+    <h1>exposed</h1>
+    <h2 id="start">game has not started</h2>
+    <script src = "../socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        let pin = localStorage.getItem('pin');
+        socket.emit('startGame',{pin});
+        socket.on('startGame', function(data){
+            console.log(data);
+        });
+    </script>
+
+</body>
+</html>
