@@ -1,4 +1,5 @@
 //Import dependencies
+const config = require('./config.json');
 const path = require('path');
 const http = require('http');
 const express = require('express');
@@ -59,8 +60,10 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', (data) =>{
         let playerLeft = liveGames.removePlayerFromGame(socket.id);
-        socket.to(`${playerLeft.pin}-host`).emit('updateLobby',liveGames.getPlayers(playerLeft.pin));
-        console.log(`Player ${playerLeft.name} (${socket.id}) left ${playerLeft.pin}`);
+        if(playerLeft){
+            socket.to(`${playerLeft.pin}-host`).emit('updateLobby',liveGames.getPlayers(playerLeft.pin));
+            console.log(`Player ${playerLeft.name} (${socket.id}) left ${playerLeft.pin}`);
+        }
     });
 
 });
@@ -70,6 +73,8 @@ app.get('/join/:game/:pin', (req, res)=>{
     res.sendFile(publicPath + '/join.html');
 });
 
-app.get('/exposed', (req, res)=>{
-    res.sendFile(publicPath + '/exposed/index.html');
+config.games.forEach(game => {
+    app.get(`/${game.name}`, (req, res)=>{
+        res.sendFile(publicPath + '/exposed/index.html');
+    });
 });

@@ -1,0 +1,12 @@
+{
+    "games":
+[
+        {
+            "name":"exposed",
+            "hostPath":"",
+            "playerPath":"/exposed/index.html",
+            "minimumPlayers": 4,
+            "maximumPlayers":20
+        }
+    ]
+}

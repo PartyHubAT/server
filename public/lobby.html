@@ -18,7 +18,7 @@
     <ul id="players"></ul>
     <div id="qrcode"></div>
     <a id="link">link</a>
-    <button>
+    <button onclick="startGame()">
         Start Game
     </button>
 
@@ -27,7 +27,7 @@
     <script src = "../socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-
+        var pin;
         socket.emit('startHosting', {
             game: 'exposed'
         });
@@ -35,6 +35,7 @@
         socket.on('hostPin', function(data){
             console.log(data);
             document.getElementById('pin').innerText = data.game.pin;
+            pin = data.game.pin;
             let qrcode = new QRCode("qrcode");
             let link = `http://${data.ip}:3000/join/${data.game.name}/${data.game.pin}`;
             let anchor = document.getElementById('link');
@@ -53,6 +54,11 @@
             });
             playerList.innerHTML = str;
         });
+
+        function startGame(){
+            console.log('starting game');
+            socket.emit('startGame', {pin});
+        }
     </script>
 
 </body>
