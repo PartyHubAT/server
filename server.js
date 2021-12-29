@@ -38,13 +38,14 @@ io.on('connection', (socket) => {
     socket.on('startLobby', function (data) {
         console.log(`start lobby for ${data.game}`);
         let game = liveGames.addGame(data.game);
+        liveGames.addPlayerToGame(new Player(socket.id, "Host", "HOST"), data.game)
         socket.join(`${game.pin}-host`);
         socket.emit('hostPin', {game: game, ip: gatewayIp});
     });
 
     socket.on('joinPlayer', function (data) {
         socket.join(data.pin);
-        liveGames.addPlayerToGame(new Player(socket.id, data.player), data.pin);
+        liveGames.addPlayerToGame(new Player(socket.id, data.player, "GUEST"), data.pin);
         socket.to(`${data.pin}-host`).emit('updateLobby', liveGames.getPlayers(data.pin));
         console.log(`Player ${data.player} (${socket.id})  joined ${data.pin}`);
     });

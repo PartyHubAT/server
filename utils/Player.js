@@ -1,7 +1,8 @@
 class Player{
-    constructor (socketId, name) {
+    constructor (socketId, name, role) {
         this.socketId = socketId;
         this.name = name;
+        this.role = role;
     }
 }
 
