@@ -14,7 +14,8 @@ function getGatewayIp(){
             }
         }
     }
-    return results['en0'][0];
+    let key = Object.keys(results)
+    return results[key[0]][0];
 }
 
 const gatewayIp = getGatewayIp();
