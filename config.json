@@ -8,6 +8,14 @@
             "publicPlayer":"/exposed/player.html",
             "minPlayers": 4,
             "maxPlayers": 20
+        },
+        {
+            "name":"demo",
+            "path":"/demo",
+            "publicHost":"/Users/lukasganster/Documents/GitHub/demo-game/public/index.html",
+            "publicPlayer":"/Users/lukasganster/Documents/GitHub/demo-game/public/index.html",
+            "minPlayers": 1,
+            "maxPlayers": 20
         }
     ]
 }
