@@ -9,8 +9,8 @@
 <body>
     <form id="form">
         <div>
-            <label for="player">Playername</label>
-            <input type="text" name="player" id="player" placeholder="Enter a name" required>
+            <label for="playerId">Playername</label>
+            <input type="text" name="playerId" id="playerId" placeholder="Enter a name" required>
         </div>
         <button type="submit">Join game</button>
     </form>
@@ -24,11 +24,10 @@
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            let player = document.getElementById('player').value.trim();
-            console.log(player);
-            localStorage.setItem('player',player);
+            let playerId  = document.getElementById('playerId').value.trim();
+            console.log(playerId);
+            localStorage.setItem('playerId',playerId);
             localStorage.setItem('gameId',gameId);
-            localStorage.setItem('game',game);
             window.location.href='http://' + window.location.host + '/player/' + game;
         });     
     </script>
