@@ -1,9 +1,9 @@
-class Player{
-    constructor (socketId, name, role) {
-        this.socketId = socketId;
-        this.name = name;
-        this.role = role;
-    }
+class Player {
+	constructor(playerId, name, role) {
+		this.playerId = playerId;
+		this.name = name;
+		this.role = role;
+	}
 }
 
-module.exports = {Player};
+module.exports = { Player };

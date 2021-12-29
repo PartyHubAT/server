@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>
-        Join Game with <span id="pin"></span>
+        Join Game with <span id="gameId"></span>
     </h1>
     <ul>
         <li>
@@ -27,18 +27,18 @@
     <script src = "../socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-        var pin;
+        var gameId;
         var game = 'demo';
         socket.emit('startLobby', {
             game: game
         });
 
-        socket.on('hostPin', function(data){
+        socket.on('hostgameId', function(data){
             console.log(data);
-            document.getElementById('pin').innerText = data.game.pin;
-            pin = data.game.pin;
+            document.getElementById('gameId').innerText = data.game.gameId;
+            gameId = data.game.gameId;
             let qrcode = new QRCode("qrcode");
-            let link = `http://${data.ip}:3000/join/${data.game.name}/${data.game.pin}`;
+            let link = `http://${data.ip}:3000/join/${data.game.name}/${data.game.gameId}`;
             let anchor = document.getElementById('link');
             anchor.href = link;
             anchor.innerText = link;
@@ -59,7 +59,7 @@
         function startHost(){
             console.log('starting host');
             window.location.href='http://' + window.location.host + '/host/' + game;
-            localStorage.setItem('pin',pin);
+            localStorage.setItem('gameId',gameId);
         }
     </script>
 

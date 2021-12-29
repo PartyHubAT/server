@@ -13,16 +13,16 @@
     <script>
         var socket = io();
         let player = localStorage.getItem('player');
-        let pin = localStorage.getItem('pin');
+        let gameId = localStorage.getItem('gameId');
         console.log('emit joinplayer');
         socket.emit('joinPlayer', {
             game: 'exposed',
-            pin: pin,
+            gameId: gameId,
             player: player
         });
         socket.emit('disconnect', {
             game: 'exposed',
-            pin: pin,
+            gameId: gameId,
             player: player
         });
         socket.on('startGame', function(data){

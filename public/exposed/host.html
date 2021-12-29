@@ -12,8 +12,8 @@
     <script src = "../socket.io/socket.io.js"></script>
     <script>
         var socket = io();
-        let pin = localStorage.getItem('pin');
-        socket.emit('startGame',{pin});
+        let gameId = localStorage.getItem('gameId');
+        socket.emit('startGame',{gameId});
         socket.on('startGame', function(data){
             console.log(data);
         });

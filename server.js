@@ -16,8 +16,8 @@ const liveGames = new LiveGames();
 
 app.use(express.static(publicPath));
 
-app.get('/join/:game/:pin', (req, res) => {
-	console.log(req.params.pin);
+app.get('/join/:game/:gameId', (req, res) => {
+	console.log(req.params.gameId);
 	res.sendFile(publicPath + '/join.html');
 });
 
@@ -39,49 +39,49 @@ io.on('connection', (socket) => {
 		console.log(`start lobby for ${data.game}`);
 		let game = liveGames.addGame(data.game);
 		liveGames.addPlayerToGame(new Player(socket.id, 'Host', 'HOST'), data.game);
-		socket.join(`${game.pin}-host`);
-		socket.emit('hostPin', { game: game, ip: gatewayIp });
+		socket.join(`${game.gameId}-host`);
+		socket.emit('hostgameId', { game: game, ip: gatewayIp });
 	});
 
 	socket.on('joinPlayer', function(data) {
-		socket.join(data.pin);
-		liveGames.addPlayerToGame(new Player(socket.id, data.player, 'GUEST'), data.pin);
-		socket.to(`${data.pin}-host`).emit('updateLobby', liveGames.getPlayers(data.pin));
-		console.log(`Player ${data.player} (${socket.id})  joined ${data.pin}`);
+		socket.join(data.gameId);
+		liveGames.addPlayerToGame(new Player(socket.id, data.player, 'GUEST'), data.gameId);
+		socket.to(`${data.gameId}-host`).emit('updateLobby', liveGames.getPlayers(data.gameId));
+		console.log(`Player ${data.player} (${socket.id})  joined ${data.gameId}`);
 	});
 
 	socket.on('requestRole', function(data) {
-		let role = liveGames.getPlayers(data.gameId).find((it) => it.socketId === data.playerId).role;
+		let role = liveGames.getPlayers(data.gameId).find((player) => player.playerId === data.playerId).role;
 		socket.emit('resolveRole', role);
 	});
 
 	socket.on('startGame', function(data) {
-		liveGames.startGame(data.pin);
+		liveGames.startGame(data.gameId);
 		socket.emit('startGame', {
-			players: liveGames.getPlayers(data.pin)
+			players: liveGames.getPlayers(data.gameId)
 		});
-		socket.broadcast.to(data.pin).emit('startGame', {
-			players: liveGames.getPlayers(data.pin)
+		socket.broadcast.to(data.gameId).emit('startGame', {
+			players: liveGames.getPlayers(data.gameId)
 		});
 	});
 
 	socket.on('messagePlayers', function(data) {
-		socket.to(`${data.pin}-players`).emit('messagePlayers', data);
+		socket.to(`${data.gameId}-players`).emit('messagePlayers', data);
 	});
 
 	socket.on('messageHost', function(data) {
-		socket.to(`${data.pin}-host`).emit('messageHost', data);
+		socket.to(`${data.gameId}-host`).emit('messageHost', data);
 	});
 
 	socket.on('readDatabase', function(data) {
-		socket.to(`${data.pin}-host`).emit('updatePlayers', data);
+		socket.to(`${data.gameId}-host`).emit('updatePlayers', data);
 	});
 
 	socket.on('disconnect', (data) => {
 		let playerLeft = liveGames.removePlayerFromGame(socket.id);
 		if (playerLeft) {
-			socket.to(`${playerLeft.pin}-host`).emit('updateLobby', liveGames.getPlayers(playerLeft.pin));
-			console.log(`Player ${playerLeft.name} (${socket.id}) left ${playerLeft.pin}`);
+			socket.to(`${playerLeft.gameId}-host`).emit('updateLobby', liveGames.getPlayers(playerLeft.gameId));
+			console.log(`Player ${playerLeft.name} (${socket.id}) left ${playerLeft.gameId}`);
 		}
 	});
 });
