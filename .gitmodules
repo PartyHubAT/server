@@ -1,0 +1,3 @@
+[submodule "public/exposed-game"]
+	path = public/exposed-game
+	url = https://github.com/PartyHubAT/exposed-game.git
