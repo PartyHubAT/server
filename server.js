@@ -50,6 +50,11 @@ io.on('connection', (socket) => {
         console.log(`Player ${data.player} (${socket.id})  joined ${data.pin}`);
     });
 
+    socket.on('requestRole', function (data) {
+        let role = liveGames.getPlayers(data.gameId).find(it => it.socketId === data.playerId).role
+        socket.emit("resolveRole", role)
+    });
+
     socket.on('startGame', function (data) {
         liveGames.startGame(data.pin);
         socket.emit('startGame',
