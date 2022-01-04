@@ -7,6 +7,9 @@
     },
     async getById (id) {
       return Room.findById(id)
+    },
+    async updateById (id, update) {
+      await Room.findByIdAndUpdate(id, update)
     }
   }
 }

@@ -1,13 +1,18 @@
 ﻿module.exports = (repo) => {
   return {
     async createNew (id, name) {
-      return repo.putNew({
+      const player = await repo.putNew({
         _id: id,
-        name: name
+        name: name,
+        roomId: undefined
       })
+      return player._id
     },
     async getPlayerById (id) {
       return repo.getById(id)
+    },
+    async joinRoom (id, roomId) {
+      return repo.updateById(id, { roomId })
     }
   }
 }

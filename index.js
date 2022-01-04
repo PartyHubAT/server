@@ -49,14 +49,28 @@ io.on('connection', socket => {
 
   socket.on('newRoom', async data => {
     const { playerName } = data
-    const player = await playerService.createNew(socket.id, playerName)
-    const roomId = await roomService.openNewWithHost(player)
+    const playerId = await playerService.createNew(socket.id, playerName)
+    const roomId = await roomService.openNewWithHost(playerId)
+    const playerRole = await roomService.getPlayerRole(roomId, playerId)
 
     console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
 
     socket.emit('roomCreated', { roomId })
-    socket.emit('roleChanged', { role: player.role })
+    socket.emit('roleChanged', { role: playerRole })
     await joinSocketRoom(roomId)
+  })
+
+  socket.on('joinRoom', async data => {
+    const { playerName, roomId } = data
+    const playerId = await playerService.createNew(socket.id, playerName)
+    await roomService.addPlayer(roomId, playerId)
+    const selectedGameName = roomService.getSelectedGameName(roomId)
+
+    console.log(`Player "${playerName}" joined room ${roomId}.`)
+
+    socket.emit('joinSuccess', { roomId })
+    await joinSocketRoom(roomId)
+    socket.emit('gameSelected', { gameName: selectedGameName })
   })
 })
 
