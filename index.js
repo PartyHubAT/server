@@ -5,7 +5,7 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
-const gameRepo = require('./repos/GamesRepo.js')(mongoose)
+const gameRepo = require('./repos/GamesRepo')(mongoose)
 const gameService = require('./services/GamesService')(gameRepo, fs)
 
 // Setup globals
@@ -37,17 +37,8 @@ app.get('/games', async (_, res) => {
 ;(async function startUp () {
   console.log('Server starting...')
 
-  console.log(`Connecting to mongo-db (${process.env.DBCONNECTION})...`)
-  await mongoose.connect(process.env.DBCONNECTION)
-  console.log('Connected to mongo-db.')
-  if (process.env.RESETDBONLAUNCH) {
-    await mongoose.connection.db.dropDatabase()
-    console.log('Reset db.')
-  }
-
-  console.log('Load games...')
-  await gameService.loadFrom(gamesPath)
-  console.log(`Games loaded (${(await gameService.getGameNames()).join(', ')})`)
+  await (require('./loaders/mongoose'))(mongoose)
+  await (require('./loaders/games'))(gameService, gamesPath)
 
   const port = process.env.PORT || 3000
   server.listen(port, () => {
