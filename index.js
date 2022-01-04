@@ -1,15 +1,14 @@
+require('dotenv').config()
 const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
-
-// Load config values
-
-require('dotenv').config()
-const port = process.env.PORT || 3000
+const fs = require('fs')
+const gameService = require('./services/GamesService')(mongoose, fs)
 
 // Setup globals
 
 const publicPath = path.join(__dirname, 'public')
+const gamesPath = path.join(__dirname, process.env.GAMESPATH)
 const app = express()
 
 // Setup routes
@@ -28,6 +27,12 @@ app.use('/', express.static(publicPath));
     await mongoose.connection.db.dropDatabase()
     console.log('Reset db.')
   }
+
+  console.log('Load games...')
+  await gameService.loadFrom(gamesPath)
+  console.log(`Games loaded (${(await gameService.getGameNames()).join(', ')})`)
+
+  const port = process.env.PORT || 3000
   app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
   })
