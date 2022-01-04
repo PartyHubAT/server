@@ -1,0 +1,31 @@
+{
+  "name": "partyhubserver",
+  "version": "0.0.1",
+  "description": "The server hosting PartyHub",
+  "homepage": "https://github.com/PartyHubAT/PartyHubServer#readme",
+  "bugs": {
+    "url": "https://github.com/PartyHubAT/PartyHubServer/issues"
+  },
+  "contributors": [
+    {
+      "name": "Ramon Brullo",
+      "email": "it211505@fhstp.ac.at",
+      "url": "https://github.com/ComradeVanti"
+    },
+    {
+      "name": "Fabian Gaugusch",
+      "email": "it211504@fhstp.ac.at",
+      "url": "https://github.com/FruitDude222"
+    },
+    {
+      "name": "Lukas Ganster",
+      "email": "it211502@fhstp.ac.at",
+      "url": "https://github.com/lukasganster"
+    }
+  ],
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PartyHubAT/PartyHubServer.git"
+  }
+}
