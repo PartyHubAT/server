@@ -7,6 +7,8 @@ const http = require('http')
 const { Server } = require('socket.io')
 const gameRepo = require('./repos/GamesRepo')(mongoose)
 const gameService = require('./services/GamesService')(gameRepo)
+const roomRepo = require('./repos/RoomRepo')(mongoose)
+const roomService = require('./services/RoomService')(roomRepo)
 
 // Setup globals
 
@@ -30,6 +32,30 @@ app.use('/', express.static(publicPath))
 
 app.get('/games', async (_, res) => {
   res.send({ games: (await gameService.getGameInfo()) })
+})
+
+// Setup socket
+
+io.on('connection', socket => {
+  async function joinSocketRoom (roomId) {
+    const socketRoomId = roomService.getSocketRoomName(roomId)
+    const playerNames = await roomService.getPlayerNamesInRoom(roomId)
+
+    socket.join(socketRoomId)
+    io.to(socketRoomId).emit('playersChanged', { playerNames })
+  }
+
+  socket.on('newRoom', async data => {
+    const { playerName } = data
+    const roomId = await roomService.openNew(playerName)
+    const playerRole = roomService.getPlayerRole(roomId, playerName)
+
+    console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
+
+    socket.emit('roomCreated', { roomId })
+    socket.emit('roleChanged', { role: playerRole })
+    await joinSocketRoom(roomId)
+  })
 })
 
 // Start server
