@@ -6,7 +6,7 @@ const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
 const gameRepo = require('./repos/GamesRepo')(mongoose)
-const gameService = require('./services/GamesService')(gameRepo, fs)
+const gameService = require('./services/GamesService')(gameRepo)
 
 // Setup globals
 
@@ -38,7 +38,7 @@ app.get('/games', async (_, res) => {
   console.log('Server starting...')
 
   await (require('./loaders/mongoose'))(mongoose)
-  await (require('./loaders/games'))(gameService, gamesPath)
+  await (require('./loaders/games'))(gameService, fs, gamesPath)
 
   const port = process.env.PORT || 3000
   server.listen(port, () => {
