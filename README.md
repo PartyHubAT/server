@@ -1,1 +1,0 @@
-# PartyHubProject (work in progress)
