@@ -3,6 +3,8 @@ const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
 const fs = require('fs')
+const http = require('http')
+const { Server } = require('socket.io')
 const gameRepo = require('./repos/GamesRepo.js')(mongoose)
 const gameService = require('./services/GamesService')(gameRepo, fs)
 
@@ -11,6 +13,16 @@ const gameService = require('./services/GamesService')(gameRepo, fs)
 const publicPath = path.join(__dirname, 'public')
 const gamesPath = path.join(__dirname, process.env.GAMESPATH)
 const app = express()
+const server = http.createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:8080',
+    methods: ['GET', 'POST'],
+    credentials: true,
+    transports: ['websocket', 'polling']
+  },
+  allowEIO3: true
+})
 
 // Setup routes
 
@@ -38,7 +50,7 @@ app.get('/games', async (_, res) => {
   console.log(`Games loaded (${(await gameService.getGameNames()).join(', ')})`)
 
   const port = process.env.PORT || 3000
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Server listening on port ${port}`)
   })
 }())
