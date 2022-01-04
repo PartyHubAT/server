@@ -1,20 +1,17 @@
 ﻿const mathUtil = require('../core/mathUtil')
 
-module.exports = (repo) => {
+module.exports = (repo, playerService) => {
   function generateRoomId () {
     return mathUtil.randBetween(10000, 999999)
   }
 
-  function makeHost (name) { return { name, role: 'HOST' } }
-
   return {
-    async openNew (hostPlayerName) {
+    async openNewWithHost (host) {
       return (await repo.putNew({
         _id: generateRoomId(),
         gameName: '',
-        players: [
-          makeHost(hostPlayerName)
-        ]
+        hostId: host._id,
+        playerIds: [host._id]
       }))._id
     },
     getSocketRoomName (roomId) {
@@ -24,13 +21,8 @@ module.exports = (repo) => {
       return repo.getById(roomId)
     },
     async getPlayersInRoom (roomId) {
-      return (await this.getRoom(roomId)).players
-    },
-    async getPlayerByName (roomId, name) {
-      return (await this.getPlayersInRoom(roomId)).filter(it => it.name === name)
-    },
-    async getPlayerRole (roomId, playerName) {
-      return (await this.getPlayerByName(roomId, playerName)).role
+      const playerIds = (await this.getRoom(roomId)).playerIds
+      return Promise.all(playerIds.map(id => playerService.getPlayerById(id)))
     },
     async getPlayerNamesInRoom (roomId) {
       return (await this.getPlayersInRoom(roomId)).map(it => it.name)

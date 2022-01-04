@@ -7,8 +7,10 @@ const http = require('http')
 const { Server } = require('socket.io')
 const gameRepo = require('./repos/GamesRepo')(mongoose)
 const gameService = require('./services/GamesService')(gameRepo)
+const playerRepo = require('./repos/PlayerRepo')(mongoose)
+const playerService = require('./services/PlayerService')(playerRepo)
 const roomRepo = require('./repos/RoomRepo')(mongoose)
-const roomService = require('./services/RoomService')(roomRepo)
+const roomService = require('./services/RoomService')(roomRepo, playerService)
 
 // Setup globals
 
@@ -38,22 +40,22 @@ app.get('/games', async (_, res) => {
 
 io.on('connection', socket => {
   async function joinSocketRoom (roomId) {
-    const socketRoomId = roomService.getSocketRoomName(roomId)
+    const socketRoomName = roomService.getSocketRoomName(roomId)
     const playerNames = await roomService.getPlayerNamesInRoom(roomId)
 
-    socket.join(socketRoomId)
-    io.to(socketRoomId).emit('playersChanged', { playerNames })
+    socket.join(socketRoomName)
+    io.to(socketRoomName).emit('playersChanged', { playerNames })
   }
 
   socket.on('newRoom', async data => {
     const { playerName } = data
-    const roomId = await roomService.openNew(playerName)
-    const playerRole = roomService.getPlayerRole(roomId, playerName)
+    const player = await playerService.createNew(socket.id, playerName)
+    const roomId = await roomService.openNewWithHost(player)
 
     console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
 
     socket.emit('roomCreated', { roomId })
-    socket.emit('roleChanged', { role: playerRole })
+    socket.emit('roleChanged', { role: player.role })
     await joinSocketRoom(roomId)
   })
 })
