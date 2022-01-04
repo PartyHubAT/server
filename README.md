@@ -10,4 +10,7 @@
 </pre>
 PartyHub server hosts the PartyHub-app as well as all the games.
 ## Usage
-Pull the repo and run `node index.js` to run the server.
+- Pull the repo to any location on your server.
+- Copy the contents `.env.example` to a new `.env` file and modify them as 
+  needed
+- Start the server with `node index.js`
