@@ -8,7 +8,7 @@ module.exports = {
     'standard'
   ],
   parserOptions: {
-    ecmaVersion: 13
+    ecmaVersion: "latest"
   },
   rules: {
   }
