@@ -3,7 +3,8 @@ const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
 const fs = require('fs')
-const gameService = require('./services/GamesService')(mongoose, fs)
+const gameRepo = require('./repos/GamesRepo.js')(mongoose)
+const gameService = require('./services/GamesService')(gameRepo, fs)
 
 // Setup globals
 
