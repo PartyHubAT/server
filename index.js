@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 
 // Load config values
 
@@ -7,7 +8,12 @@ const port = process.env.PORT || 3000
 
 // Setup globals
 
-const app = express();
+const publicPath = path.join(__dirname, 'public')
+const app = express()
+
+// Setup routes
+
+app.use('/', express.static(publicPath));
 
 // Start server
 
