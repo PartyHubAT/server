@@ -25,8 +25,12 @@ module.exports = (repo, playerService) => {
     async getPlayerInRoomById (roomId, playerId) {
       return (await this.getPlayersInRoom(roomId)).find(it => it._id === playerId)
     },
+    async getHostId (roomId) {
+      // The first player in the room is host
+      return (await this.getPlayerIdsInRoom(roomId))[0]
+    },
     async getPlayerRole (roomId, playerId) {
-      return (await this.getPlayerInRoomById(roomId, playerId)).role
+      return (await this.getHostId(roomId)) === playerId ? 0 : 1
     },
     async getSelectedGameName (roomId) {
       return (await this.getRoom(roomId)).gameName
@@ -44,6 +48,10 @@ module.exports = (repo, playerService) => {
       }))._id
       await this.addPlayer(roomId, hostId)
       return roomId
+    },
+    async removePlayer (roomId, playerId) {
+      const ids = await this.getPlayerIdsInRoom(roomId)
+      await repo.updateById(roomId, { playerIds: ids.filter(it => it !== playerId) })
     }
   }
 }

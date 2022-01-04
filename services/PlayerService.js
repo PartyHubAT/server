@@ -13,6 +13,9 @@
     },
     async joinRoom (id, roomId) {
       return repo.updateById(id, { roomId })
+    },
+    async remove (id) {
+      return repo.deleteById(id)
     }
   }
 }

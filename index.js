@@ -39,12 +39,18 @@ app.get('/games', async (_, res) => {
 // Setup socket
 
 io.on('connection', socket => {
-  async function joinSocketRoom (roomId) {
+  async function sendNewPlayerNames (roomId) {
     const socketRoomName = roomService.getSocketRoomName(roomId)
     const playerNames = await roomService.getPlayerNamesInRoom(roomId)
 
-    socket.join(socketRoomName)
     io.to(socketRoomName).emit('playersChanged', { playerNames })
+  }
+
+  async function joinSocketRoom (roomId) {
+    const socketRoomName = roomService.getSocketRoomName(roomId)
+
+    socket.join(socketRoomName)
+    await sendNewPlayerNames(roomId)
   }
 
   socket.on('newRoom', async data => {
@@ -71,6 +77,19 @@ io.on('connection', socket => {
     socket.emit('joinSuccess', { roomId })
     await joinSocketRoom(roomId)
     socket.emit('gameSelected', { gameName: selectedGameName })
+  })
+
+  socket.on('disconnect', async () => {
+    const player = await playerService.getPlayerById(socket.id)
+    if (player) {
+      if (player.roomId) {
+        await roomService.removePlayer(player.roomId, player._id)
+
+        await sendNewPlayerNames(player.roomId)
+        console.log(`"${player.name}" has disconnected from room ${player.roomId}.`)
+      }
+      await playerService.remove(player._id)
+    }
   })
 })
 
