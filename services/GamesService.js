@@ -7,8 +7,11 @@
           .map(it => require(`${path}/${it.name}/info.js`))
           .map(async game => repo.putNew(game)))
     },
+    async getGameInfo () {
+      return (await repo.getAll()).map(it => ({ name: it.name }))
+    },
     async getGameNames () {
-      return (await repo.getAll()).map(it => it.name)
+      return (await this.getGameInfo()).map(it => it.name)
     }
   }
 }

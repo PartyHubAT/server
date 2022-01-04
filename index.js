@@ -14,11 +14,15 @@ const app = express()
 
 // Setup routes
 
-app.use('/', express.static(publicPath));
+app.use('/', express.static(publicPath))
+
+app.get('/games', async (_, res) => {
+  res.send({ games: (await gameService.getGameInfo()) })
+})
 
 // Start server
 
-(async function startUp () {
+;(async function startUp () {
   console.log('Server starting...')
 
   console.log(`Connecting to mongo-db (${process.env.DBCONNECTION})...`)
