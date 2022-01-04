@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const mongoose = require('mongoose')
 
 // Load config values
 
@@ -17,9 +18,16 @@ app.use('/', express.static(publicPath));
 
 // Start server
 
-(function startUp () {
+(async function startUp () {
   console.log('Server starting...')
 
+  console.log(`Connecting to mongo-db (${process.env.DBCONNECTION})...`)
+  await mongoose.connect(process.env.DBCONNECTION)
+  console.log('Connected to mongo-db.')
+  if (process.env.RESETDBONLAUNCH) {
+    await mongoose.connection.db.dropDatabase()
+    console.log('Reset db.')
+  }
   app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
   })
