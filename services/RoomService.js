@@ -28,7 +28,7 @@ module.exports = (repo, playerService) => {
   /**
    * Gets the ids of all players in a room
    * @param {number} roomId The id of the room
-   * @returns {Promise<Number[]>} The ids or an empty array if the room is not found
+   * @returns {Promise<string[]>} The ids or an empty array if the room is not found
    */
   async function getPlayerIdsInRoom (roomId) {
     const room = await getRoom(roomId)
