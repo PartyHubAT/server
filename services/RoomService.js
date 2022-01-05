@@ -66,6 +66,7 @@ module.exports = (repo, playerService) => {
     getSocketRoomName (roomId) {
       return `Room-${roomId}`
     },
+
     /**
      * Gets the role of a specific player in a room
      * @param {number} roomId The id of the room
@@ -76,6 +77,7 @@ module.exports = (repo, playerService) => {
       const hostId = await getHostId(roomId)
       return hostId ? (hostId === playerId ? 'HOST' : 'GUEST') : undefined
     },
+
     /**
      * Gets the name of the selected game in a room
      * @param {number} roomId The id of the room
@@ -85,6 +87,7 @@ module.exports = (repo, playerService) => {
       const room = await getRoom(roomId)
       return room ? room.gameName : undefined
     },
+
     /**
      * Adds a player to a room
      * @param {number} roomId The id of the room
@@ -96,6 +99,7 @@ module.exports = (repo, playerService) => {
       await repo.updateById(roomId, { playerIds: ids.concat(playerId) })
       await playerService.joinRoom(playerId, roomId)
     },
+
     /**
      * Gets the names of all players in a room
      * @param {number} roomId The id of the room
@@ -105,6 +109,7 @@ module.exports = (repo, playerService) => {
       const players = await getPlayersInRoom(roomId)
       return players.map(it => it.name)
     },
+
     /**
      * Opens a new room with a specific player as host
      * @param {string} hostId The id of the host player
@@ -119,6 +124,7 @@ module.exports = (repo, playerService) => {
       await this.addPlayerToRoom(roomId, hostId)
       return roomId
     },
+
     /**
      * Removes a player from a room
      * @param {number} roomId The id of the room
@@ -129,6 +135,7 @@ module.exports = (repo, playerService) => {
       const ids = await getPlayerIdsInRoom(roomId)
       await repo.updateById(roomId, { playerIds: ids.filter(it => it !== playerId) })
     },
+
     /**
      * Selects a game in a room
      * @param {number} roomId The id of the room
