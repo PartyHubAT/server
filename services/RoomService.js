@@ -30,7 +30,7 @@ module.exports = (repo, playerService) => {
       return (await this.getPlayerIdsInRoom(roomId))[0]
     },
     async getPlayerRole (roomId, playerId) {
-      return (await this.getHostId(roomId)) === playerId ? 0 : 1
+      return (await this.getHostId(roomId)) === playerId ? 'HOST' : 'GUEST'
     },
     async getSelectedGameName (roomId) {
       return (await this.getRoom(roomId)).gameName
