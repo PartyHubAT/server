@@ -1,4 +1,9 @@
-﻿module.exports = async (mongoose) => {
+﻿/**
+ * Connects to the mongodb database
+ * @param mongoose The servers mongoose instance
+ * @returns {Promise<void>}
+ */
+module.exports = async (mongoose) => {
   console.log(`Connecting to mongo-db (${process.env.DBCONNECTION})...`)
   await mongoose.connect(process.env.DBCONNECTION)
   console.log('Connected to mongo-db.')
