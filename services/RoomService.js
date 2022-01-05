@@ -35,7 +35,7 @@ module.exports = (repo, playerService) => {
     async getSelectedGameName (roomId) {
       return (await this.getRoom(roomId)).gameName
     },
-    async addPlayer (roomId, playerId) {
+    async addPlayerToRoom (roomId, playerId) {
       const ids = await this.getPlayerIdsInRoom(roomId)
       await repo.updateById(roomId, { playerIds: ids.concat(playerId) })
       await playerService.joinRoom(playerId, roomId)
@@ -46,7 +46,7 @@ module.exports = (repo, playerService) => {
         gameName: '',
         playerIds: []
       }))._id
-      await this.addPlayer(roomId, hostId)
+      await this.addPlayerToRoom(roomId, hostId)
       return roomId
     },
     async removePlayer (roomId, playerId) {
