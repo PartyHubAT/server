@@ -22,7 +22,7 @@ module.exports = (mongoose) => {
      * @returns {Promise<Object|undefined>} The room or undefined if not found
      */
     async getById (id) {
-      return Room.findOne({ _id: id })
+      return Room.findById(id)
     },
 
     /**
