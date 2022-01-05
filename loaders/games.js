@@ -1,4 +1,11 @@
-﻿module.exports = async (gameService, fs, gamesPath) => {
+﻿/**
+ * Loads all games from the filesystem into the database
+ * @param {Object} gameService Games-service for storing the games
+ * @param {Object} fs File-system
+ * @param {Object} gamesPath The path to the games
+ * @returns {Promise<void>}
+ */
+module.exports = async (gameService, fs, gamesPath) => {
   console.log('Load games...')
 
   const filesInGamesDir = await fs.promises.readdir(gamesPath, { withFileTypes: true })
