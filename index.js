@@ -67,7 +67,8 @@ io.on('connection', socket => {
   async function registerGameServerLogic (roomId, gameName) {
     const { register } = gameService.getServerLogicFor(gamesPath, gameName)
 
-    return Promise.all(
+    // Wait for all sockets to have the server-logic registered
+    await Promise.all(
       getSocketsInRoom(roomId)
         .map(async playerSocket => {
           const player = await playerService.getPlayerById(playerSocket.id)
