@@ -1,16 +1,22 @@
 ﻿module.exports = (repo) => {
   return {
     async addGame (game) {
-      return repo.putNew(game)
+      await repo.putNew(game)
     },
     async getGameInfo () {
-      return (await repo.getAll()).map(it => ({ name: it.name }))
+      const games = await repo.getAll()
+      return games.map(it => ({ name: it.name }))
     },
     async getGameNames () {
-      return (await this.getGameInfo()).map(it => it.name)
+      const games = await this.getGameInfo()
+      return games.map(it => it.name)
     },
     getServerLogicFor (gamesPath, gameName) {
-      return require(`${gamesPath}/${gameName}/server.js`)
+      try {
+        return require(`${gamesPath}/${gameName}/server.js`)
+      } catch (e) {
+        return undefined
+      }
     }
   }
 }
