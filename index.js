@@ -70,7 +70,7 @@ io.on('connection', socket => {
     const { playerName, roomId } = data
     const playerId = await playerService.createNew(socket.id, playerName)
     await roomService.addPlayer(roomId, playerId)
-    const selectedGameName = roomService.getSelectedGameName(roomId)
+    const selectedGameName = await roomService.getSelectedGameName(roomId)
 
     console.log(`Player "${playerName}" joined room ${roomId}.`)
 
