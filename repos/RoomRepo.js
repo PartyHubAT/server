@@ -6,7 +6,7 @@
       return Room.create(room)
     },
     async getById (id) {
-      return Room.findById(id)
+      return Room.findOne({ _id: id })
     },
     async updateById (id, update) {
       await Room.findByIdAndUpdate(id, update)
