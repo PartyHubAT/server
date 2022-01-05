@@ -4,7 +4,7 @@
  * Service for interacting with rooms
  * @param repo Room-repo, for storing and retrieving rooms
  * @param playerService Player-service, for interacting with players
- * @returns {string|undefined|*[]|string|*|{getSelectedGameName(number): Promise<string|undefined>, getPlayerNamesInRoom(number): Promise<string[]>, getPlayerRole(number, string): Promise<string|undefined>, openNewWithHost(string): Promise<number>, selectGame(number, string): Promise<void>, removePlayerFromRoom(number, string): Promise<void>, getSocketRoomName(number): string, addPlayerToRoom(number, string): Promise<void>}}
+ * @returns {{getSelectedGameName(number): Promise<string|undefined>, getPlayerNamesInRoom(number): Promise<string[]>, getPlayerRole(number, string): Promise<string|undefined>, openNewWithHost(string): Promise<number>, selectGame(number, string): Promise<void>, removePlayerFromRoom(number, string): Promise<void>, getSocketRoomName(number): string, addPlayerToRoom(number, string): Promise<void>}}
  */
 module.exports = (repo, playerService) => {
   /**
