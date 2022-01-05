@@ -10,7 +10,8 @@ module.exports = (repo, playerService) => {
   }
 
   async function getPlayerIdsInRoom (roomId) {
-    return (await getRoom(roomId)).playerIds
+    const room = await getRoom(roomId)
+    return room ? room.playerIds : []
   }
 
   async function getPlayersInRoom (roomId) {
@@ -19,8 +20,10 @@ module.exports = (repo, playerService) => {
   }
 
   async function getHostId (roomId) {
-    // The first player in the room is host
-    return (await getPlayerIdsInRoom(roomId))[0]
+    const ids = await getPlayerIdsInRoom(roomId)
+    return ids.length > 0
+      ? ids[0] // The first player in the room is the host
+      : undefined
   }
 
   return {
@@ -28,10 +31,12 @@ module.exports = (repo, playerService) => {
       return `Room-${roomId}`
     },
     async getPlayerRole (roomId, playerId) {
-      return (await getHostId(roomId)) === playerId ? 'HOST' : 'GUEST'
+      const hostId = await getHostId(roomId)
+      return hostId ? (hostId === playerId ? 'HOST' : 'GUEST') : undefined
     },
     async getSelectedGameName (roomId) {
-      return (await getRoom(roomId)).gameName
+      const room = await getRoom(roomId)
+      return room ? room.gameName : undefined
     },
     async addPlayerToRoom (roomId, playerId) {
       const ids = await getPlayerIdsInRoom(roomId)
@@ -39,7 +44,8 @@ module.exports = (repo, playerService) => {
       await playerService.joinRoom(playerId, roomId)
     },
     async getPlayerNamesInRoom (roomId) {
-      return (await getPlayersInRoom(roomId)).map(it => it.name)
+      const players = await getPlayersInRoom(roomId)
+      return players.map(it => it.name)
     },
     async openNewWithHost (hostId) {
       const roomId = (await repo.putNew({
