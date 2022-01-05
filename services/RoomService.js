@@ -22,9 +22,6 @@ module.exports = (repo, playerService) => {
     async getPlayerNamesInRoom (roomId) {
       return (await this.getPlayersInRoom(roomId)).map(it => it.name)
     },
-    async getPlayerInRoomById (roomId, playerId) {
-      return (await this.getPlayersInRoom(roomId)).find(it => it._id === playerId)
-    },
     async getHostId (roomId) {
       // The first player in the room is host
       return (await this.getPlayerIdsInRoom(roomId))[0]
