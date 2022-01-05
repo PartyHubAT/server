@@ -30,9 +30,12 @@ const io = new Server(server, {
 
 // Setup routes
 
+// Serves the public folder at root. Used for serving the app
 app.use('/', express.static(publicPath))
+// Serves all games
 app.use('/game/', express.static(gamesPath))
 
+// Gets info on all games on the server
 app.get('/games', async (_, res) => {
   res.send({ games: (await gameService.getGameInfo()) })
 })
@@ -40,23 +43,45 @@ app.get('/games', async (_, res) => {
 // Setup socket
 
 io.on('connection', socket => {
+  /**
+   * Send a message to all sockets in the room
+   * @param roomId The id of the room to emit to
+   * @param event The name of the event
+   * @param data The data to emit
+   */
   function emitToRoom (roomId, event, data) {
     const socketRoomName = roomService.getSocketRoomName(roomId)
     io.to(socketRoomName).emit(event, data)
   }
 
+  /**
+   * Sends the names of all players in a room to all sockets in that room
+   * @param roomId The id of the room to emit to
+   * @returns {Promise<void>}
+   */
   async function sendNewPlayerNames (roomId) {
     const playerNames = await roomService.getPlayerNamesInRoom(roomId)
     emitToRoom(roomId, 'playersChanged', { playerNames })
   }
 
+  /**
+   * Enters the current socket into the socket-room corresponding to the room-id
+   * @param roomId The id of the room to join
+   * @returns {Promise<void>}
+   */
   async function joinSocketRoom (roomId) {
     const socketRoomName = roomService.getSocketRoomName(roomId)
-
     socket.join(socketRoomName)
+
+    // Whenever a new player joins, send the new player-names to all players in socket
     await sendNewPlayerNames(roomId)
   }
 
+  /**
+   * Gets all sockets inside a room
+   * @param roomId The id of the room
+   * @returns {Socket<any, any, any, any>[]}
+   */
   function getSocketsInRoom (roomId) {
     const socketRoomName = roomService.getSocketRoomName(roomId)
 
@@ -64,6 +89,12 @@ io.on('connection', socket => {
       .map(socketId => io.sockets.sockets.get(socketId))
   }
 
+  /**
+   * Registers custom game-server logic with all sockets in a room
+   * @param roomId The id of the room
+   * @param gameName The name of the game to register
+   * @returns {Promise<void>}
+   */
   async function registerGameServerLogic (roomId, gameName) {
     const { register } = gameService.getServerLogicFor(gamesPath, gameName)
 
@@ -83,6 +114,7 @@ io.on('connection', socket => {
     const { playerName } = data
     const playerId = await playerService.createNew(socket.id, playerName)
     const roomId = await roomService.openNewWithHost(playerId)
+    // Is always host probably, so could hard-code, but get it from db just to be safe
     const playerRole = await roomService.getPlayerRole(roomId, playerId)
 
     console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
@@ -145,6 +177,8 @@ io.on('connection', socket => {
 
 ;(async function startUp () {
   console.log('Server starting...')
+
+  // Execute all loaders, to initialize the server
 
   await (require('./loaders/mongoose'))(mongoose)
   await (require('./loaders/games'))(gameService, fs, gamesPath)
