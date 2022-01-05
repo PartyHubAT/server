@@ -8,6 +8,9 @@
     },
     async getGameNames () {
       return (await this.getGameInfo()).map(it => it.name)
+    },
+    getServerLogicFor (gamesPath, gameName) {
+      return require(`${gamesPath}/${gameName}/server.js`)
     }
   }
 }

@@ -31,6 +31,7 @@ const io = new Server(server, {
 // Setup routes
 
 app.use('/', express.static(publicPath))
+app.use('/game/', express.static(gamesPath))
 
 app.get('/games', async (_, res) => {
   res.send({ games: (await gameService.getGameInfo()) })
@@ -54,6 +55,27 @@ io.on('connection', socket => {
 
     socket.join(socketRoomName)
     await sendNewPlayerNames(roomId)
+  }
+
+  function getSocketsInRoom (roomId) {
+    const socketRoomName = roomService.getSocketRoomName(roomId)
+
+    return Array.from(io.sockets.adapter.rooms.get(socketRoomName))
+      .map(socketId => io.sockets.sockets.get(socketId))
+  }
+
+  async function registerGameServerLogic (roomId, gameName) {
+    const { register } = gameService.getServerLogicFor(gamesPath, gameName)
+
+    return Promise.all(
+      getSocketsInRoom(roomId)
+        .map(async playerSocket => {
+          const player = await playerService.getPlayerById(playerSocket.id)
+          register(playerSocket, (event, data) => {
+            console.log(`"${player.name}" sent a game message in room ${roomId}: ${JSON.stringify(data)}`)
+            emitToRoom(roomId, event, data)
+          })
+        }))
   }
 
   socket.on('newRoom', async data => {
@@ -91,6 +113,17 @@ io.on('connection', socket => {
     console.log(`Player "${player.name}" changed room ${player.roomId}' game to "${gameName}".`)
 
     emitToRoom(player.roomId, 'gameSelected', { gameName })
+  })
+
+  socket.on('startGame', async () => {
+    const playerId = socket.id
+    const player = await playerService.getPlayerById(playerId)
+    const gameName = await roomService.getSelectedGameName(player.roomId)
+    await registerGameServerLogic(player.roomId, gameName)
+
+    console.log(`Room ${player.roomId}' started playing "${gameName}".`)
+
+    emitToRoom(player.roomId, 'gameStarted', { gameName })
   })
 
   socket.on('disconnect', async () => {
