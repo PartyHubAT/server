@@ -39,11 +39,14 @@ app.get('/games', async (_, res) => {
 // Setup socket
 
 io.on('connection', socket => {
-  async function sendNewPlayerNames (roomId) {
+  function emitToRoom (roomId, event, data) {
     const socketRoomName = roomService.getSocketRoomName(roomId)
-    const playerNames = await roomService.getPlayerNamesInRoom(roomId)
+    io.to(socketRoomName).emit(event, data)
+  }
 
-    io.to(socketRoomName).emit('playersChanged', { playerNames })
+  async function sendNewPlayerNames (roomId) {
+    const playerNames = await roomService.getPlayerNamesInRoom(roomId)
+    emitToRoom(roomId, 'playersChanged', { playerNames })
   }
 
   async function joinSocketRoom (roomId) {
@@ -77,6 +80,17 @@ io.on('connection', socket => {
     socket.emit('joinSuccess', { roomId })
     await joinSocketRoom(roomId)
     socket.emit('gameSelected', { gameName: selectedGameName })
+  })
+
+  socket.on('selectGame', async data => {
+    const playerId = socket.id
+    const player = await playerService.getPlayerById(playerId)
+    const { gameName } = data
+    await roomService.selectGame(player.roomId, gameName)
+
+    console.log(`Player "${player.name}" changed room ${player.roomId}' game to "${gameName}".`)
+
+    emitToRoom(player.roomId, 'gameSelected', { gameName })
   })
 
   socket.on('disconnect', async () => {

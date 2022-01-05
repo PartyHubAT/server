@@ -52,6 +52,9 @@ module.exports = (repo, playerService) => {
     async removePlayer (roomId, playerId) {
       const ids = await this.getPlayerIdsInRoom(roomId)
       await repo.updateById(roomId, { playerIds: ids.filter(it => it !== playerId) })
+    },
+    async selectGame (roomId, gameName) {
+      await repo.updateById(roomId, { gameName })
     }
   }
 }
