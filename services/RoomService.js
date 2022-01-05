@@ -5,37 +5,41 @@ module.exports = (repo, playerService) => {
     return mathUtil.randBetween(10000, 999999)
   }
 
+  async function getRoom (roomId) {
+    return repo.getById(roomId)
+  }
+
+  async function getPlayerIdsInRoom (roomId) {
+    return (await getRoom(roomId)).playerIds
+  }
+
+  async function getPlayersInRoom (roomId) {
+    const playerIds = await getPlayerIdsInRoom(roomId)
+    return Promise.all(playerIds.map(id => playerService.getPlayerById(id)))
+  }
+
+  async function getHostId (roomId) {
+    // The first player in the room is host
+    return (await getPlayerIdsInRoom(roomId))[0]
+  }
+
   return {
     getSocketRoomName (roomId) {
       return `Room-${roomId}`
     },
-    async getRoom (roomId) {
-      return repo.getById(roomId)
-    },
-    async getPlayerIdsInRoom (roomId) {
-      return (await this.getRoom(roomId)).playerIds
-    },
-    async getPlayersInRoom (roomId) {
-      const playerIds = await this.getPlayerIdsInRoom(roomId)
-      return Promise.all(playerIds.map(id => playerService.getPlayerById(id)))
-    },
-    async getPlayerNamesInRoom (roomId) {
-      return (await this.getPlayersInRoom(roomId)).map(it => it.name)
-    },
-    async getHostId (roomId) {
-      // The first player in the room is host
-      return (await this.getPlayerIdsInRoom(roomId))[0]
-    },
     async getPlayerRole (roomId, playerId) {
-      return (await this.getHostId(roomId)) === playerId ? 'HOST' : 'GUEST'
+      return (await getHostId(roomId)) === playerId ? 'HOST' : 'GUEST'
     },
     async getSelectedGameName (roomId) {
-      return (await this.getRoom(roomId)).gameName
+      return (await getRoom(roomId)).gameName
     },
     async addPlayerToRoom (roomId, playerId) {
-      const ids = await this.getPlayerIdsInRoom(roomId)
+      const ids = await getPlayerIdsInRoom(roomId)
       await repo.updateById(roomId, { playerIds: ids.concat(playerId) })
       await playerService.joinRoom(playerId, roomId)
+    },
+    async getPlayerNamesInRoom (roomId) {
+      return (await getPlayersInRoom(roomId)).map(it => it.name)
     },
     async openNewWithHost (hostId) {
       const roomId = (await repo.putNew({
@@ -47,7 +51,7 @@ module.exports = (repo, playerService) => {
       return roomId
     },
     async removePlayer (roomId, playerId) {
-      const ids = await this.getPlayerIdsInRoom(roomId)
+      const ids = await getPlayerIdsInRoom(roomId)
       await repo.updateById(roomId, { playerIds: ids.filter(it => it !== playerId) })
     },
     async selectGame (roomId, gameName) {
