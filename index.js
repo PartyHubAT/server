@@ -45,9 +45,9 @@ app.get('/games', async (_, res) => {
 io.on('connection', socket => {
   /**
    * Send a message to all sockets in the room
-   * @param roomId The id of the room to emit to
-   * @param event The name of the event
-   * @param data The data to emit
+   * @param {number} roomId The id of the room to emit to
+   * @param {string} event The name of the event
+   * @param {Object} data The data to emit
    */
   function emitToRoom (roomId, event, data) {
     const socketRoomName = roomService.getSocketRoomName(roomId)
@@ -56,7 +56,7 @@ io.on('connection', socket => {
 
   /**
    * Sends the names of all players in a room to all sockets in that room
-   * @param roomId The id of the room to emit to
+   * @param {number} roomId The id of the room to emit to
    * @returns {Promise<void>}
    */
   async function sendNewPlayerNames (roomId) {
@@ -66,7 +66,7 @@ io.on('connection', socket => {
 
   /**
    * Enters the current socket into the socket-room corresponding to the room-id
-   * @param roomId The id of the room to join
+   * @param {number} roomId The id of the room to join
    * @returns {Promise<void>}
    */
   async function joinSocketRoom (roomId) {
@@ -79,8 +79,8 @@ io.on('connection', socket => {
 
   /**
    * Gets all sockets inside a room
-   * @param roomId The id of the room
-   * @returns {Socket<any, any, any, any>[]}
+   * @param {number} roomId The id of the room
+   * @returns {Socket<any, any, any, any>[]} The sockets
    */
   function getSocketsInRoom (roomId) {
     const socketRoomName = roomService.getSocketRoomName(roomId)
@@ -91,8 +91,8 @@ io.on('connection', socket => {
 
   /**
    * Registers custom game-server logic with all sockets in a room
-   * @param roomId The id of the room
-   * @param gameName The name of the game to register
+   * @param {number} roomId The id of the room
+   * @param {string} gameName The name of the game to register
    * @returns {Promise<void>}
    */
   async function registerGameServerLogic (roomId, gameName) {
