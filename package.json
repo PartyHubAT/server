@@ -1,6 +1,6 @@
 {
   "name": "partyhubserver",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The server hosting PartyHub",
   "homepage": "https://github.com/PartyHubAT/PartyHubServer#readme",
   "bugs": {
