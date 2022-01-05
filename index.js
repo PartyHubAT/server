@@ -163,7 +163,7 @@ io.on('connection', socket => {
     const player = await playerService.getPlayerById(socket.id)
     if (player) {
       if (player.roomId) {
-        await roomService.removePlayer(player.roomId, player._id)
+        await roomService.removePlayerFromRoom(player.roomId, player._id)
 
         await sendNewPlayerNames(player.roomId)
         console.log(`"${player.name}" has disconnected from room ${player.roomId}.`)
