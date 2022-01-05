@@ -9,7 +9,7 @@
       return Player.findById(id)
     },
     async deleteById (id) {
-      return Player.findByIdAndDelete(id)
+      await Player.findByIdAndDelete(id)
     },
     async updateById (id, update) {
       await Player.findByIdAndUpdate(id, update)
