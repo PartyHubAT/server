@@ -8,7 +8,10 @@ module.exports = async (mongoose) => {
   await mongoose.connect(process.env.DBCONNECTION)
   console.log('Connected to mongo-db.')
   if (process.env.RESETDBONLAUNCH && JSON.parse(process.env.RESETDBONLAUNCH)) {
-    await mongoose.connection.db.dropDatabase()
-    console.log('Reset db.')
+    const collections = await mongoose.connection.db.collections()
+    for (const collection of collections) {
+      await collection.deleteMany({})
+    }
+    console.log('Reset database and all collections.')
   }
 }
