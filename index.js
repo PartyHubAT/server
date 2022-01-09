@@ -89,25 +89,45 @@ io.on('connection', socket => {
       .map(socketId => io.sockets.sockets.get(socketId))
   }
 
-  /**
-   * Registers custom game-server logic with all sockets in a room
-   * @param {number} roomId The id of the room
-   * @param {string} gameName The name of the game to register
-   * @returns {Promise<void>}
-   */
-  async function registerGameServerLogic (roomId, gameName) {
-    const { register } = gameService.getServerLogicFor(gamesPath, gameName)
+  function endGameInRoom (roomId) {
+    throw new Error('Ending games is not implemented')
+  }
 
-    // Wait for all sockets to have the server-logic registered
-    await Promise.all(
-      getSocketsInRoom(roomId)
-        .map(async playerSocket => {
-          const player = await playerService.getPlayerById(playerSocket.id)
-          register(playerSocket, (event, data) => {
-            console.log(`"${player.name}" sent a game message in room ${roomId}: ${JSON.stringify(data)}`)
-            emitToRoom(roomId, event, data)
-          })
-        }))
+  /**
+   * Starts the game
+   */
+  async function startGame (roomId, gameName) {
+    console.log('Initializing game...')
+
+    function emitToAll (event, data) {
+      emitToRoom(roomId, event, data)
+    }
+
+    function emitToOne (playerId, event, data) {
+      io.sockets.sockets.get(playerId).emit(event, data)
+    }
+
+    function endGame () {
+      endGameInRoom(roomId)
+    }
+
+    const players = await roomService.getPlayersInRoom(roomId)
+    const initServerLogic = await gameService.getServerLogicFor(gamesPath, gameName)
+    const settings = await gameService.getDefaultGameSettings(gamesPath, gameName)
+    const gameServer = initServerLogic(emitToAll, emitToOne, endGame, players, settings)
+
+    getSocketsInRoom(roomId).forEach(socket => {
+      const events = gameServer.events
+      Object.keys(events).forEach(event => {
+        socket.on(event, data => {
+          events[event](data)
+        })
+      })
+    })
+
+    console.log('Starting game...')
+
+    gameServer.startGame()
   }
 
   socket.on('newRoom', async data => {
@@ -152,7 +172,7 @@ io.on('connection', socket => {
     const playerId = socket.id
     const player = await playerService.getPlayerById(playerId)
     const gameName = await roomService.getSelectedGameName(player.roomId)
-    await registerGameServerLogic(player.roomId, gameName)
+    await startGame(player.roomId, gameName)
 
     console.log(`Room ${player.roomId}' started playing "${gameName}".`)
 

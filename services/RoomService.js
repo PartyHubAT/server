@@ -4,7 +4,7 @@
  * Service for interacting with rooms
  * @param repo Room-repo, for storing and retrieving rooms
  * @param playerService Player-service, for interacting with players
- * @returns {{getSelectedGameName(number): Promise<string|undefined>, getPlayerNamesInRoom(number): Promise<string[]>, getPlayerRole(number, string): Promise<string|undefined>, openNewWithHost(string): Promise<number>, selectGame(number, string): Promise<void>, removePlayerFromRoom(number, string): Promise<void>, getSocketRoomName(number): string, addPlayerToRoom(number, string): Promise<void>}}
+ * @returns {{getSelectedGameName(number): Promise<string|undefined>, getPlayerNamesInRoom(number): Promise<string[]>, getPlayerRole(number, string): Promise<string|undefined>, getPlayersInRoom(number): Promise<*[]>, openNewWithHost(string): Promise<number>, selectGame(number, string): Promise<void>, removePlayerFromRoom(number, string): Promise<void>, getSocketRoomName(number): string, addPlayerToRoom(number, string): Promise<void>}|Promise<(*|undefined)[]>}
  */
 module.exports = (repo, playerService) => {
   /**
@@ -33,16 +33,6 @@ module.exports = (repo, playerService) => {
   async function getPlayerIdsInRoom (roomId) {
     const room = await getRoom(roomId)
     return room ? room.playerIds : []
-  }
-
-  /**
-   * Gets all players in a room
-   * @param {number} roomId The id of the room
-   * @returns {Promise<any[]>} The players or an empty array if the room is not found
-   */
-  async function getPlayersInRoom (roomId) {
-    const playerIds = await getPlayerIdsInRoom(roomId)
-    return Promise.all(playerIds.map(id => playerService.getPlayerById(id)))
   }
 
   /**
@@ -101,12 +91,22 @@ module.exports = (repo, playerService) => {
     },
 
     /**
+     * Gets all players in a room
+     * @param {number} roomId The id of the room
+     * @returns {Promise<any[]>} The players or an empty array if the room is not found
+     */
+    async getPlayersInRoom (roomId) {
+      const playerIds = await getPlayerIdsInRoom(roomId)
+      return Promise.all(playerIds.map(id => playerService.getPlayerById(id)))
+    },
+
+    /**
      * Gets the names of all players in a room
      * @param {number} roomId The id of the room
      * @returns {Promise<string[]>} The names of the players or empty array if the room was not found
      */
     async getPlayerNamesInRoom (roomId) {
-      const players = await getPlayersInRoom(roomId)
+      const players = await this.getPlayersInRoom(roomId)
       return players.map(it => it.name)
     },
 

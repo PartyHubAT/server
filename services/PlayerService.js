@@ -26,7 +26,16 @@ module.exports = (repo) => {
      * @returns {Promise<any|undefined>} The player or undefined if not found
      */
     async getPlayerById (id) {
-      return repo.getById(id)
+      try {
+        const player = await repo.getById(id)
+        return {
+          _id: player._id,
+          name: player.name,
+          roomId: player.roomId
+        }
+      } catch (e) {
+        return undefined
+      }
     },
 
     /**
