@@ -1,10 +1,6 @@
 ﻿const { Map } = require('immutable')
 
-module.exports =
-  /**
-   * Stores multiple games
-   */
-  class Library {
+module.exports = class Library {
   /**
    * An empty library
    */
@@ -49,4 +45,4 @@ module.exports =
   getGameByName (gameName) {
     return this.#games.get(gameName)
   }
-  }
+}
