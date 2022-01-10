@@ -1,4 +1,9 @@
-﻿module.exports = class Game {
+﻿
+module.exports =
+  /**
+   * Contains information about a game
+   */
+  class Game {
   #info
   #settings
   #serverLogic
@@ -43,4 +48,4 @@
   get serverLogic () {
     return this.#serverLogic
   }
-}
+  }
