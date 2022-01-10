@@ -23,7 +23,7 @@ module.exports = class Library {
 
   /**
    * Gets info on all games in the library
-   * @return {Game[]} Game info
+   * @return {Object[]} Game info
    */
   get gameInfo () {
     return Array.from(this.#games.values()).map(game => game.info)
