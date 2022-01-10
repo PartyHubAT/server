@@ -10,7 +10,7 @@ const Library = require('../models/library.js')
 module.exports = async (fs, gamesPath) => {
   console.log('Load games...')
 
-  const library = Library.empty()
+  let library = Library.empty
   const filesInGamesDir = await fs.promises.readdir(gamesPath, { withFileTypes: true })
 
   filesInGamesDir
@@ -22,7 +22,7 @@ module.exports = async (fs, gamesPath) => {
 
       return new Game(info, settings, server)
     })
-    .forEach(game => library.add(game))
+    .forEach(game => { library = library.add(game) })
 
   console.log(`Games loaded (${library.gameNames.join(', ')})`)
 
