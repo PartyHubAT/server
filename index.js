@@ -50,7 +50,14 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
 
   function processEmit (emit) {
     if (emit.targetId) io.sockets.sockets.get(emit.targetId).emit(emit.eventName, emit.data)
-    else io.to(emit.roomId).emit(emit.eventName, emit.data)
+    else if (emit.roomId) io.to(emit.roomId).emit(emit.eventName, emit.data)
+    else if (emit.socketRoom) {
+      if (emit.action === 'join') {
+        io.sockets.sockets.get(emit.socketId).join(emit.socketRoom)
+      } else if (emit.action === 'leave') {
+        io.sockets.sockets.get(emit.socketId).leave(emit.socketRoom)
+      }
+    }
   }
 
   function processSocketEvent (socketId, eventName, data) {

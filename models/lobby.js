@@ -35,6 +35,14 @@ module.exports = class Lobby {
   }
 
   /**
+   * Gets the ids of all player in the lobby
+   * @return {string[]}
+   */
+  get playerIds () {
+    return this.#playerIds.toArray()
+  }
+
+  /**
    * Adds a player to the lobby
    * @param {string} playerId The id of the player to add
    * @return {Lobby} A new lobby with the player added

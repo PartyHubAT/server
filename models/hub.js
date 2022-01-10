@@ -69,13 +69,15 @@ module.exports = class Hub {
         case 'newRoom': {
           const newLobby = Lobby.openNew().addPlayer(playerId)
           return {
-            newHub:
-              this
-                .#withPlayerBase(
-                  this.#playerBase
-                    .setPlayerName(playerId, data.playerName)
-                    .setPlayerRoomId(playerId, newLobby.roomId))
-                .#withLobbies(this.#lobbies.set(newLobby.roomId, newLobby)),
+            newHub: this
+              .#withPlayerBase(
+                this.#playerBase
+                  .setPlayerName(playerId, data.playerName)
+                  .setPlayerRoomId(playerId, newLobby.roomId))
+              .#withLobbies(
+                this.#lobbies
+                  .set(newLobby.roomId, newLobby)
+              ),
             emits: [{
               targetId: playerId,
               eventName: 'joinSuccess',
@@ -85,12 +87,15 @@ module.exports = class Hub {
         }
         case 'joinRoom': {
           return {
-            newHub:
-              this
-                .#withPlayerBase(
-                  this.#playerBase
-                    .setPlayerName(playerId, data.playerName)
-                    .setPlayerRoomId(playerId, data.roomId)),
+            newHub: this
+              .#withPlayerBase(
+                this.#playerBase
+                  .setPlayerName(playerId, data.playerName)
+                  .setPlayerRoomId(playerId, data.roomId))
+              .#withLobbies(
+                this.#lobbies
+                  .update(data.roomId, lobby => lobby.addPlayer(playerId))
+              ),
             emits: [{
               targetId: playerId,
               eventName: 'joinSuccess',
@@ -101,8 +106,10 @@ module.exports = class Hub {
         case 'disconnect':
           console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
           return {
-            newHub:
-              this.#withPlayerBase(this.#playerBase.remove(playerId)),
+            newHub: this
+              .#withPlayerBase(
+                this.#playerBase.remove(playerId)
+              ),
             emits: []
           }
         default:
@@ -111,7 +118,33 @@ module.exports = class Hub {
     }
 
     const processLobbyEvent = () => {
-
+      switch (eventName) {
+        case 'onLobbyJoined' : {
+          const player = this.#playerBase.get(playerId)
+          return {
+            newHub: this,
+            emits: [
+              {
+                socketRoom: player.roomId,
+                socketId: playerId,
+                action: 'join'
+              },
+              {
+                roomId: player.roomId,
+                eventName: 'playersChanged',
+                data: {
+                  playerNames:
+                    this
+                      .#lobbies.get(player.roomId)
+                      .playerIds
+                      .map(id => this.#playerBase.get(id))
+                      .map(p => p.name)
+                }
+              }
+            ]
+          }
+        }
+      }
     }
 
     if (this.#playerBase.has(playerId)) { // The player is already in the player-base
