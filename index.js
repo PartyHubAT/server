@@ -5,8 +5,6 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
-const Lonely = require('./models/lonely.js')
-const Hub = require('./models/hub.js')
 const playerRepo = require('./repos/PlayerRepo')(mongoose)
 const playerService = require('./services/PlayerService')(playerRepo)
 const roomRepo = require('./repos/RoomRepo')(mongoose)
@@ -45,15 +43,9 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
     res.send({ games: library.gameInfo })
   })
 
-  // Setup hub
-
-  const hub = new Hub()
-
   // Setup socket
 
   io.on('connection', socket => {
-    hub.addLonelyFromSocket(socket)
-
     /**
      * Send a message to all sockets in the room
      * @param {number} roomId The id of the room to emit to
