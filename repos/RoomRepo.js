@@ -4,7 +4,7 @@
  * @returns {{putNew(Object): Promise<Object>, getById(*): Promise<Object|undefined>, updateById(number, Object): Promise<void>}}
  */
 module.exports = (mongoose) => {
-  const Room = require('../models/Room.js')(mongoose)
+  const Room = require('../dbmodels/Room.js')(mongoose)
 
   return {
     /**

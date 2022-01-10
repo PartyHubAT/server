@@ -4,7 +4,7 @@
  * @returns {Object|{putNew(Object): Promise<Object>, getById(string): Promise<Object|undefined>, deleteById(string): Promise<void>, updateById(string, Object): Promise<void>}}
  */
 module.exports = (mongoose) => {
-  const Player = require('../models/Player.js')(mongoose)
+  const Player = require('../dbmodels/Player.js')(mongoose)
 
   return {
     /**

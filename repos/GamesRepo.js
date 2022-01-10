@@ -4,7 +4,7 @@
  * @returns {{getAll(): Promise<Object[]>, putNew(Object): Promise<Object>}}
  */
 module.exports = (mongoose) => {
-  const Game = require('../models/Game.js')(mongoose)
+  const Game = require('../dbmodels/Game.js')(mongoose)
 
   return {
     /**
