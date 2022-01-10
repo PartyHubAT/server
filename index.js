@@ -49,8 +49,8 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
   // Setup socket
 
   function processEmit (emit) {
-    if (emit.targetId) io.sockets.sockets.get(emit.targetId).emit(emit.eventNames, emit.data)
-    else io.to(emit.roomId).emit(emit.eventNames, emit.data)
+    if (emit.targetId) io.sockets.sockets.get(emit.targetId).emit(emit.eventName, emit.data)
+    else io.to(emit.roomId).emit(emit.eventName, emit.data)
   }
 
   function processSocketEvent (socketId, eventName, data) {
@@ -156,20 +156,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
 
       gameServer.startGame()
     }
-
-    socket.on('newRoom', async data => {
-      const { playerName } = data
-      const playerId = await playerService.createNew(socket.id, playerName)
-      const roomId = await roomService.openNewWithHost(playerId)
-      // Is always host probably, so could hard-code, but get it from db just to be safe
-      const playerRole = await roomService.getPlayerRole(roomId, playerId)
-
-      console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
-
-      socket.emit('roomCreated', { roomId })
-      socket.emit('roleChanged', { role: playerRole })
-      await joinSocketRoom(roomId)
-    })
 
     socket.on('joinRoom', async data => {
       const {

@@ -1,5 +1,5 @@
 ﻿const { randBetween } = require('../core/mathUtil.js')
-const { Map } = require('immutable')
+const { List } = require('immutable')
 
 module.exports = class Lobby {
   /**
@@ -8,13 +8,13 @@ module.exports = class Lobby {
    */
   #roomId
   /**
-   * The players in the lobby
+   * The ids of the players in the lobby
    */
-  #players
+  #playerIds
 
-  constructor (roomId, players) {
+  constructor (roomId, playerIds) {
     this.#roomId = roomId
-    this.#players = players
+    this.#playerIds = playerIds
   }
 
   /**
@@ -23,7 +23,7 @@ module.exports = class Lobby {
    */
   static openNew () {
     const id = randBetween(100000, 999999)
-    return new Lobby(id, Map())
+    return new Lobby(id, List())
   }
 
   /**
@@ -36,10 +36,10 @@ module.exports = class Lobby {
 
   /**
    * Adds a player to the lobby
-   * @param {Player} player The player to add
+   * @param {string} playerId The id of the player to add
    * @return {Lobby} A new lobby with the player added
    */
-  addPlayer (player) {
-    return new Lobby(this.#roomId, this.#players.set(player.id, player))
+  addPlayer (playerId) {
+    return new Lobby(this.#roomId, this.#playerIds.push(playerId))
   }
 }

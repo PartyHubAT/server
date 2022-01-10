@@ -1,20 +1,20 @@
-﻿const LonelyZone = require('./lonelyZone.js')
+﻿const PlayerBase = require('./playerBase.js')
 const Lobby = require('./lobby.js')
 const { Map } = require('immutable')
 
 module.exports = class Hub {
   /**
-   * The lonely-zone
-   * @type {LonelyZone}
+   * The player-base
+   * @type {PlayerBase}
    */
-  #lonelyZone
+  #playerBase
   /**
    * The current lobbies
    */
   #lobbies
 
-  constructor (lonelyZone, lobbies) {
-    this.#lonelyZone = lonelyZone
+  constructor (playerBase, lobbies) {
+    this.#playerBase = playerBase
     this.#lobbies = lobbies
   }
 
@@ -22,24 +22,24 @@ module.exports = class Hub {
    * An empty hub
    * @type {Hub}
    */
-  static empty = new Hub(LonelyZone.empty, Map())
+  static empty = new Hub(PlayerBase.empty, Map())
 
   /**
-   * Creates a new hub with a different lonely-zone
-   * @param {LonelyZone} lonelyZone The new lonely-zone
-   * @return {Hub} The new hub
+   * Creates a new hub with a different player-base
+   * @param {PlayerBase} playerBase The new player-base
+   * @return {Hub} A hub with the new player-base
    */
-  #withLonelyZone (lonelyZone) {
-    return new Hub(lonelyZone, this.#lobbies)
+  #withPlayerBase (playerBase) {
+    return new Hub(playerBase, this.#lobbies)
   }
 
   /**
    * Creates a new hub with  different lobbies
    * @param lobbies The new lobbies
-   * @return {Hub} The new hub
+   * @return {Hub} A hub with the new lobbies
    */
   #withLobbies (lobbies) {
-    return new Hub(this.#lonelyZone, lobbies)
+    return new Hub(this.#playerBase, lobbies)
   }
 
   /**
@@ -50,32 +50,36 @@ module.exports = class Hub {
    * @return {{emits: *[], newHub: Hub}} A new hub, with any changes the event cause, as well as an array of emits
    */
   processSocketEvent (playerId, eventName, data) {
-    const output = (hub, emits) => ({ newHub: hub, emits })
+    const noChanges = { newHub: this, emits: [] }
 
-    const noChanges = () => output(new Hub(this.#lonelyZone, this.#lobbies), [])
-
-    if (this.#lonelyZone.has(playerId)) { // The player who sent the message is in the lonely-zone
+    if (this.#playerBase.has(playerId)) { // The player is already in the player-base
       switch (eventName) {
         case 'newRoom': {
-          const host = this.#lonelyZone.get(playerId).withName(data.playerName)
-          const lobby = Lobby.openNew().addPlayer(host)
+          const newLobby = Lobby.openNew().addPlayer(playerId)
           return {
             newHub:
               this
-                .#withLonelyZone(this.#lonelyZone.remove(playerId))
-                .#withLobbies(this.#lobbies.set(lobby.roomId, lobby)),
-            emits: []
+                .#withPlayerBase(
+                  this.#playerBase
+                    .setPlayerName(playerId, data.playerName)
+                    .setPlayerRoomId(playerId, newLobby.roomId))
+                .#withLobbies(this.#lobbies.set(newLobby.roomId, newLobby)),
+            emits: [{
+              targetId: playerId,
+              eventName: 'joinSuccess',
+              data: { roomId: newLobby.roomId }
+            }]
           }
         }
         case 'disconnect':
           console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
           return {
             newHub:
-              this.#withLonelyZone(this.#lonelyZone.remove(playerId)),
+              this.#withPlayerBase(this.#playerBase.remove(playerId)),
             emits: []
           }
         default:
-          return noChanges()
+          return noChanges
       }
     } else { // The player who sent the message is completely unknown
       // The only thing unknown players can do is connect
@@ -83,10 +87,10 @@ module.exports = class Hub {
         console.log(`New player (${playerId}) entered the lonely-zone.`)
         return {
           newHub:
-            this.#withLonelyZone(this.#lonelyZone.addNew(playerId)),
+            this.#withPlayerBase(this.#playerBase.addLonely(playerId)),
           emits: []
         }
-      } else { return noChanges() }
+      } else { return noChanges }
     }
   }
 }
