@@ -47,7 +47,7 @@ module.exports = class Hub {
    * @param {string} playerId The id of the player who triggered the event
    * @param {string} eventName The name of the event
    * @param {any} data The data that was sent with the event
-   * @return {{emits: *[], newHub: Hub}} A new hub, with any changes the event cause, as well as an array of emits
+   * @return {{emits: function[], newHub: Hub}} A new hub, with any changes the event cause, as well as an array of emits
    */
   processSocketEvent (playerId, eventName, data) {
     const noChanges = { newHub: this, emits: [] }
@@ -78,11 +78,9 @@ module.exports = class Hub {
                 this.#lobbies
                   .set(newLobby.roomId, newLobby)
               ),
-            emits: [{
-              targetId: playerId,
-              eventName: 'joinSuccess',
-              data: { roomId: newLobby.roomId }
-            }]
+            emits: [
+              io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: newLobby.roomId })
+            ]
           }
         }
         case 'joinRoom': {
@@ -96,11 +94,9 @@ module.exports = class Hub {
                 this.#lobbies
                   .update(data.roomId, lobby => lobby.addPlayer(playerId))
               ),
-            emits: [{
-              targetId: playerId,
-              eventName: 'joinSuccess',
-              data: { roomId: data.roomId }
-            }]
+            emits: [
+              io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: data.roomId })
+            ]
           }
         }
         case 'disconnect':
@@ -124,23 +120,15 @@ module.exports = class Hub {
           return {
             newHub: this,
             emits: [
-              {
-                socketRoom: player.roomId,
-                socketId: playerId,
-                action: 'join'
-              },
-              {
-                roomId: player.roomId,
-                eventName: 'playersChanged',
-                data: {
-                  playerNames:
-                    this
-                      .#lobbies.get(player.roomId)
-                      .playerIds
-                      .map(id => this.#playerBase.get(id))
-                      .map(p => p.name)
-                }
-              }
+              io => io.sockets.sockets.get(playerId).join(player.roomId),
+              io => io.to(player.roomId).emit('playersChanged', {
+                playerNames:
+                  this
+                    .#lobbies.get(player.roomId)
+                    .playerIds
+                    .map(id => this.#playerBase.get(id))
+                    .map(p => p.name)
+              })
             ]
           }
         }
@@ -156,17 +144,13 @@ module.exports = class Hub {
                 newLobbies
               ),
             emits: [
-              {
-                roomId: player.roomId,
-                eventName: 'playersChanged',
-                data: {
-                  playerNames:
-                      newLobbies.get(player.roomId)
-                        .playerIds
-                        .map(id => this.#playerBase.get(id))
-                        .map(p => p.name)
-                }
-              }
+              io => io.to(player.roomId).emit('playersChanged', {
+                playerNames:
+                  newLobbies.get(player.roomId)
+                    .playerIds
+                    .map(id => this.#playerBase.get(id))
+                    .map(p => p.name)
+              })
             ]
           }
         }
