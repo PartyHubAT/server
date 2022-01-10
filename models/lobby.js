@@ -50,4 +50,13 @@ module.exports = class Lobby {
   addPlayer (playerId) {
     return new Lobby(this.#roomId, this.#playerIds.push(playerId))
   }
+
+  /**
+   * Removes a player from the lobby
+   * @param {string} playerId The id of the player
+   * @return {Lobby} The lobby without the player
+   */
+  removePlayer (playerId) {
+    return new Lobby(this.#roomId, this.#playerIds.filter(it => it !== playerId))
+  }
 }

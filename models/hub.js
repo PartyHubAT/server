@@ -144,6 +144,32 @@ module.exports = class Hub {
             ]
           }
         }
+        case 'disconnect': {
+          const player = this.#playerBase.get(playerId)
+          const newLobbies = this.#lobbies.update(player.roomId, lobby => lobby.removePlayer(playerId))
+          return {
+            newHub: this
+              .#withPlayerBase(
+                this.#playerBase.remove(playerId)
+              )
+              .#withLobbies(
+                newLobbies
+              ),
+            emits: [
+              {
+                roomId: player.roomId,
+                eventName: 'playersChanged',
+                data: {
+                  playerNames:
+                      newLobbies.get(player.roomId)
+                        .playerIds
+                        .map(id => this.#playerBase.get(id))
+                        .map(p => p.name)
+                }
+              }
+            ]
+          }
+        }
       }
     }
 
