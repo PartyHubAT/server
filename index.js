@@ -28,6 +28,8 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
     allowEIO3: true
   })
 
+  // Load game library
+
   const library = await (require('./loaders/games.js'))(fs, gamesPath)
 
   // Setup routes
