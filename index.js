@@ -157,22 +157,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
       gameServer.startGame()
     }
 
-    socket.on('joinRoom', async data => {
-      const {
-        playerName,
-        roomId
-      } = data
-      const playerId = await playerService.createNew(socket.id, playerName)
-      await roomService.addPlayerToRoom(roomId, playerId)
-      const selectedGameName = await roomService.getSelectedGameName(roomId)
-
-      console.log(`Player "${playerName}" joined room ${roomId}.`)
-
-      socket.emit('joinSuccess', { roomId })
-      await joinSocketRoom(roomId)
-      socket.emit('gameSelected', { gameName: selectedGameName })
-    })
-
     socket.on('selectGame', async data => {
       const playerId = socket.id
       const player = await playerService.getPlayerById(playerId)

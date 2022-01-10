@@ -71,6 +71,21 @@ module.exports = class Hub {
             }]
           }
         }
+        case 'joinRoom': {
+          return {
+            newHub:
+              this
+                .#withPlayerBase(
+                  this.#playerBase
+                    .setPlayerName(playerId, data.playerName)
+                    .setPlayerRoomId(playerId, data.roomId)),
+            emits: [{
+              targetId: playerId,
+              eventName: 'joinSuccess',
+              data: { roomId: data.roomId }
+            }]
+          }
+        }
         case 'disconnect':
           console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
           return {
