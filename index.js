@@ -61,7 +61,7 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
   }
 
   io.on('connection', socket => {
-    socket.onAny((eventName, ...data) => {
+    socket.onAny((eventName, data) => {
       processSocketEvent(socket.id, eventName, data)
     })
 
