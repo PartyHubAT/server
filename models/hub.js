@@ -52,7 +52,19 @@ module.exports = class Hub {
   processSocketEvent (playerId, eventName, data) {
     const noChanges = { newHub: this, emits: [] }
 
-    if (this.#playerBase.has(playerId)) { // The player is already in the player-base
+    const processUnknownPlayerEvent = () => {
+      // The only thing unknown players can do is connect
+      if (eventName === 'connect') {
+        console.log(`New player (${playerId}) entered the lonely-zone.`)
+        return {
+          newHub:
+            this.#withPlayerBase(this.#playerBase.addLonely(playerId)),
+          emits: []
+        }
+      } else { return noChanges }
+    }
+
+    const processLonelyPlayerEvent = () => {
       switch (eventName) {
         case 'newRoom': {
           const newLobby = Lobby.openNew().addPlayer(playerId)
@@ -96,16 +108,20 @@ module.exports = class Hub {
         default:
           return noChanges
       }
+    }
+
+    const processLobbyEvent = () => {
+
+    }
+
+    if (this.#playerBase.has(playerId)) { // The player is already in the player-base
+      if (this.#playerBase.get(playerId).inInRoom) { // The player is already in a room
+        return processLobbyEvent()
+      } else { // The player is not yet in a room
+        return processLonelyPlayerEvent()
+      }
     } else { // The player who sent the message is completely unknown
-      // The only thing unknown players can do is connect
-      if (eventName === 'connect') {
-        console.log(`New player (${playerId}) entered the lonely-zone.`)
-        return {
-          newHub:
-            this.#withPlayerBase(this.#playerBase.addLonely(playerId)),
-          emits: []
-        }
-      } else { return noChanges }
+      return processUnknownPlayerEvent()
     }
   }
 }
