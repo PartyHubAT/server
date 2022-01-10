@@ -43,4 +43,13 @@ module.exports = class LonelyZone {
   has (playerId) {
     return this.#players.has(playerId)
   }
+
+  /**
+   * Gets a player from the lonely-zone
+   * @param {string} playerId The id of the player
+   * @return {Player|undefined} The player or undefined if not found
+   */
+  get (playerId) {
+    return this.#players.get(playerId)
+  }
 }
