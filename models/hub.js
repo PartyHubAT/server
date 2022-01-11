@@ -1,6 +1,6 @@
 ﻿const PlayerBase = require('./playerBase.js')
+const RoomMap = require('./roomMap.js')
 const Room = require('./room.js')
-const { Map } = require('immutable')
 
 module.exports = class Hub {
   /**
@@ -10,6 +10,7 @@ module.exports = class Hub {
   #playerBase
   /**
    * The current rooms
+   * @type {RoomMap}
    */
   #rooms
 
@@ -22,7 +23,7 @@ module.exports = class Hub {
    * An empty hub
    * @type {Hub}
    */
-  static empty = new Hub(PlayerBase.empty, Map())
+  static empty = new Hub(PlayerBase.empty, RoomMap.empty)
 
   /**
    * The hubs player-base
@@ -34,6 +35,7 @@ module.exports = class Hub {
 
   /**
    * The hubs' rooms
+   * @return {RoomMap}
    */
   get rooms () {
     return this.#rooms
@@ -50,7 +52,7 @@ module.exports = class Hub {
 
   /**
    * Creates a new hub with different rooms
-   * @param rooms The new rooms
+   * @param {RoomMap} rooms The new rooms
    * @return {Hub} A hub with the new rooms
    */
   withRooms (rooms) {
@@ -68,7 +70,7 @@ module.exports = class Hub {
 
   /**
    * Changes the hubs rooms
-   * @param {function} mapper A function that changes the rooms
+   * @param {function(RoomMap):RoomMap} mapper A function that changes the rooms
    * @return {Hub} A new hub with the changed rooms
    */
   mapRooms (mapper) {
@@ -82,7 +84,7 @@ module.exports = class Hub {
    * @return {Hub} A new hub with the changed room
    */
   mapRoom (id, mapper) {
-    return this.mapRooms(rooms => rooms.update(id, mapper))
+    return this.mapRooms(rooms => rooms.map(id, mapper))
   }
 
   /**
@@ -118,7 +120,7 @@ module.exports = class Hub {
                 .setPlayerName(playerId, data.playerName)
                 .setPlayerRoomId(playerId, newRoom.id))
               .mapRooms(it => it
-                .set(newRoom.id, newRoom)),
+                .add(newRoom)),
             emits: [
               io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: newRoom.id })
             ]
@@ -171,7 +173,7 @@ module.exports = class Hub {
         }
         case 'disconnect': {
           const player = this.#playerBase.get(playerId)
-          const newRooms = this.#rooms.update(player.roomId, room => room.removePlayer(playerId))
+          const newRooms = this.#rooms.map(player.roomId, room => room.removePlayer(playerId))
           return {
             newHub: this
               .mapPlayerBase(it => it
