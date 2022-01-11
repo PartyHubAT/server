@@ -1,5 +1,5 @@
 ﻿const PlayerBase = require('./playerBase.js')
-const Lobby = require('./lobby.js')
+const Room = require('./room.js')
 const { Map } = require('immutable')
 
 module.exports = class Hub {
@@ -9,13 +9,13 @@ module.exports = class Hub {
    */
   #playerBase
   /**
-   * The current lobbies
+   * The current rooms
    */
-  #lobbies
+  #rooms
 
-  constructor (playerBase, lobbies) {
+  constructor (playerBase, rooms) {
     this.#playerBase = playerBase
-    this.#lobbies = lobbies
+    this.#rooms = rooms
   }
 
   /**
@@ -33,10 +33,10 @@ module.exports = class Hub {
   }
 
   /**
-   * The hubs' lobbies
+   * The hubs' rooms
    */
-  get lobbies () {
-    return this.#lobbies
+  get rooms () {
+    return this.#rooms
   }
 
   /**
@@ -45,16 +45,16 @@ module.exports = class Hub {
    * @return {Hub} A hub with the new player-base
    */
   withPlayerBase (playerBase) {
-    return new Hub(playerBase, this.lobbies)
+    return new Hub(playerBase, this.rooms)
   }
 
   /**
-   * Creates a new hub with  different lobbies
-   * @param lobbies The new lobbies
-   * @return {Hub} A hub with the new lobbies
+   * Creates a new hub with different rooms
+   * @param rooms The new rooms
+   * @return {Hub} A hub with the new rooms
    */
-  withLobbies (lobbies) {
-    return new Hub(this.playerBase, lobbies)
+  withRooms (rooms) {
+    return new Hub(this.playerBase, rooms)
   }
 
   /**
@@ -67,22 +67,22 @@ module.exports = class Hub {
   }
 
   /**
-   * Changes the hubs lobbies
-   * @param {function} mapper A function that changes the lobbies
-   * @return {Hub} A new hub with the changed lobbies
+   * Changes the hubs rooms
+   * @param {function} mapper A function that changes the rooms
+   * @return {Hub} A new hub with the changed rooms
    */
-  mapLobbies (mapper) {
-    return this.withLobbies(mapper(this.lobbies))
+  mapRooms (mapper) {
+    return this.withRooms(mapper(this.rooms))
   }
 
   /**
-   * Changes one of the hubs lobbies
-   * @param {number} id The id of the lobby
-   * @param {function(Lobby):Lobby} mapper A function that changes a lobby
-   * @return {Hub} A new hub with the changed lobby
+   * Changes one of the hubs rooms
+   * @param {number} id The id of the room
+   * @param {function(Room):Room} mapper A function that changes a room
+   * @return {Hub} A new hub with the changed room
    */
-  mapLobby (id, mapper) {
-    return this.mapLobbies(lobbies => lobbies.update(id, mapper))
+  mapRoom (id, mapper) {
+    return this.mapRooms(rooms => rooms.update(id, mapper))
   }
 
   /**
@@ -111,16 +111,16 @@ module.exports = class Hub {
     const processLonelyPlayerEvent = () => {
       switch (eventName) {
         case 'newRoom': {
-          const newLobby = Lobby.openNew().addPlayer(playerId)
+          const newRoom = Room.openNew().addPlayer(playerId)
           return {
             newHub: this
               .mapPlayerBase(it => it
                 .setPlayerName(playerId, data.playerName)
-                .setPlayerRoomId(playerId, newLobby.roomId))
-              .mapLobbies(it => it
-                .set(newLobby.roomId, newLobby)),
+                .setPlayerRoomId(playerId, newRoom.id))
+              .mapRooms(it => it
+                .set(newRoom.id, newRoom)),
             emits: [
-              io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: newLobby.roomId })
+              io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: newRoom.id })
             ]
           }
         }
@@ -130,7 +130,7 @@ module.exports = class Hub {
               .mapPlayerBase(it => it
                 .setPlayerName(playerId, data.playerName)
                 .setPlayerRoomId(playerId, data.roomId))
-              .mapLobby(data.roomId, it => it
+              .mapRoom(data.roomId, it => it
                 .addPlayer(playerId)),
             emits: [
               io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: data.roomId })
@@ -150,9 +150,9 @@ module.exports = class Hub {
       }
     }
 
-    const processLobbyEvent = () => {
+    const processRoomEvent = () => {
       switch (eventName) {
-        case 'onLobbyJoined' : {
+        case 'onRoomJoined' : {
           const player = this.#playerBase.get(playerId)
           return {
             newHub: this,
@@ -161,7 +161,7 @@ module.exports = class Hub {
               io => io.to(player.roomId).emit('playersChanged', {
                 playerNames:
                   this
-                    .#lobbies.get(player.roomId)
+                    .#rooms.get(player.roomId)
                     .playerIds
                     .map(id => this.#playerBase.get(id))
                     .map(p => p.name)
@@ -171,17 +171,17 @@ module.exports = class Hub {
         }
         case 'disconnect': {
           const player = this.#playerBase.get(playerId)
-          const newLobbies = this.#lobbies.update(player.roomId, lobby => lobby.removePlayer(playerId))
+          const newRooms = this.#rooms.update(player.roomId, room => room.removePlayer(playerId))
           return {
             newHub: this
               .mapPlayerBase(it => it
                 .remove(playerId))
-              .withLobbies(
-                newLobbies),
+              .withRooms(
+                newRooms),
             emits: [
               io => io.to(player.roomId).emit('playersChanged', {
                 playerNames:
-                  newLobbies.get(player.roomId)
+                  newRooms.get(player.roomId)
                     .playerIds
                     .map(id => this.#playerBase.get(id))
                     .map(p => p.name)
@@ -194,7 +194,7 @@ module.exports = class Hub {
 
     if (this.#playerBase.has(playerId)) { // The player is already in the player-base
       if (this.#playerBase.get(playerId).inInRoom) { // The player is already in a room
-        return processLobbyEvent()
+        return processRoomEvent()
       } else { // The player is not yet in a room
         return processLonelyPlayerEvent()
       }
