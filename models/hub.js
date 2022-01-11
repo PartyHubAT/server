@@ -10,7 +10,7 @@ class Hub {
    * The player-map
    * @type {PlayerMap}
    */
-  #playerMap
+  #players
   /**
    * The current rooms
    * @type {RoomMap}
@@ -18,7 +18,7 @@ class Hub {
   #rooms
 
   constructor (playerMap, rooms) {
-    this.#playerMap = playerMap
+    this.#players = playerMap
     this.#rooms = rooms
   }
 
@@ -29,11 +29,11 @@ class Hub {
   static empty = new Hub(PlayerMap.empty, RoomMap.empty)
 
   /**
-   * The hubs player-map
+   * The hubs players
    * @return {PlayerMap}
    */
-  get playerMap () {
-    return this.#playerMap
+  get players () {
+    return this.#players
   }
 
   /**
@@ -59,7 +59,7 @@ class Hub {
    * @return {Hub} A hub with the new rooms
    */
   withRooms (rooms) {
-    return new Hub(this.playerMap, rooms)
+    return new Hub(this.players, rooms)
   }
 
   /**
@@ -68,7 +68,7 @@ class Hub {
    * @return {Hub} A new hub with the changed player-map
    */
   mapPlayerMap (mapper) {
-    return this.withPlayerMap(mapper(this.playerMap))
+    return this.withPlayerMap(mapper(this.players))
   }
 
   /**
@@ -158,7 +158,7 @@ class Hub {
     const processRoomEvent = () => {
       switch (eventName) {
         case 'onRoomJoined' : {
-          const player = this.#playerMap.get(playerId)
+          const player = this.#players.get(playerId)
           return {
             newHub: this,
             emits: [
@@ -168,14 +168,14 @@ class Hub {
                   this
                     .#rooms.get(player.roomId)
                     .playerIds
-                    .map(id => this.#playerMap.get(id))
+                    .map(id => this.#players.get(id))
                     .map(p => p.name)
               })
             ]
           }
         }
         case 'disconnect': {
-          const player = this.#playerMap.get(playerId)
+          const player = this.#players.get(playerId)
           const newRooms = this.#rooms.map(player.roomId, room => room.removePlayer(playerId))
           return {
             newHub: this
@@ -188,7 +188,7 @@ class Hub {
                 playerNames:
                   newRooms.get(player.roomId)
                     .playerIds
-                    .map(id => this.#playerMap.get(id))
+                    .map(id => this.#players.get(id))
                     .map(p => p.name)
               })
             ]
@@ -197,8 +197,8 @@ class Hub {
       }
     }
 
-    if (this.#playerMap.has(playerId)) { // The player is already in the player-map
-      if (this.#playerMap.get(playerId).inInRoom) { // The player is already in a room
+    if (this.#players.has(playerId)) { // The player is already in the player-map
+      if (this.#players.get(playerId).inInRoom) { // The player is already in a room
         return processRoomEvent()
       } else { // The player is not yet in a room
         return processLonelyPlayerEvent()
