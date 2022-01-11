@@ -91,121 +91,13 @@ class Hub {
   }
 
   /**
-   * Processes an event
-   * @param {string} playerId The id of the player who triggered the event
-   * @param {string} eventName The name of the event
-   * @param {any} data The data that was sent with the event
-   * @return {{emits: function[], newHub: Hub}} A new hub, with any changes the event cause, as well as an array of emits
+   * Gets all players in a room
+   * @param {number} roomId The id of the room
+   * @return {Player[]|undefined} The players or undefined if the room is not found
    */
-  processSocketEvent (playerId, eventName, data) {
-    const noChanges = { newHub: this, emits: [] }
-
-    const processUnknownPlayerEvent = () => {
-      // The only thing unknown players can do is connect
-      if (eventName === 'connect') {
-        console.log(`New player (${playerId}) entered the lonely-zone.`)
-        return {
-          newHub:
-            this.mapPlayers(it => it
-              .addLonely(playerId)),
-          emits: []
-        }
-      } else { return noChanges }
-    }
-
-    const processLonelyPlayerEvent = () => {
-      switch (eventName) {
-        case 'newRoom': {
-          const newRoom = Room.openNew().addPlayer(playerId)
-          return {
-            newHub: this
-              .mapPlayers(it => it
-                .setPlayerName(playerId, data.playerName)
-                .setPlayerRoomId(playerId, newRoom.id))
-              .mapRooms(it => it
-                .add(newRoom)),
-            emits: [
-              io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: newRoom.id })
-            ]
-          }
-        }
-        case 'joinRoom': {
-          return {
-            newHub: this
-              .mapPlayers(it => it
-                .setPlayerName(playerId, data.playerName)
-                .setPlayerRoomId(playerId, data.roomId))
-              .mapRoom(data.roomId, it => it
-                .addPlayer(playerId)),
-            emits: [
-              io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: data.roomId })
-            ]
-          }
-        }
-        case 'disconnect':
-          console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
-          return {
-            newHub: this
-              .mapPlayers(it => it
-                .remove(playerId)),
-            emits: []
-          }
-        default:
-          return noChanges
-      }
-    }
-
-    const processRoomEvent = () => {
-      switch (eventName) {
-        case 'onRoomJoined' : {
-          const player = this.#players.get(playerId)
-          return {
-            newHub: this,
-            emits: [
-              io => io.sockets.sockets.get(playerId).join(player.roomId),
-              io => io.to(player.roomId).emit('playersChanged', {
-                playerNames:
-                  this
-                    .#rooms.get(player.roomId)
-                    .playerIds
-                    .map(id => this.#players.get(id))
-                    .map(p => p.name)
-              })
-            ]
-          }
-        }
-        case 'disconnect': {
-          const player = this.#players.get(playerId)
-          const newRooms = this.#rooms.map(player.roomId, room => room.removePlayer(playerId))
-          return {
-            newHub: this
-              .mapPlayers(it => it
-                .remove(playerId))
-              .withRooms(
-                newRooms),
-            emits: [
-              io => io.to(player.roomId).emit('playersChanged', {
-                playerNames:
-                  newRooms.get(player.roomId)
-                    .playerIds
-                    .map(id => this.#players.get(id))
-                    .map(p => p.name)
-              })
-            ]
-          }
-        }
-      }
-    }
-
-    if (this.#players.has(playerId)) { // The player is already in the player-map
-      if (this.#players.get(playerId).inInRoom) { // The player is already in a room
-        return processRoomEvent()
-      } else { // The player is not yet in a room
-        return processLonelyPlayerEvent()
-      }
-    } else { // The player who sent the message is completely unknown
-      return processUnknownPlayerEvent()
-    }
+  getPlayersInRoom (roomId) {
+    const room = this.rooms.get(roomId)
+    return room ? room.playerIds.map(id => this.players.get(id)) : undefined
   }
 }
 

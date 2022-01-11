@@ -5,7 +5,6 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
-const Hub = require('./models/hub.js')
 const playerRepo = require('./repos/PlayerRepo')(mongoose)
 const playerService = require('./services/PlayerService')(playerRepo)
 const roomRepo = require('./repos/RoomRepo')(mongoose)
@@ -44,28 +43,11 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
     res.send({ games: library.gameInfo })
   })
 
-  let hub = Hub.empty
-
   // Setup socket
 
-  function processSocketEvent (socketId, eventName, data) {
-    const { newHub, emits } = hub.processSocketEvent(socketId, eventName, data)
-    hub = newHub
-
-    emits.forEach(emit => emit(io))
-  }
+  require('./socketRoutes/index.js')(io)
 
   io.on('connection', socket => {
-    socket.onAny((eventName, data) => {
-      processSocketEvent(socket.id, eventName, data)
-    })
-
-    socket.on('disconnect', () => {
-      processSocketEvent(socket.id, 'disconnect', {})
-    })
-
-    processSocketEvent(socket.id, 'connect', {})
-
     /**
      * Send a message to all sockets in the room
      * @param {number} roomId The id of the room to emit to
