@@ -1,7 +1,10 @@
 ﻿const { Map } = require('immutable')
 const Player = require('./player.js')
 
-module.exports = class PlayerBase {
+/**
+ * Stores players
+ */
+class PlayerMap {
   /**
    * All currently active players
    */
@@ -12,23 +15,23 @@ module.exports = class PlayerBase {
   }
 
   /**
-   * An empty player-base
-   * @type {PlayerBase}
+   * An empty player-map
+   * @type {PlayerMap}
    */
-  static empty = new PlayerBase(Map())
+  static empty = new PlayerMap(Map())
 
   /**
-   * Adds a new lonely player to the player-base
+   * Adds a new lonely player to the player-map
    * @param {string} id The player id
-   * @return {PlayerBase} A new player-base with the player added
+   * @return {PlayerMap} A new player-map with the player added
    */
   addLonely (id) {
     const player = Player.makeLonely(id)
-    return new PlayerBase(this.#players.set(id, player))
+    return new PlayerMap(this.#players.set(id, player))
   }
 
   /**
-   * Checks if a player exists in the player-base
+   * Checks if a player exists in the player-map
    * @param {string} id The id of the player
    * @return {boolean} Whether the player exists or not
    */
@@ -46,48 +49,50 @@ module.exports = class PlayerBase {
   }
 
   /**
-   * Updates a player in the player-base
+   * Updates a player in the player-map
    * @param {string} id The id of the player
-   * @param {function} mapper A function that changes a player
-   * @return {PlayerBase} A new player-base with the new player
+   * @param {function(Player):Player} mapper A function that changes a player
+   * @return {PlayerMap} A new player-map with the new player
    */
-  #updatePlayer (id, mapper) {
+  map (id, mapper) {
     const player = this.get(id)
 
     if (player) {
       const updated = mapper(player)
-      return new PlayerBase(this.#players.set(id, updated))
+      return new PlayerMap(this.#players.set(id, updated))
     } else {
       return this
     }
   }
 
   /**
-   * Changes the name of a player in the player-base. If the player does not exist, nothing happens
+   * Changes the name of a player in the player-map. If the player does not exist, nothing happens
    * @param {string} id The id of the player
    * @param {string} name The new name
-   * @return {PlayerBase} A new player-base with the updated player
+   * @return {PlayerMap} A new player-map with the updated player
    */
   setPlayerName (id, name) {
-    return this.#updatePlayer(id, player => player.withName(name))
+    return this.map(id, player => player.withName(name))
   }
 
   /**
-   * Changes the room-id of a player in the player-base. If the player does not exist, nothing happens
+   * Changes the room-id of a player in the player-map. If the player does not exist, nothing happens
    * @param {string} id The id of the player
    * @param {number} roomId The new roomId
-   * @return {PlayerBase} A new player-base with the updated player
+   * @return {PlayerMap} A new player-map with the updated player
    */
   setPlayerRoomId (id, roomId) {
-    return this.#updatePlayer(id, player => player.withRoomId(roomId))
+    return this.map(id, player => player.withRoomId(roomId))
   }
 
   /**
-   * Removes a player from the player-base
+   * Removes a player from the player-map
    * @param {string} id The id of the player
-   * @return {PlayerBase} A new player-base without the player
+   * @return {PlayerMap} A new player-map without the player
    */
   remove (id) {
-    return new PlayerBase(this.#players.filter(p => p.id !== id))
+    return new PlayerMap(this.#players.filter(p => p.id !== id))
   }
 }
+
+module.exports = PlayerMap

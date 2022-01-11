@@ -1,21 +1,21 @@
-﻿const PlayerBase = require('./playerBase.js')
+﻿const PlayerMap = require('./playerMap.js')
 const RoomMap = require('./roomMap.js')
 const Room = require('./room.js')
 
 module.exports = class Hub {
   /**
-   * The player-base
-   * @type {PlayerBase}
+   * The player-map
+   * @type {PlayerMap}
    */
-  #playerBase
+  #playerMap
   /**
    * The current rooms
    * @type {RoomMap}
    */
   #rooms
 
-  constructor (playerBase, rooms) {
-    this.#playerBase = playerBase
+  constructor (playerMap, rooms) {
+    this.#playerMap = playerMap
     this.#rooms = rooms
   }
 
@@ -23,14 +23,14 @@ module.exports = class Hub {
    * An empty hub
    * @type {Hub}
    */
-  static empty = new Hub(PlayerBase.empty, RoomMap.empty)
+  static empty = new Hub(PlayerMap.empty, RoomMap.empty)
 
   /**
-   * The hubs player-base
-   * @return {PlayerBase}
+   * The hubs player-map
+   * @return {PlayerMap}
    */
-  get playerBase () {
-    return this.#playerBase
+  get playerMap () {
+    return this.#playerMap
   }
 
   /**
@@ -42,12 +42,12 @@ module.exports = class Hub {
   }
 
   /**
-   * Creates a new hub with a different player-base
-   * @param {PlayerBase} playerBase The new player-base
-   * @return {Hub} A hub with the new player-base
+   * Creates a new hub with a different player-map
+   * @param {PlayerMap} playerMap The new player-map
+   * @return {Hub} A hub with the new player-map
    */
-  withPlayerBase (playerBase) {
-    return new Hub(playerBase, this.rooms)
+  withPlayerMap (playerMap) {
+    return new Hub(playerMap, this.rooms)
   }
 
   /**
@@ -56,16 +56,16 @@ module.exports = class Hub {
    * @return {Hub} A hub with the new rooms
    */
   withRooms (rooms) {
-    return new Hub(this.playerBase, rooms)
+    return new Hub(this.playerMap, rooms)
   }
 
   /**
-   * Changes the hubs player-base
-   * @param {function(PlayerBase):PlayerBase} mapper A function that changes the player-base
-   * @return {Hub} A new hub with the changed player-base
+   * Changes the hubs player-map
+   * @param {function(PlayerMap):PlayerMap} mapper A function that changes the player-map
+   * @return {Hub} A new hub with the changed player-map
    */
-  mapPlayerBase (mapper) {
-    return this.withPlayerBase(mapper(this.playerBase))
+  mapPlayerMap (mapper) {
+    return this.withPlayerMap(mapper(this.playerMap))
   }
 
   /**
@@ -103,7 +103,7 @@ module.exports = class Hub {
         console.log(`New player (${playerId}) entered the lonely-zone.`)
         return {
           newHub:
-            this.mapPlayerBase(it => it
+            this.mapPlayerMap(it => it
               .addLonely(playerId)),
           emits: []
         }
@@ -116,7 +116,7 @@ module.exports = class Hub {
           const newRoom = Room.openNew().addPlayer(playerId)
           return {
             newHub: this
-              .mapPlayerBase(it => it
+              .mapPlayerMap(it => it
                 .setPlayerName(playerId, data.playerName)
                 .setPlayerRoomId(playerId, newRoom.id))
               .mapRooms(it => it
@@ -129,7 +129,7 @@ module.exports = class Hub {
         case 'joinRoom': {
           return {
             newHub: this
-              .mapPlayerBase(it => it
+              .mapPlayerMap(it => it
                 .setPlayerName(playerId, data.playerName)
                 .setPlayerRoomId(playerId, data.roomId))
               .mapRoom(data.roomId, it => it
@@ -143,7 +143,7 @@ module.exports = class Hub {
           console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
           return {
             newHub: this
-              .mapPlayerBase(it => it
+              .mapPlayerMap(it => it
                 .remove(playerId)),
             emits: []
           }
@@ -155,7 +155,7 @@ module.exports = class Hub {
     const processRoomEvent = () => {
       switch (eventName) {
         case 'onRoomJoined' : {
-          const player = this.#playerBase.get(playerId)
+          const player = this.#playerMap.get(playerId)
           return {
             newHub: this,
             emits: [
@@ -165,18 +165,18 @@ module.exports = class Hub {
                   this
                     .#rooms.get(player.roomId)
                     .playerIds
-                    .map(id => this.#playerBase.get(id))
+                    .map(id => this.#playerMap.get(id))
                     .map(p => p.name)
               })
             ]
           }
         }
         case 'disconnect': {
-          const player = this.#playerBase.get(playerId)
+          const player = this.#playerMap.get(playerId)
           const newRooms = this.#rooms.map(player.roomId, room => room.removePlayer(playerId))
           return {
             newHub: this
-              .mapPlayerBase(it => it
+              .mapPlayerMap(it => it
                 .remove(playerId))
               .withRooms(
                 newRooms),
@@ -185,7 +185,7 @@ module.exports = class Hub {
                 playerNames:
                   newRooms.get(player.roomId)
                     .playerIds
-                    .map(id => this.#playerBase.get(id))
+                    .map(id => this.#playerMap.get(id))
                     .map(p => p.name)
               })
             ]
@@ -194,8 +194,8 @@ module.exports = class Hub {
       }
     }
 
-    if (this.#playerBase.has(playerId)) { // The player is already in the player-base
-      if (this.#playerBase.get(playerId).inInRoom) { // The player is already in a room
+    if (this.#playerMap.has(playerId)) { // The player is already in the player-map
+      if (this.#playerMap.get(playerId).inInRoom) { // The player is already in a room
         return processRoomEvent()
       } else { // The player is not yet in a room
         return processLonelyPlayerEvent()
