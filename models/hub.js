@@ -2,7 +2,10 @@
 const RoomMap = require('./roomMap.js')
 const Room = require('./room.js')
 
-module.exports = class Hub {
+/**
+ * Stores the current rooms and players
+ */
+class Hub {
   /**
    * The player-map
    * @type {PlayerMap}
@@ -205,3 +208,5 @@ module.exports = class Hub {
     }
   }
 }
+
+module.exports = Hub
