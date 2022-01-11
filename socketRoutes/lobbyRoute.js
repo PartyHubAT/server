@@ -15,11 +15,28 @@ const isInLobby = (hub, playerId) =>
 const onLobbyJoined = (hub, playerId, data, emitter) => {
   const player = hub.players.get(playerId)
   const playerNames = hub.getPlayersInRoom(player.roomId).map(it => it.name)
+  const role = hub.getPlayerRoleInRoom(playerId, player.roomId)
+  const gameName = hub.rooms.get(player.roomId).gameName
 
   emitter(Emit.joinRoom(playerId, player.roomId))
   emitter(Emit.toRoom(player.roomId, 'playersChanged', { playerNames }))
+  emitter(Emit.toOne(playerId, 'roleChanged', { role }))
+  emitter(Emit.toOne(playerId, 'gameSelected', { gameName }))
 
   return hub
+}
+
+/**
+ * Event handler for when the host changes the game
+ * @type {SocketEventHandler}
+ */
+const onSelectGame = (hub, playerId, data, emitter) => {
+  const player = hub.players.get(playerId)
+  console.log(`The host of room ${player.roomId} changed the game to "${data.gameName}".`)
+
+  emitter(Emit.toRoom(player.roomId, 'gameSelected', { gameName: data.gameName }))
+
+  return hub.mapRoom(player.roomId, room => room.withGameName(data.gameName))
 }
 
 /**
@@ -45,6 +62,7 @@ module.exports = new SocketRoute(
   isInLobby,
   [
     { eventName: 'onLobbyJoined', handler: onLobbyJoined },
+    { eventName: 'selectGame', handler: onSelectGame },
     { eventName: 'disconnect', handler: onDisconnect }
   ]
 )

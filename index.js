@@ -70,19 +70,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
     }
 
     /**
-     * Enters the current socket into the socket-room corresponding to the room-id
-     * @param {number} roomId The id of the room to join
-     * @returns {Promise<void>}
-     */
-    async function joinSocketRoom (roomId) {
-      const socketRoomName = roomService.getSocketRoomName(roomId)
-      socket.join(socketRoomName)
-
-      // Whenever a new player joins, send the new player-names to all players in socket
-      await sendNewPlayerNames(roomId)
-    }
-
-    /**
      * Gets all sockets inside a room
      * @param {number} roomId The id of the room
      * @returns {Socket<any, any, any, any>[]} The sockets
@@ -134,17 +121,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
       gameServer.startGame()
     }
 
-    socket.on('selectGame', async data => {
-      const playerId = socket.id
-      const player = await playerService.getPlayerById(playerId)
-      const { gameName } = data
-      await roomService.selectGame(player.roomId, gameName)
-
-      console.log(`Player "${player.name}" changed room ${player.roomId}' game to "${gameName}".`)
-
-      emitToRoom(player.roomId, 'gameSelected', { gameName })
-    })
-
     socket.on('startGame', async () => {
       const playerId = socket.id
       const player = await playerService.getPlayerById(playerId)
@@ -154,19 +130,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
       console.log(`Room ${player.roomId}' started playing "${gameName}".`)
 
       emitToRoom(player.roomId, 'gameStarted', { gameName })
-    })
-
-    socket.on('disconnect', async () => {
-      const player = await playerService.getPlayerById(socket.id)
-      if (player) {
-        if (player.roomId) {
-          await roomService.removePlayerFromRoom(player.roomId, player._id)
-
-          await sendNewPlayerNames(player.roomId)
-          console.log(`"${player.name}" has disconnected from room ${player.roomId}.`)
-        }
-        await playerService.remove(player._id)
-      }
     })
   })
 

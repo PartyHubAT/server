@@ -11,10 +11,16 @@ module.exports = class Room {
    * The ids of the players in the room
    */
   #playerIds
+  /**
+   * The name of the currently selected game
+   * @type {string}
+   */
+  #gameName
 
-  constructor (id, playerIds) {
+  constructor (id, playerIds, gameName) {
     this.#id = id
     this.#playerIds = playerIds
+    this.#gameName = gameName
   }
 
   /**
@@ -23,7 +29,7 @@ module.exports = class Room {
    */
   static openNew () {
     const id = randBetween(100000, 999999)
-    return new Room(id, List())
+    return new Room(id, List(), '')
   }
 
   /**
@@ -43,12 +49,38 @@ module.exports = class Room {
   }
 
   /**
+   * The name of the currently selected game
+   * @return {string}
+   */
+  get gameName () {
+    return this.#gameName
+  }
+
+  /**
+   * Makes a new version of this room with the given players
+   * @param playerIds The new player-ids
+   * @return {Room} A new room with the new players
+   */
+  #withPlayers (playerIds) {
+    return new Room(this.id, playerIds, this.gameName)
+  }
+
+  /**
+   * Makes a new version of this room with the given game as its selected game
+   * @param {string} gameName The name of the selected game
+   * @return {Room} A new room with the changed game
+   */
+  withGameName (gameName) {
+    return new Room(this.id, this.#playerIds, gameName)
+  }
+
+  /**
    * Adds a player to the room
    * @param {string} playerId The id of the player to add
    * @return {Room} A new room with the player added
    */
   addPlayer (playerId) {
-    return new Room(this.#id, this.#playerIds.push(playerId))
+    return this.#withPlayers(this.#playerIds.push(playerId))
   }
 
   /**
@@ -57,6 +89,6 @@ module.exports = class Room {
    * @return {Room} The room without the player
    */
   removePlayer (playerId) {
-    return new Room(this.#id, this.#playerIds.filter(it => it !== playerId))
+    return this.#withPlayers(this.#playerIds.filter(it => it !== playerId))
   }
 }

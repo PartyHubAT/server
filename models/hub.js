@@ -99,6 +99,22 @@ class Hub {
     const room = this.rooms.get(roomId)
     return room ? room.playerIds.map(id => this.players.get(id)) : undefined
   }
+
+  /**
+   * Gets the role of a player in a room
+   * @param {string} playerId The id of the player
+   * @param {number} roomId The id of the room
+   * @return {string|undefined} The role or undefined if the room or player was not found
+   */
+  getPlayerRoleInRoom (playerId, roomId) {
+    const room = this.rooms.get(roomId)
+    if (room) {
+      const playerIds = room.playerIds
+      if (playerIds.includes(playerId)) {
+        return playerIds[0] === playerId ? 'HOST' : 'GUEST'
+      } else { return undefined }
+    } else { return undefined }
+  }
 }
 
 module.exports = Hub
