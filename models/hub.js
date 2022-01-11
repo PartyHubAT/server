@@ -49,7 +49,7 @@ class Hub {
    * @param {PlayerMap} playerMap The new player-map
    * @return {Hub} A hub with the new player-map
    */
-  withPlayerMap (playerMap) {
+  withPlayers (playerMap) {
     return new Hub(playerMap, this.rooms)
   }
 
@@ -67,8 +67,8 @@ class Hub {
    * @param {function(PlayerMap):PlayerMap} mapper A function that changes the player-map
    * @return {Hub} A new hub with the changed player-map
    */
-  mapPlayerMap (mapper) {
-    return this.withPlayerMap(mapper(this.players))
+  mapPlayers (mapper) {
+    return this.withPlayers(mapper(this.players))
   }
 
   /**
@@ -106,7 +106,7 @@ class Hub {
         console.log(`New player (${playerId}) entered the lonely-zone.`)
         return {
           newHub:
-            this.mapPlayerMap(it => it
+            this.mapPlayers(it => it
               .addLonely(playerId)),
           emits: []
         }
@@ -119,7 +119,7 @@ class Hub {
           const newRoom = Room.openNew().addPlayer(playerId)
           return {
             newHub: this
-              .mapPlayerMap(it => it
+              .mapPlayers(it => it
                 .setPlayerName(playerId, data.playerName)
                 .setPlayerRoomId(playerId, newRoom.id))
               .mapRooms(it => it
@@ -132,7 +132,7 @@ class Hub {
         case 'joinRoom': {
           return {
             newHub: this
-              .mapPlayerMap(it => it
+              .mapPlayers(it => it
                 .setPlayerName(playerId, data.playerName)
                 .setPlayerRoomId(playerId, data.roomId))
               .mapRoom(data.roomId, it => it
@@ -146,7 +146,7 @@ class Hub {
           console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
           return {
             newHub: this
-              .mapPlayerMap(it => it
+              .mapPlayers(it => it
                 .remove(playerId)),
             emits: []
           }
@@ -179,7 +179,7 @@ class Hub {
           const newRooms = this.#rooms.map(player.roomId, room => room.removePlayer(playerId))
           return {
             newHub: this
-              .mapPlayerMap(it => it
+              .mapPlayers(it => it
                 .remove(playerId))
               .withRooms(
                 newRooms),
