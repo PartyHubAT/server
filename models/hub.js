@@ -25,12 +25,27 @@ module.exports = class Hub {
   static empty = new Hub(PlayerBase.empty, Map())
 
   /**
+   * The hubs player-base
+   * @return {PlayerBase}
+   */
+  get playerBase () {
+    return this.#playerBase
+  }
+
+  /**
+   * The hubs' lobbies
+   */
+  get lobbies () {
+    return this.#lobbies
+  }
+
+  /**
    * Creates a new hub with a different player-base
    * @param {PlayerBase} playerBase The new player-base
    * @return {Hub} A hub with the new player-base
    */
-  #withPlayerBase (playerBase) {
-    return new Hub(playerBase, this.#lobbies)
+  withPlayerBase (playerBase) {
+    return new Hub(playerBase, this.lobbies)
   }
 
   /**
@@ -38,8 +53,36 @@ module.exports = class Hub {
    * @param lobbies The new lobbies
    * @return {Hub} A hub with the new lobbies
    */
-  #withLobbies (lobbies) {
-    return new Hub(this.#playerBase, lobbies)
+  withLobbies (lobbies) {
+    return new Hub(this.playerBase, lobbies)
+  }
+
+  /**
+   * Changes the hubs player-base
+   * @param {function(PlayerBase):PlayerBase} mapper A function that changes the player-base
+   * @return {Hub} A new hub with the changed player-base
+   */
+  mapPlayerBase (mapper) {
+    return this.withPlayerBase(mapper(this.playerBase))
+  }
+
+  /**
+   * Changes the hubs lobbies
+   * @param {function} mapper A function that changes the lobbies
+   * @return {Hub} A new hub with the changed lobbies
+   */
+  mapLobbies (mapper) {
+    return this.withLobbies(mapper(this.lobbies))
+  }
+
+  /**
+   * Changes one of the hubs lobbies
+   * @param {number} id The id of the lobby
+   * @param {function(Lobby):Lobby} mapper A function that changes a lobby
+   * @return {Hub} A new hub with the changed lobby
+   */
+  mapLobby (id, mapper) {
+    return this.mapLobbies(lobbies => lobbies.update(id, mapper))
   }
 
   /**
@@ -58,7 +101,8 @@ module.exports = class Hub {
         console.log(`New player (${playerId}) entered the lonely-zone.`)
         return {
           newHub:
-            this.#withPlayerBase(this.#playerBase.addLonely(playerId)),
+            this.mapPlayerBase(it => it
+              .addLonely(playerId)),
           emits: []
         }
       } else { return noChanges }
@@ -70,14 +114,11 @@ module.exports = class Hub {
           const newLobby = Lobby.openNew().addPlayer(playerId)
           return {
             newHub: this
-              .#withPlayerBase(
-                this.#playerBase
-                  .setPlayerName(playerId, data.playerName)
-                  .setPlayerRoomId(playerId, newLobby.roomId))
-              .#withLobbies(
-                this.#lobbies
-                  .set(newLobby.roomId, newLobby)
-              ),
+              .mapPlayerBase(it => it
+                .setPlayerName(playerId, data.playerName)
+                .setPlayerRoomId(playerId, newLobby.roomId))
+              .mapLobbies(it => it
+                .set(newLobby.roomId, newLobby)),
             emits: [
               io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: newLobby.roomId })
             ]
@@ -86,14 +127,11 @@ module.exports = class Hub {
         case 'joinRoom': {
           return {
             newHub: this
-              .#withPlayerBase(
-                this.#playerBase
-                  .setPlayerName(playerId, data.playerName)
-                  .setPlayerRoomId(playerId, data.roomId))
-              .#withLobbies(
-                this.#lobbies
-                  .update(data.roomId, lobby => lobby.addPlayer(playerId))
-              ),
+              .mapPlayerBase(it => it
+                .setPlayerName(playerId, data.playerName)
+                .setPlayerRoomId(playerId, data.roomId))
+              .mapLobby(data.roomId, it => it
+                .addPlayer(playerId)),
             emits: [
               io => io.sockets.sockets.get(playerId).emit('joinSuccess', { roomId: data.roomId })
             ]
@@ -103,9 +141,8 @@ module.exports = class Hub {
           console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
           return {
             newHub: this
-              .#withPlayerBase(
-                this.#playerBase.remove(playerId)
-              ),
+              .mapPlayerBase(it => it
+                .remove(playerId)),
             emits: []
           }
         default:
@@ -137,12 +174,10 @@ module.exports = class Hub {
           const newLobbies = this.#lobbies.update(player.roomId, lobby => lobby.removePlayer(playerId))
           return {
             newHub: this
-              .#withPlayerBase(
-                this.#playerBase.remove(playerId)
-              )
-              .#withLobbies(
-                newLobbies
-              ),
+              .mapPlayerBase(it => it
+                .remove(playerId))
+              .withLobbies(
+                newLobbies),
             emits: [
               io => io.to(player.roomId).emit('playersChanged', {
                 playerNames:
