@@ -72,8 +72,8 @@ function initWebsocket (io) {
    * @return {SocketEventHandler} The handler to send the event to
    */
   const findHandlerForEvent = (route, eventName) => {
-    const path = route.eventPaths.find(path => path.eventName === eventName)
-    return path ? path.handler : route.unknownPathHandler
+    const path = route.eventPaths.find(path => path[0] === eventName)
+    return path ? path[1] : route.unknownPathHandler
   }
 
   /**

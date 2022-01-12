@@ -19,6 +19,6 @@ const onConnect = (hub, playerId) => {
 module.exports = new SocketRoute(
   isUnknownPlayer,
   [
-    { eventName: 'connect', handler: onConnect }
+    ['connect', onConnect]
   ]
 )

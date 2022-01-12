@@ -16,10 +16,8 @@
  */
 
 /**
- * Specifies a path that an event can go to in a route
- * @typedef {Object} EventPath
- * @property {string} eventName The name of the event that triggers this path
- * @property {SocketEventHandler} handler A handler for this event
+ * Specifies an event and the corresponding handler
+ * @typedef {[string,SocketEventHandler]} EventPath
  */
 
 /**

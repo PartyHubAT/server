@@ -56,8 +56,8 @@ const onDisconnect = (hub, playerId) => {
 module.exports = new SocketRoute(
   isLonelyPlayer,
   [
-    { eventName: 'disconnect', handler: onDisconnect },
-    { eventName: 'newRoom', handler: onNewRoom },
-    { eventName: 'joinRoom', handler: onJoinRoom }
+    ['disconnect', onDisconnect],
+    ['newRoom', onNewRoom],
+    ['joinRoom', onJoinRoom]
   ]
 )

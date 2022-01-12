@@ -78,9 +78,9 @@ const onDisconnect = (hub, playerId) => {
 module.exports = new SocketRoute(
   isInLobby,
   [
-    { eventName: 'onLobbyJoined', handler: onLobbyJoined },
-    { eventName: 'selectGame', handler: onSelectGame },
-    { eventName: 'startGame', handler: onStartGame },
-    { eventName: 'disconnect', handler: onDisconnect }
+    ['onLobbyJoined', onLobbyJoined],
+    ['selectGame', onSelectGame],
+    ['startGame', onStartGame],
+    ['disconnect', onDisconnect]
   ]
 )
