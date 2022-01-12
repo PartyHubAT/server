@@ -9,7 +9,7 @@
 /**
  * Emits event after the mapping is complete
  * @callback Emitter
- * @param {SocketEmit} emit The emit
+ * @param {SocketCmd} emit The emit
  */
 
 /**
@@ -28,7 +28,7 @@
  * @param {Hub} hub The current state of the hub
  * @param {string} playerId The id of the player who triggered the event
  * @param {any} data The data that was sent with the event
- * @return {SocketEmit[]} The generated emit
+ * @return {SocketCmd[]} The generated emit
  */
 
 /**

@@ -1,5 +1,5 @@
 ﻿const SocketRoute = require('./socketRoute.js')
-const Emit = require('./emit.js')
+const Cmd = require('./cmd.js')
 const Room = require('../models/room')
 
 /**
@@ -22,7 +22,7 @@ const onNewRoom = (hub, playerId, data, emitter) => {
       .setPlayerRoomId(playerId, newRoom.id))
     .mapRooms(it => it
       .add(newRoom))
-  emitter(Emit.toOne(playerId, 'joinSuccess', { roomId: newRoom.id }))
+  emitter(Cmd.toOne(playerId, 'joinSuccess', { roomId: newRoom.id }))
   return nextHub
 }
 
@@ -38,7 +38,7 @@ const onJoinRoom = (hub, playerId, data, emitter) => {
       .setPlayerRoomId(playerId, data.roomId))
     .mapRoom(data.roomId, it => it
       .addPlayer(playerId))
-  emitter(Emit.toOne(playerId, 'joinSuccess', { roomId: data.roomId }))
+  emitter(Cmd.toOne(playerId, 'joinSuccess', { roomId: data.roomId }))
   return nextHub
 }
 

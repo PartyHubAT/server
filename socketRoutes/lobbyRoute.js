@@ -1,5 +1,5 @@
 ﻿const SocketRoute = require('./socketRoute.js')
-const Emit = require('./emit.js')
+const Cmd = require('./cmd.js')
 
 /**
  * Checks if this route should be taken
@@ -18,10 +18,10 @@ const onLobbyJoined = (hub, playerId, data, emitter) => {
   const role = hub.getPlayerRoleInRoom(playerId, player.roomId)
   const gameName = hub.rooms.get(player.roomId).gameName
 
-  emitter(Emit.joinRoom(playerId, player.roomId))
-  emitter(Emit.toRoom(player.roomId, 'playersChanged', { playerNames }))
-  emitter(Emit.toOne(playerId, 'roleChanged', { role }))
-  emitter(Emit.toOne(playerId, 'gameSelected', { gameName }))
+  emitter(Cmd.joinRoom(playerId, player.roomId))
+  emitter(Cmd.toRoom(player.roomId, 'playersChanged', { playerNames }))
+  emitter(Cmd.toOne(playerId, 'roleChanged', { role }))
+  emitter(Cmd.toOne(playerId, 'gameSelected', { gameName }))
 
   return hub
 }
@@ -34,7 +34,7 @@ const onSelectGame = (hub, playerId, data, emitter) => {
   const player = hub.players.get(playerId)
   console.log(`The host of room ${player.roomId} changed the game to "${data.gameName}".`)
 
-  emitter(Emit.toRoom(player.roomId, 'gameSelected', { gameName: data.gameName }))
+  emitter(Cmd.toRoom(player.roomId, 'gameSelected', { gameName: data.gameName }))
 
   return hub.mapRoom(player.roomId, room => room.withGameName(data.gameName))
 }
@@ -49,7 +49,7 @@ const onStartGame = (hub, playerId, _, emitter) => {
 
   console.log(`Room ${player.roomId}' started playing "${gameName}".`)
 
-  emitter(Emit.toRoom(player.roomId, 'gameStarted', { gameName }))
+  emitter(Cmd.toRoom(player.roomId, 'gameStarted', { gameName }))
 
   return hub
 }
@@ -68,7 +68,7 @@ const onDisconnect = (hub, playerId, _, emitter) => {
   const playerNames = newHub.getPlayersInRoom(player.roomId).map(it => it.name)
 
   console.log(`Player "${player.name}" (${playerId}) disconnected from lobby ${player.roomId}.`)
-  emitter(Emit.toRoom(player.roomId, 'playersChanged', { playerNames }))
+  emitter(Cmd.toRoom(player.roomId, 'playersChanged', { playerNames }))
 
   return newHub
 }

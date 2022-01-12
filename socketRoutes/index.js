@@ -1,5 +1,5 @@
 ﻿const Hub = require('../models/hub.js')
-const Emit = require('./emit.js')
+const Cmd = require('./cmd.js')
 
 /**
  * The routes an event can go down
@@ -77,21 +77,21 @@ function initWebsocket (io) {
   }
 
   /**
-   * Handles an emit
-   * @param {SocketEmit} emit The emit to handle
+   * Handles a cmd
+   * @param {SocketCmd} cmd The cmd to handle
    */
-  const handleEmit = (emit) => {
-    switch (emit.type) {
-      case Emit.EMIT_TO_ONE:
-        return sendToSocket(emit.playerId, emit.eventName, emit.data)
-      case Emit.EMIT_TO_ROOM:
-        return sendToRoom(emit.roomId, emit.eventName, emit.data)
-      case Emit.JOIN_ROOM:
-        return addSocketToRoom(emit.playerId, emit.roomId)
-      case Emit.LEAVE_ROOM:
-        return removeSocketFromRoom(emit.playerId, emit.roomId)
+  const handleCmd = (cmd) => {
+    switch (cmd.type) {
+      case Cmd.EMIT_TO_ONE:
+        return sendToSocket(cmd.playerId, cmd.eventName, cmd.data)
+      case Cmd.EMIT_TO_ROOM:
+        return sendToRoom(cmd.roomId, cmd.eventName, cmd.data)
+      case Cmd.JOIN_ROOM:
+        return addSocketToRoom(cmd.playerId, cmd.roomId)
+      case Cmd.LEAVE_ROOM:
+        return removeSocketFromRoom(cmd.playerId, cmd.roomId)
       default:
-        return console.log(`Invalid emit: ${JSON.stringify(emit)}`)
+        return console.log(`Invalid cmd: ${JSON.stringify(cmd)}`)
     }
   }
 
@@ -105,13 +105,13 @@ function initWebsocket (io) {
     const route = tryFindRouteForEvent(socketId)
 
     if (route) {
-      const emits = []
-      const emit = (e) => emits.push(e)
+      const cmds = []
+      const emitter = (e) => cmds.push(e)
 
       const handler = findHandlerForEvent(route, eventName)
-      hub = handler(hub, socketId, data, emit)
+      hub = handler(hub, socketId, data, emitter)
 
-      emits.forEach(handleEmit)
+      cmds.forEach(handleCmd)
     } else {
       console.log(`No route was found for event "${eventName}" sent by ${socketId}`)
     }
