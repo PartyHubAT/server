@@ -7,12 +7,6 @@
  */
 
 /**
- * Emits event after the mapping is complete
- * @callback Emitter
- * @param {SocketCmd} emit The emit
- */
-
-/**
  * Maps the current hub to a new form
  * @callback SocketEventHandler
  * @param {Hub} hub The current state of the hub
