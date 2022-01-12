@@ -1,6 +1,6 @@
-﻿const SocketRoute = require('./socketRoute.js')
-const Cmd = require('./cmd.js')
-const Room = require('../models/room')
+﻿const SocketRoute = require('../socketRoute.js')
+const Cmd = require('../cmd.js')
+const Room = require('../../models/room')
 
 /**
  * Checks if this route should be taken

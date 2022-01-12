@@ -1,5 +1,5 @@
-﻿const SocketRoute = require('./socketRoute.js')
-const Cmd = require('./cmd.js')
+﻿const SocketRoute = require('../socketRoute.js')
+const Cmd = require('../cmd.js')
 
 /**
  * Checks if this route should be taken

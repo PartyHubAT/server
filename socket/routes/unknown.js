@@ -1,4 +1,4 @@
-﻿const SocketRoute = require('./socketRoute.js')
+﻿const SocketRoute = require('../socketRoute.js')
 
 /**
  * Checks if this route should be taken
