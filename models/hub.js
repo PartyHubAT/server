@@ -205,19 +205,12 @@ class Hub {
   }
 
   /**
-   * Gets the role of a player in a room
-   * @param {string} playerId The id of the player
-   * @param {number} roomId The id of the room
-   * @return {string|undefined} The role or undefined if the room or player was not found
+   * Gets a room by its id
+   * @param {number} id The id of the room
+   * @return {Room|undefined} The room or undefined if not found
    */
-  getPlayerRoleInRoom (playerId, roomId) {
-    const room = this.#rooms.get(roomId)
-    if (room) {
-      const playerIds = room.playerIds
-      if (playerIds.includes(playerId)) {
-        return playerIds[0] === playerId ? 'HOST' : 'GUEST'
-      } else { return undefined }
-    } else { return undefined }
+  getRoomById (id) {
+    return this.#rooms.get(id)
   }
 
   /**
@@ -228,6 +221,32 @@ class Hub {
   getGameInRoom (roomId) {
     const room = this.#rooms.get(roomId)
     return room ? room.gameName : undefined
+  }
+
+  /**
+   * Gets the room a player is in
+   * @param {string} playerId The id of the player
+   * @return {Room|undefined} The room or undefined if the player was not found, is not in a room or the room was not found
+   */
+  getPlayersRoom (playerId) {
+    const player = this.getPlayerById(playerId)
+    const roomId = player?.roomId
+    return roomId ? this.getRoomById(roomId) : undefined
+  }
+
+  /**
+   * Gets the role of a player in a room
+   * @param {string} playerId The id of the player
+   * @return {string|undefined} The role or undefined if the room or player was not found
+   */
+  getPlayersRole (playerId) {
+    const room = this.getPlayersRoom(playerId)
+    if (room) {
+      const playerIds = room.playerIds
+      if (playerIds.includes(playerId)) {
+        return playerIds[0] === playerId ? 'HOST' : 'GUEST'
+      } else { return undefined }
+    } else { return undefined }
   }
 }
 

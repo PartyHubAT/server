@@ -15,7 +15,7 @@ const isInLobby = (hub, playerId) =>
 const onLobbyJoined = (hub, playerId) => {
   const player = hub.getPlayerById(playerId)
   const playerNames = hub.getPlayerNamesInRoom(player.roomId)
-  const role = hub.getPlayerRoleInRoom(playerId, player.roomId)
+  const role = hub.getPlayersRole(playerId)
   const gameName = hub.getGameInRoom(player.roomId)
 
   return [
