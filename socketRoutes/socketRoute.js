@@ -18,14 +18,6 @@
  * @param {Hub} hub The current state of the hub
  * @param {string} playerId The id of the player who triggered the event
  * @param {any} data The data that was sent with the event
- */
-/**
- * Generates emits based on the new state of the hub
- * @callback EmitGenerator
- * @param {Hub} hub The current state of the hub
- * @param {string} playerId The id of the player who triggered the event
- * @param {any} data The data that was sent with the event
- * @return {SocketCmd[]} The generated emit
  * @return {[Hub,SocketCmd[]]} The new state of the hub and an array of cmds to execute
  */
 
