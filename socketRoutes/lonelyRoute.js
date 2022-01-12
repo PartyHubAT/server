@@ -23,7 +23,7 @@ const newRoom = (hub, playerId, data) => {
     .mapRooms(it => it
       .add(newRoom))
   return [nextHub, [
-    Cmd.toOne(playerId, 'joinSuccess', { roomId: newRoom.id })
+    Cmd.emitToOne(playerId, 'joinSuccess', { roomId: newRoom.id })
   ]]
 }
 
@@ -40,7 +40,7 @@ const joinRoom = (hub, playerId, data) => {
     .mapRoom(data.roomId, it => it
       .addPlayer(playerId))
   return [nextHub, [
-    Cmd.toOne(playerId, 'joinSuccess', { roomId: data.roomId })
+    Cmd.emitToOne(playerId, 'joinSuccess', { roomId: data.roomId })
   ]]
 }
 

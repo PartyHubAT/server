@@ -89,8 +89,8 @@ module.exports = {
   EMIT_TO_ROOM,
   JOIN_ROOM,
   LEAVE_ROOM,
-  toOne: emitToOne,
-  toRoom: emitToRoom,
+  emitToOne,
+  emitToRoom,
   joinRoom,
   leaveRoom
 }

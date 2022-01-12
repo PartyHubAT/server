@@ -20,9 +20,9 @@ const onLobbyJoined = (hub, playerId) => {
 
   return [hub, [
     Cmd.joinRoom(playerId, player.roomId),
-    Cmd.toRoom(player.roomId, 'playersChanged', { playerNames }),
-    Cmd.toOne(playerId, 'roleChanged', { role }),
-    Cmd.toOne(playerId, 'gameSelected', { gameName })
+    Cmd.emitToRoom(player.roomId, 'playersChanged', { playerNames }),
+    Cmd.emitToOne(playerId, 'roleChanged', { role }),
+    Cmd.emitToOne(playerId, 'gameSelected', { gameName })
   ]]
 }
 
@@ -36,7 +36,7 @@ const selectGame = (hub, playerId, data) => {
   console.log(`The host of room ${player.roomId} changed the game to "${data.gameName}".`)
 
   return [newHub, [
-    Cmd.toRoom(player.roomId, 'gameSelected', { gameName: data.gameName })
+    Cmd.emitToRoom(player.roomId, 'gameSelected', { gameName: data.gameName })
   ]]
 }
 
@@ -51,7 +51,7 @@ const startGame = (hub, playerId) => {
   console.log(`Room ${player.roomId}' started playing "${gameName}".`)
 
   return [hub, [
-    Cmd.toRoom(player.roomId, 'gameStarted', { gameName })
+    Cmd.emitToRoom(player.roomId, 'gameStarted', { gameName })
   ]]
 }
 
@@ -71,7 +71,7 @@ const disconnect = (hub, playerId) => {
   console.log(`Player "${player.name}" (${playerId}) disconnected from lobby ${player.roomId}.`)
 
   return [newHub, [
-    Cmd.toRoom(player.roomId, 'playersChanged', { playerNames })
+    Cmd.emitToRoom(player.roomId, 'playersChanged', { playerNames })
   ]]
 }
 
