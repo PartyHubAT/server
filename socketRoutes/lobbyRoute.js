@@ -6,17 +6,17 @@ const Cmd = require('./cmd.js')
  * @type {RoutePredicate}
  */
 const isInLobby = (hub, playerId) =>
-  hub.players.get(playerId).inInRoom
+  hub.getPlayerById(playerId).inInRoom
 
 /**
  * Event handler for when a player joined a lobby
  * @type {SocketEventHandler}
  */
 const onLobbyJoined = (hub, playerId) => {
-  const player = hub.players.get(playerId)
-  const playerNames = hub.getPlayersInRoom(player.roomId).map(it => it.name)
+  const player = hub.getPlayerById(playerId)
+  const playerNames = hub.getPlayerNamesInRoom(player.roomId)
   const role = hub.getPlayerRoleInRoom(playerId, player.roomId)
-  const gameName = hub.rooms.get(player.roomId).gameName
+  const gameName = hub.getGameInRoom(player.roomId)
 
   return [hub, [
     Cmd.joinRoom(playerId, player.roomId),
@@ -31,13 +31,15 @@ const onLobbyJoined = (hub, playerId) => {
  * @type {SocketEventHandler}
  */
 const selectGame = (hub, playerId, data) => {
-  const player = hub.players.get(playerId)
-  const newHub = hub.mapRoom(player.roomId, room => room.withGameName(data.gameName))
+  const player = hub.getPlayerById(playerId)
   console.log(`The host of room ${player.roomId} changed the game to "${data.gameName}".`)
 
-  return [newHub, [
-    Cmd.emitToRoom(player.roomId, 'gameSelected', { gameName: data.gameName })
-  ]]
+  return [
+    hub
+      .changeGameInRoom(player.roomId, data.gameName),
+    [
+      Cmd.emitToRoom(player.roomId, 'gameSelected', { gameName: data.gameName })
+    ]]
 }
 
 /**
@@ -45,14 +47,16 @@ const selectGame = (hub, playerId, data) => {
  * @type {SocketEventHandler}
  */
 const startGame = (hub, playerId) => {
-  const player = hub.players.get(playerId)
-  const gameName = hub.rooms.get(player.roomId).gameName
+  const player = hub.getPlayerById(playerId)
+  const gameName = hub.getGameInRoom(player.roomId)
 
   console.log(`Room ${player.roomId}' started playing "${gameName}".`)
 
-  return [hub, [
-    Cmd.emitToRoom(player.roomId, 'gameStarted', { gameName })
-  ]]
+  return [
+    hub,
+    [
+      Cmd.emitToRoom(player.roomId, 'gameStarted', { gameName })
+    ]]
 }
 
 /**
@@ -60,19 +64,17 @@ const startGame = (hub, playerId) => {
  * @type {SocketEventHandler}
  */
 const disconnect = (hub, playerId) => {
-  const player = hub.players.get(playerId)
-  const newHub = hub
-    .mapPlayers(it => it
-      .remove(player))
-    .mapRoom(player.roomId, it => it
-      .removePlayer(playerId))
-  const playerNames = newHub.getPlayersInRoom(player.roomId).map(it => it.name)
+  const player = hub.getPlayerById(playerId)
+  const newHub = hub.removePlayer(playerId)
+  const playerNames = newHub.getPlayerNamesInRoom(player.roomId)
 
   console.log(`Player "${player.name}" (${playerId}) disconnected from lobby ${player.roomId}.`)
 
-  return [newHub, [
-    Cmd.emitToRoom(player.roomId, 'playersChanged', { playerNames })
-  ]]
+  return [
+    newHub,
+    [
+      Cmd.emitToRoom(player.roomId, 'playersChanged', { playerNames })
+    ]]
 }
 
 module.exports = new SocketRoute(

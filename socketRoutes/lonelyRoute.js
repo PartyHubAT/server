@@ -7,24 +7,24 @@ const Room = require('../models/room')
  * @type {RoutePredicate}
  */
 const isLonelyPlayer = (hub, playerId) =>
-  !hub.players.get(playerId).inInRoom
+  !hub.getPlayerById(playerId).inInRoom
 
 /**
  * Event handler for when a player creates a new room
  * @type {SocketEventHandler}
  */
 const newRoom = (hub, playerId, data) => {
-  const newRoom = Room.openNew().addPlayer(playerId)
+  const newRoom = Room.openNew()
   console.log(`Player "${data.playerName}" (${playerId}) left the lonely-zone to create room ${newRoom.id}.`)
-  const nextHub = hub
-    .mapPlayers(it => it
-      .setPlayerName(playerId, data.playerName)
-      .setPlayerRoomId(playerId, newRoom.id))
-    .mapRooms(it => it
-      .add(newRoom))
-  return [nextHub, [
-    Cmd.emitToOne(playerId, 'joinSuccess', { roomId: newRoom.id })
-  ]]
+
+  return [
+    hub
+      .addRoom(newRoom)
+      .renamePlayer(playerId, data.playerName)
+      .movePlayerToRoom(playerId, newRoom.id),
+    [
+      Cmd.emitToOne(playerId, 'joinSuccess', { roomId: newRoom.id })
+    ]]
 }
 
 /**
@@ -33,15 +33,13 @@ const newRoom = (hub, playerId, data) => {
  */
 const joinRoom = (hub, playerId, data) => {
   console.log(`Player "${data.playerName}" (${playerId}) left the lonely-zone to join room ${data.roomId}.`)
-  const nextHub = hub
-    .mapPlayers(it => it
-      .setPlayerName(playerId, data.playerName)
-      .setPlayerRoomId(playerId, data.roomId))
-    .mapRoom(data.roomId, it => it
-      .addPlayer(playerId))
-  return [nextHub, [
-    Cmd.emitToOne(playerId, 'joinSuccess', { roomId: data.roomId })
-  ]]
+  return [
+    hub
+      .renamePlayer(playerId, data.playerName)
+      .movePlayerToRoom(playerId, data.roomId),
+    [
+      Cmd.emitToOne(playerId, 'joinSuccess', { roomId: data.roomId })
+    ]]
 }
 
 /**
@@ -50,7 +48,7 @@ const joinRoom = (hub, playerId, data) => {
  */
 const disconnect = (hub, playerId) => {
   console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
-  return [hub.mapPlayers(it => it.remove(playerId)), []]
+  return [hub.removePlayer(playerId), []]
 }
 
 module.exports = new SocketRoute(

@@ -5,7 +5,7 @@
  * @type {RoutePredicate}
  */
 const isUnknownPlayer = (hub, playerId) =>
-  !hub.players.has(playerId)
+  !hub.hasPlayerWithId(playerId)
 
 /**
  * Event handler for when a player connects
@@ -13,7 +13,11 @@ const isUnknownPlayer = (hub, playerId) =>
  */
 const connect = (hub, playerId) => {
   console.log(`New player (${playerId}) entered the lonely-zone.`)
-  return [hub.withPlayers(hub.players.addLonely(playerId)), []]
+  return [
+    hub
+      .addLonely(playerId),
+    []
+  ]
 }
 
 module.exports = new SocketRoute(
