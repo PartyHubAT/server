@@ -17,7 +17,7 @@
 
 /**
  * Specifies an event and the corresponding handler
- * @typedef {[string,SocketEventHandler]} EventPath
+ * @typedef {[string,SocketEventHandler]} EventPaths
  */
 
 /**
@@ -29,13 +29,13 @@ const defaultUnknownPath = (hub) => [hub, []]
 /**
  * Makes a new socket-route
  * @param {RoutePredicate} pred
- * @param {EventPath[]} eventPaths The paths the event can go down
+ * @param {SocketEventHandler[]} handlers The paths the event can go down
  * @param {SocketEventHandler?} unknownPath The path if none of the others match
  * @constructor
  */
-function SocketRoute (pred, eventPaths, unknownPath) {
+function SocketRoute (pred, handlers, unknownPath) {
   this.pred = pred
-  this.eventPaths = eventPaths
+  this.eventPaths = handlers.map(it => [it.name, it])
   this.unknownPathHandler = unknownPath ?? defaultUnknownPath
 }
 

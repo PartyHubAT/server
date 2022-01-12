@@ -30,7 +30,7 @@ const onLobbyJoined = (hub, playerId) => {
  * Event handler for when the host changes the game
  * @type {SocketEventHandler}
  */
-const onSelectGame = (hub, playerId, data) => {
+const selectGame = (hub, playerId, data) => {
   const player = hub.players.get(playerId)
   const newHub = hub.mapRoom(player.roomId, room => room.withGameName(data.gameName))
   console.log(`The host of room ${player.roomId} changed the game to "${data.gameName}".`)
@@ -44,7 +44,7 @@ const onSelectGame = (hub, playerId, data) => {
  * Event handler for when the host starts the game
  * @type {SocketEventHandler}
  */
-const onStartGame = (hub, playerId) => {
+const startGame = (hub, playerId) => {
   const player = hub.players.get(playerId)
   const gameName = hub.rooms.get(player.roomId).gameName
 
@@ -59,7 +59,7 @@ const onStartGame = (hub, playerId) => {
  * Event handler for when a player disconnects from the lobby
  * @type {SocketEventHandler}
  */
-const onDisconnect = (hub, playerId) => {
+const disconnect = (hub, playerId) => {
   const player = hub.players.get(playerId)
   const newHub = hub
     .mapPlayers(it => it
@@ -78,9 +78,9 @@ const onDisconnect = (hub, playerId) => {
 module.exports = new SocketRoute(
   isInLobby,
   [
-    ['onLobbyJoined', onLobbyJoined],
-    ['selectGame', onSelectGame],
-    ['startGame', onStartGame],
-    ['disconnect', onDisconnect]
+    onLobbyJoined,
+    selectGame,
+    startGame,
+    disconnect
   ]
 )

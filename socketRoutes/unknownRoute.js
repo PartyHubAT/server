@@ -11,7 +11,7 @@ const isUnknownPlayer = (hub, playerId) =>
  * Event handler for when a player connects
  * @type {SocketEventHandler}
  */
-const onConnect = (hub, playerId) => {
+const connect = (hub, playerId) => {
   console.log(`New player (${playerId}) entered the lonely-zone.`)
   return [hub.withPlayers(hub.players.addLonely(playerId)), []]
 }
@@ -19,6 +19,6 @@ const onConnect = (hub, playerId) => {
 module.exports = new SocketRoute(
   isUnknownPlayer,
   [
-    ['connect', onConnect]
+    connect
   ]
 )

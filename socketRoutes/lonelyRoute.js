@@ -13,7 +13,7 @@ const isLonelyPlayer = (hub, playerId) =>
  * Event handler for when a player creates a new room
  * @type {SocketEventHandler}
  */
-const onNewRoom = (hub, playerId, data) => {
+const newRoom = (hub, playerId, data) => {
   const newRoom = Room.openNew().addPlayer(playerId)
   console.log(`Player "${data.playerName}" (${playerId}) left the lonely-zone to create room ${newRoom.id}.`)
   const nextHub = hub
@@ -31,7 +31,7 @@ const onNewRoom = (hub, playerId, data) => {
  * Event handler for when a player joins a room
  * @type {SocketEventHandler}
  */
-const onJoinRoom = (hub, playerId, data) => {
+const joinRoom = (hub, playerId, data) => {
   console.log(`Player "${data.playerName}" (${playerId}) left the lonely-zone to join room ${data.roomId}.`)
   const nextHub = hub
     .mapPlayers(it => it
@@ -48,7 +48,7 @@ const onJoinRoom = (hub, playerId, data) => {
  * Event handler for when a player disconnects
  * @type {SocketEventHandler}
  */
-const onDisconnect = (hub, playerId) => {
+const disconnect = (hub, playerId) => {
   console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
   return [hub.mapPlayers(it => it.remove(playerId)), []]
 }
@@ -56,8 +56,8 @@ const onDisconnect = (hub, playerId) => {
 module.exports = new SocketRoute(
   isLonelyPlayer,
   [
-    ['disconnect', onDisconnect],
-    ['newRoom', onNewRoom],
-    ['joinRoom', onJoinRoom]
+    disconnect,
+    newRoom,
+    joinRoom
   ]
 )
