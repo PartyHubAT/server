@@ -60,16 +60,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
     }
 
     /**
-     * Sends the names of all players in a room to all sockets in that room
-     * @param {number} roomId The id of the room to emit to
-     * @returns {Promise<void>}
-     */
-    async function sendNewPlayerNames (roomId) {
-      const playerNames = await roomService.getPlayerNamesInRoom(roomId)
-      emitToRoom(roomId, 'playersChanged', { playerNames })
-    }
-
-    /**
      * Gets all sockets inside a room
      * @param {number} roomId The id of the room
      * @returns {Socket<any, any, any, any>[]} The sockets
@@ -120,17 +110,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
 
       gameServer.startGame()
     }
-
-    socket.on('startGame', async () => {
-      const playerId = socket.id
-      const player = await playerService.getPlayerById(playerId)
-      const gameName = await roomService.getSelectedGameName(player.roomId)
-      await startGame(player.roomId, gameName)
-
-      console.log(`Room ${player.roomId}' started playing "${gameName}".`)
-
-      emitToRoom(player.roomId, 'gameStarted', { gameName })
-    })
   })
 
   // Start server

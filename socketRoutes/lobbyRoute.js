@@ -40,6 +40,21 @@ const onSelectGame = (hub, playerId, data, emitter) => {
 }
 
 /**
+ * Event handler for when the host starts the game
+ * @type {SocketEventHandler}
+ */
+const onStartGame = (hub, playerId, _, emitter) => {
+  const player = hub.players.get(playerId)
+  const gameName = hub.rooms.get(player.roomId).gameName
+
+  console.log(`Room ${player.roomId}' started playing "${gameName}".`)
+
+  emitter(Emit.toRoom(player.roomId, 'gameStarted', { gameName }))
+
+  return hub
+}
+
+/**
  * Event handler for when a player disconnects from the lobby
  * @type {SocketEventHandler}
  */
@@ -63,6 +78,7 @@ module.exports = new SocketRoute(
   [
     { eventName: 'onLobbyJoined', handler: onLobbyJoined },
     { eventName: 'selectGame', handler: onSelectGame },
+    { eventName: 'startGame', handler: onStartGame },
     { eventName: 'disconnect', handler: onDisconnect }
   ]
 )
