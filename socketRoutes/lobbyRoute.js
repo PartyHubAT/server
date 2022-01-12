@@ -18,12 +18,15 @@ const onLobbyJoined = (hub, playerId) => {
   const role = hub.getPlayerRoleInRoom(playerId, player.roomId)
   const gameName = hub.getGameInRoom(player.roomId)
 
-  return [hub, [
-    Cmd.joinRoom(playerId, player.roomId),
-    Cmd.emitToRoom(player.roomId, 'playersChanged', { playerNames }),
-    Cmd.emitToOne(playerId, 'roleChanged', { role }),
-    Cmd.emitToOne(playerId, 'gameSelected', { gameName })
-  ]]
+  return [
+    hub,
+    [
+      Cmd.joinRoom(playerId, player.roomId),
+      Cmd.emitToRoom(player.roomId, 'playersChanged', { playerNames }),
+      Cmd.emitToOne(playerId, 'roleChanged', { role }),
+      Cmd.emitToOne(playerId, 'gameSelected', { gameName })
+    ]
+  ]
 }
 
 /**
@@ -39,7 +42,8 @@ const selectGame = (hub, playerId, data) => {
       .changeGameInRoom(player.roomId, data.gameName),
     [
       Cmd.emitToRoom(player.roomId, 'gameSelected', { gameName: data.gameName })
-    ]]
+    ]
+  ]
 }
 
 /**
@@ -56,7 +60,8 @@ const startGame = (hub, playerId) => {
     hub,
     [
       Cmd.emitToRoom(player.roomId, 'gameStarted', { gameName })
-    ]]
+    ]
+  ]
 }
 
 /**
@@ -74,7 +79,8 @@ const disconnect = (hub, playerId) => {
     newHub,
     [
       Cmd.emitToRoom(player.roomId, 'playersChanged', { playerNames })
-    ]]
+    ]
+  ]
 }
 
 module.exports = new SocketRoute(

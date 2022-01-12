@@ -24,7 +24,8 @@ const newRoom = (hub, playerId, data) => {
       .movePlayerToRoom(playerId, newRoom.id),
     [
       Cmd.emitToOne(playerId, 'joinSuccess', { roomId: newRoom.id })
-    ]]
+    ]
+  ]
 }
 
 /**
@@ -39,7 +40,8 @@ const joinRoom = (hub, playerId, data) => {
       .movePlayerToRoom(playerId, data.roomId),
     [
       Cmd.emitToOne(playerId, 'joinSuccess', { roomId: data.roomId })
-    ]]
+    ]
+  ]
 }
 
 /**
@@ -48,7 +50,11 @@ const joinRoom = (hub, playerId, data) => {
  */
 const disconnect = (hub, playerId) => {
   console.log(`Unknown player (${playerId}) disconnected from the lonely-zone.`)
-  return [hub.removePlayer(playerId), []]
+  return [
+    hub
+      .removePlayer(playerId),
+    []
+  ]
 }
 
 module.exports = new SocketRoute(
