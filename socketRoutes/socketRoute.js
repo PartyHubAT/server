@@ -18,10 +18,7 @@
  * @param {Hub} hub The current state of the hub
  * @param {string} playerId The id of the player who triggered the event
  * @param {any} data The data that was sent with the event
- * @param {Emitter} emitter Helper to emit emits after the mapping is complete
- * @return {Hub} The new state of the hub
  */
-
 /**
  * Generates emits based on the new state of the hub
  * @callback EmitGenerator
@@ -29,6 +26,7 @@
  * @param {string} playerId The id of the player who triggered the event
  * @param {any} data The data that was sent with the event
  * @return {SocketCmd[]} The generated emit
+ * @return {[Hub,SocketCmd[]]} The new state of the hub and an array of cmds to execute
  */
 
 /**
@@ -42,7 +40,7 @@
  * A default event handler for when no event matches
  * @type {SocketEventHandler}
  */
-const defaultUnknownPath = (hub) => hub
+const defaultUnknownPath = (hub) => [hub, []]
 
 /**
  * Makes a new socket-route

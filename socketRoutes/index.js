@@ -105,12 +105,10 @@ function initWebsocket (io) {
     const route = tryFindRouteForEvent(socketId)
 
     if (route) {
-      const cmds = []
-      const emitter = (e) => cmds.push(e)
-
       const handler = findHandlerForEvent(route, eventName)
-      hub = handler(hub, socketId, data, emitter)
+      const [newHub, cmds] = handler(hub, socketId, data)
 
+      hub = newHub
       cmds.forEach(handleCmd)
     } else {
       console.log(`No route was found for event "${eventName}" sent by ${socketId}`)

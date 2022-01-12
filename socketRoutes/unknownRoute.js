@@ -13,7 +13,7 @@ const isUnknownPlayer = (hub, playerId) =>
  */
 const onConnect = (hub, playerId) => {
   console.log(`New player (${playerId}) entered the lonely-zone.`)
-  return hub.withPlayers(hub.players.addLonely(playerId))
+  return [hub.withPlayers(hub.players.addLonely(playerId)), []]
 }
 
 module.exports = new SocketRoute(
