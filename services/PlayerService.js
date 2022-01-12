@@ -7,7 +7,7 @@ module.exports = (repo) => {
   return {
     /**
      * Creates a new player
-     * @param {string} id The id of the new player
+     * @param {PlayerId} id The id of the new player
      * @param {string} name The name of the new player
      * @returns {Promise<any>} The created player
      */
@@ -22,7 +22,7 @@ module.exports = (repo) => {
 
     /**
      * Gets a player by id
-     * @param {string} id The id of the player
+     * @param {PlayerId} id The id of the player
      * @returns {Promise<any|undefined>} The player or undefined if not found
      */
     async getPlayerById (id) {
@@ -40,8 +40,8 @@ module.exports = (repo) => {
 
     /**
      * Sets a players room
-     * @param {string} id The id of the player
-     * @param {number} roomId The id of the room
+     * @param {PlayerId} id The id of the player
+     * @param {RoomId} roomId The id of the room
      * @returns {Promise<void>}
      */
     async joinRoom (id, roomId) {
@@ -50,7 +50,7 @@ module.exports = (repo) => {
 
     /**
      * Removes a player
-     * @param {string} id The id of the player
+     * @param {PlayerId} id The id of the player
      * @returns {Promise<*>}
      */
     async remove (id) {

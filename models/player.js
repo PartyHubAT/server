@@ -1,7 +1,14 @@
-﻿module.exports = class Player {
+﻿/**
+ * @typedef {string} PlayerId
+ */
+
+/**
+ * A player
+ */
+class Player {
   /**
    * The players id
-   * @type {string}
+   * @type {PlayerId}
    */
   #id
   /**
@@ -11,7 +18,7 @@
   #name
   /**
    * The id of the room the player is in
-   * @type {number|undefined}
+   * @type {RoomId|undefined}
    */
   #roomId
 
@@ -23,7 +30,7 @@
 
   /**
    * Creates a new lonely player
-   * @param {string} id The players id
+   * @param {PlayerId} id The players id
    * @return {Player} The created player
    */
   static makeLonely (id) {
@@ -32,7 +39,7 @@
 
   /**
    * The players id
-   * @return {string}
+   * @return {PlayerId}
    */
   get id () {
     return this.#id
@@ -48,7 +55,7 @@
 
   /**
    * Gets the id of the room the player is in
-   * @return {number|undefined} The id or undefined if the player is not in a room
+   * @return {RoomId|undefined} The id or undefined if the player is not in a room
    */
   get roomId () {
     return this.#roomId
@@ -73,10 +80,12 @@
 
   /**
    * Creates a new player with a different room-id
-   * @param {number} roomId The new room-id
+   * @param {RoomId} roomId The new room-id
    * @return {Player} The new player
    */
   withRoomId (roomId) {
     return new Player(this.#id, this.name, roomId)
   }
 }
+
+module.exports = Player

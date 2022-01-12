@@ -27,7 +27,7 @@ module.exports = (mongoose) => {
 
     /**
      * Updates a room in the database
-     * @param {number} id The id of the room
+     * @param {RoomId} id The id of the room
      * @param {Object} update The updated room data
      * @returns {Promise<void>}
      */

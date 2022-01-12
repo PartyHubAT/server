@@ -7,7 +7,7 @@ const LEAVE_ROOM = 3
  * Makes socket.io send data to a specific player
  * @typedef {Object} EmitToOneCmd
  * @property {number} type The type of the cmd (EMIT_TO_ROOM)
- * @property {string} playerId The id of the player to emit to
+ * @property {PlayerId} playerId The id of the player to emit to
  * @property {string} eventName The name of the event
  * @property {any} data The data to send
  */
@@ -16,7 +16,7 @@ const LEAVE_ROOM = 3
  * Makes socket.io send data to all players in a room
  * @typedef {Object} EmitToRoomCmd
  * @property {number} type The type of the cmd (EMIT_TO_ONE)
- * @property {number} roomId The id of the room to emit to
+ * @property {RoomId} roomId The id of the room to emit to
  * @property {string} eventName The name of the event
  * @property {any} data The data to send
  */
@@ -25,16 +25,16 @@ const LEAVE_ROOM = 3
  * Makes socket.io add a player to a socket-room
  * @typedef {Object} JoinRoomCmd
  * @property {number} type The type of the cmd (JOIN_ROOM)
- * @property {string} playerId The id of the player that should join
- * @property {number} roomId The id of the room to join
+ * @property {PlayerId} playerId The id of the player that should join
+ * @property {RoomId} roomId The id of the room to join
  */
 
 /**
  * Makes socket.io remove a player from a socket-room
  * @typedef {Object} LeaveRoomCmd
  * @property {number} type The type of the cmd (LEAVE_ROOM)
- * @property {string} playerId The id of the player that should leave
- * @property {number} roomId The id of the room to leave
+ * @property {PlayerId} playerId The id of the player that should leave
+ * @property {RoomId} roomId The id of the room to leave
  */
 
 /**
@@ -44,7 +44,7 @@ const LEAVE_ROOM = 3
 
 /**
  * Makes a cmd for emitting data to a specific player
- * @param {string} playerId The id of the player
+ * @param {PlayerId} playerId The id of the player
  * @param {string} eventName The name of the event
  * @param {any} data The data to send
  * @return {SocketCmd} The created cmd
@@ -55,7 +55,7 @@ function emitToOne (playerId, eventName, data) {
 
 /**
  * Makes a cmd for emitting data to all players in a room
- * @param {number} roomId The id of the room to emit to
+ * @param {RoomId} roomId The id of the room to emit to
  * @param {string} eventName The name of the event
  * @param {any} data The data to send
  * @return {SocketCmd} The created cmd
@@ -66,8 +66,8 @@ function emitToRoom (roomId, eventName, data) {
 
 /**
  * Makes a cmd for adding a player to a socket-room
- * @param {string} playerId The id of the player
- * @param {number} roomId The id of the room
+ * @param {PlayerId} playerId The id of the player
+ * @param {RoomId} roomId The id of the room
  * @return {SocketCmd} The created cmd
  */
 function joinRoom (playerId, roomId) {
@@ -76,8 +76,8 @@ function joinRoom (playerId, roomId) {
 
 /**
  * Makes a cmd for removing a player from a socket-room
- * @param {string} playerId The id of the player
- * @param {number} roomId The id of the room
+ * @param {PlayerId} playerId The id of the player
+ * @param {RoomId} roomId The id of the room
  * @return {SocketCmd} The created cmd
  */
 function leaveRoom (playerId, roomId) {

@@ -18,7 +18,7 @@ module.exports = (repo, playerService) => {
 
   /**
    * Gets a room by id
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<any|undefined>} A promise of the room or undefined if the room was not found
    */
   async function getRoom (roomId) {
@@ -27,7 +27,7 @@ module.exports = (repo, playerService) => {
 
   /**
    * Gets the ids of all players in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<string[]>} The ids or an empty array if the room is not found
    */
   async function getPlayerIdsInRoom (roomId) {
@@ -37,7 +37,7 @@ module.exports = (repo, playerService) => {
 
   /**
    * Gets the id of the host in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<String|undefined>} The id or undefined if the room is not found or empty
    */
   async function getHostId (roomId) {
@@ -50,7 +50,7 @@ module.exports = (repo, playerService) => {
   return {
     /**
      * Gets the socket-room name of a room
-     * @param {number} roomId The id of the room
+     * @param {RoomId} roomId The id of the room
      * @returns {string} The socket-room name
      */
     getSocketRoomName (roomId) {
@@ -59,8 +59,8 @@ module.exports = (repo, playerService) => {
 
     /**
      * Gets the role of a specific player in a room
-     * @param {number} roomId The id of the room
-     * @param {string} playerId The id of the player
+     * @param {RoomId} roomId The id of the room
+     * @param {PlayerId} playerId The id of the player
      * @returns {Promise<string|undefined>} The role of the player or undefined if the room was not found or empty
      */
     async getPlayerRole (roomId, playerId) {
@@ -70,7 +70,7 @@ module.exports = (repo, playerService) => {
 
     /**
      * Gets the name of the selected game in a room
-     * @param {number} roomId The id of the room
+     * @param {RoomId} roomId The id of the room
      * @returns {Promise<string|undefined>} The name of the game or undefined if the room was not found
      */
     async getSelectedGameName (roomId) {
@@ -80,8 +80,8 @@ module.exports = (repo, playerService) => {
 
     /**
      * Adds a player to a room
-     * @param {number} roomId The id of the room
-     * @param {string} playerId The id of the player
+     * @param {RoomId} roomId The id of the room
+     * @param {PlayerId} playerId The id of the player
      * @returns {Promise<void>}
      */
     async addPlayerToRoom (roomId, playerId) {
@@ -92,7 +92,7 @@ module.exports = (repo, playerService) => {
 
     /**
      * Gets all players in a room
-     * @param {number} roomId The id of the room
+     * @param {RoomId} roomId The id of the room
      * @returns {Promise<any[]>} The players or an empty array if the room is not found
      */
     async getPlayersInRoom (roomId) {
@@ -102,7 +102,7 @@ module.exports = (repo, playerService) => {
 
     /**
      * Gets the names of all players in a room
-     * @param {number} roomId The id of the room
+     * @param {RoomId} roomId The id of the room
      * @returns {Promise<string[]>} The names of the players or empty array if the room was not found
      */
     async getPlayerNamesInRoom (roomId) {
@@ -127,8 +127,8 @@ module.exports = (repo, playerService) => {
 
     /**
      * Removes a player from a room
-     * @param {number} roomId The id of the room
-     * @param {string} playerId The id of the player
+     * @param {RoomId} roomId The id of the room
+     * @param {PlayerId} playerId The id of the player
      * @returns {Promise<void>}
      */
     async removePlayerFromRoom (roomId, playerId) {
@@ -138,7 +138,7 @@ module.exports = (repo, playerService) => {
 
     /**
      * Selects a game in a room
-     * @param {number} roomId The id of the room
+     * @param {RoomId} roomId The id of the room
      * @param {string} gameName The name of the game to be selected
      * @returns {Promise<void>}
      */

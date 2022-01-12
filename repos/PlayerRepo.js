@@ -18,7 +18,7 @@ module.exports = (mongoose) => {
 
     /**
      * Gets a player by id
-     * @param {string} id The id of the player
+     * @param {PlayerId} id The id of the player
      * @returns {Promise<Object|undefined>} The player or undefined if not found
      */
     async getById (id) {
@@ -27,7 +27,7 @@ module.exports = (mongoose) => {
 
     /**
      * Deletes a specific player
-     * @param {string} id The id of the player to delete
+     * @param {PlayerId} id The id of the player to delete
      * @returns {Promise<void>}
      */
     async deleteById (id) {
@@ -36,7 +36,7 @@ module.exports = (mongoose) => {
 
     /**
      * Updates a specific player in the database
-     * @param {string} id The id of the player
+     * @param {PlayerId} id The id of the player
      * @param {Object} update The new player data
      * @returns {Promise<void>}
      */

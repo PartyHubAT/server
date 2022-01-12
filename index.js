@@ -50,7 +50,7 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
   io.on('connection', socket => {
     /**
      * Send a message to all sockets in the room
-     * @param {number} roomId The id of the room to emit to
+     * @param {RoomId} roomId The id of the room to emit to
      * @param {string} event The name of the event
      * @param {Object} data The data to emit
      */
@@ -61,7 +61,7 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
 
     /**
      * Gets all sockets inside a room
-     * @param {number} roomId The id of the room
+     * @param {RoomId} roomId The id of the room
      * @returns {Socket<any, any, any, any>[]} The sockets
      */
     function getSocketsInRoom (roomId) {

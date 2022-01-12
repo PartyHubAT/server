@@ -75,7 +75,7 @@ class Hub {
 
   /**
    * Changes one of the hubs players
-   * @param {string} id The id of the player
+   * @param {PlayerId} id The id of the player
    * @param {function(Player):Player} mapper A function that changes a player
    * @return {Hub} A new hub with the changed player
    */
@@ -85,7 +85,7 @@ class Hub {
 
   /**
    * Changes one of the hubs rooms
-   * @param {number} id The id of the room
+   * @param {RoomId} id The id of the room
    * @param {function(Room):Room} mapper A function that changes a room
    * @return {Hub} A new hub with the changed room
    */
@@ -104,7 +104,7 @@ class Hub {
 
   /**
    * Checks if the hub has a player with the given id
-   * @param {string} id The id of the player
+   * @param {PlayerId} id The id of the player
    * @return {boolean} Whether the hub has a player with the name
    */
   hasPlayerWithId (id) {
@@ -113,7 +113,7 @@ class Hub {
 
   /**
    * Gets a player by their id
-   * @param {string} id The id of the player
+   * @param {PlayerId} id The id of the player
    * @return {Player|undefined} The player or undefined if not found
    */
   getPlayerById (id) {
@@ -122,7 +122,7 @@ class Hub {
 
   /**
    * Adds a new lonely player to the hub
-   * @param {string} playerId The players id
+   * @param {PlayerId} playerId The players id
    * @return {Hub} A new hub with the player added
    */
   addLonely (playerId) {
@@ -132,7 +132,7 @@ class Hub {
 
   /**
    * Renames a player
-   * @param {string} id The id of the player
+   * @param {PlayerId} id The id of the player
    * @param {string} newName The new name of the player
    * @return {Hub} A new hub with the renamed player
    */
@@ -151,8 +151,8 @@ class Hub {
 
   /**
    * Moves a player to a room
-   * @param {string} playerId The id of the player
-   * @param {number} roomId The id of the room
+   * @param {PlayerId} playerId The id of the player
+   * @param {RoomId} roomId The id of the room
    * @return {Hub} A new hub with the moved player
    */
   movePlayerToRoom (playerId, roomId) {
@@ -163,7 +163,7 @@ class Hub {
 
   /**
    * Removes a player from the hub and all rooms they're in
-   * @param {string} id The id of the player
+   * @param {PlayerId} id The id of the player
    * @return {Hub} A new hub without the player
    */
   removePlayer (id) {
@@ -176,7 +176,7 @@ class Hub {
 
   /**
    * Changes the game of a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @param {string} gameName The name of the new game
    * @return {Hub} A new hub with the game changed
    */
@@ -186,7 +186,7 @@ class Hub {
 
   /**
    * Gets all players in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @return {Player[]|undefined} The players or undefined if the room is not found
    */
   getPlayersInRoom (roomId) {
@@ -196,7 +196,7 @@ class Hub {
 
   /**
    * Gets the names of all players in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @return {string[]|undefined} The names or undefined if the room was not found
    */
   getPlayerNamesInRoom (roomId) {
@@ -206,7 +206,7 @@ class Hub {
 
   /**
    * Gets a room by its id
-   * @param {number} id The id of the room
+   * @param {RoomId} id The id of the room
    * @return {Room|undefined} The room or undefined if not found
    */
   getRoomById (id) {
@@ -215,7 +215,7 @@ class Hub {
 
   /**
    * Gets the name of the game played in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @return {string|undefined} The name of the game or undefined if the room is not found
    */
   getGameInRoom (roomId) {
@@ -225,7 +225,7 @@ class Hub {
 
   /**
    * Gets the room a player is in
-   * @param {string} playerId The id of the player
+   * @param {PlayerId} playerId The id of the player
    * @return {Room|undefined} The room or undefined if the player was not found, is not in a room or the room was not found
    */
   getPlayersRoom (playerId) {
@@ -236,7 +236,7 @@ class Hub {
 
   /**
    * Gets the role of a player in a room
-   * @param {string} playerId The id of the player
+   * @param {PlayerId} playerId The id of the player
    * @return {string|undefined} The role or undefined if the room or player was not found
    */
   getPlayersRole (playerId) {

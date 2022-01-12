@@ -20,7 +20,7 @@ function initWebsocket (io) {
 
   /**
    * Sends an event to a specific socket
-   * @param {string} id The sockets id
+   * @param {PlayerId} id The sockets id
    * @param {string} eventName The name of the event
    * @param {any} data The data to send
    */
@@ -30,7 +30,7 @@ function initWebsocket (io) {
 
   /**
    * Sends an event to all sockets in a room
-   * @param {number} roomId The id of the room to send to
+   * @param {RoomId} roomId The id of the room to send to
    * @param {string} eventName The roomId of the event
    * @param {any} data The data to send
    */
@@ -40,8 +40,8 @@ function initWebsocket (io) {
 
   /**
    * Adds a socket to a room
-   * @param {string} id The id of the socket
-   * @param {number} roomId The id of the room
+   * @param {PlayerId} id The id of the socket
+   * @param {RoomId} roomId The id of the room
    */
   const addSocketToRoom = (id, roomId) => {
     io.sockets.sockets.get(id).join(roomId.toString())
@@ -49,8 +49,8 @@ function initWebsocket (io) {
 
   /**
    * Removes a socket from a room
-   * @param {string} id The id of the socket
-   * @param {number} roomId The id of the room
+   * @param {PlayerId} id The id of the socket
+   * @param {RoomId} roomId The id of the room
    */
   const removeSocketFromRoom = (id, roomId) => {
     io.sockets.sockets.get(id).leave(roomId.toString())

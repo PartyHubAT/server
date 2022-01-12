@@ -1,10 +1,17 @@
 ﻿const { randBetween } = require('../core/mathUtil.js')
 const { List } = require('immutable')
 
-module.exports = class Room {
+/**
+ * @typedef {number} RoomId
+ */
+
+/**
+ * A room
+ */
+class Room {
   /**
    * The rooms id
-   * @type {number}
+   * @type {RoomId}
    */
   #id
   /**
@@ -34,7 +41,7 @@ module.exports = class Room {
 
   /**
    * The rooms id
-   * @return {number}
+   * @return {RoomId}
    */
   get id () {
     return this.#id
@@ -76,7 +83,7 @@ module.exports = class Room {
 
   /**
    * Adds a player to the room
-   * @param {string} playerId The id of the player to add
+   * @param {PlayerId} playerId The id of the player to add
    * @return {Room} A new room with the player added
    */
   addPlayer (playerId) {
@@ -85,10 +92,12 @@ module.exports = class Room {
 
   /**
    * Removes a player from the room
-   * @param {string} playerId The id of the player
+   * @param {PlayerId} playerId The id of the player
    * @return {Room} The room without the player
    */
   removePlayer (playerId) {
     return this.#withPlayers(this.#playerIds.filter(it => it !== playerId))
   }
 }
+
+module.exports = Room
