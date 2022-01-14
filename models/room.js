@@ -1,4 +1,4 @@
-﻿const { randBetween } = require('../core/mathUtil.js')
+﻿const { randBetween } = require('../misc/mathUtil')
 const { List } = require('immutable')
 const RoomPhase = require('./roomPhase')
 
