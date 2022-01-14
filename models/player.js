@@ -21,11 +21,17 @@ class Player {
    * @type {RoomId|undefined}
    */
   #roomId
+  /**
+   * Whether the player has set up the game yet
+   * @type {boolean}
+   */
+  #hasSetupGame
 
-  constructor (id, name, roomId) {
+  constructor (id, name, roomId, hasSetupGame) {
     this.#id = id
     this.#name = name
     this.#roomId = roomId
+    this.#hasSetupGame = hasSetupGame
   }
 
   /**
@@ -34,7 +40,7 @@ class Player {
    * @return {Player} The created player
    */
   static makeLonely (id) {
-    return new Player(id, 'unknown', undefined)
+    return new Player(id, 'unknown', undefined, false)
   }
 
   /**
@@ -70,12 +76,20 @@ class Player {
   }
 
   /**
+   * Whether the player has set up the game
+   * @return {boolean}
+   */
+  get hasSetupGame () {
+    return this.#hasSetupGame
+  }
+
+  /**
    * Creates a new player with a different name
    * @param {string} name The new name
    * @return {Player} The new player
    */
   withName (name) {
-    return new Player(this.#id, name, this.roomId)
+    return new Player(this.id, name, this.roomId, this.hasSetupGame)
   }
 
   /**
@@ -84,7 +98,16 @@ class Player {
    * @return {Player} The new player
    */
   withRoomId (roomId) {
-    return new Player(this.#id, this.name, roomId)
+    return new Player(this.id, this.name, roomId, this.hasSetupGame)
+  }
+
+  /**
+   * Changes whether the player has set up their game
+   * @param {boolean} hasSetupGame Whether the player has set up their game
+   * @return {Player} A new player with the hasSetupGame flag changed
+   */
+  withSetupGame (hasSetupGame) {
+    return new Player(this.id, this.name, this.roomId, hasSetupGame)
   }
 }
 

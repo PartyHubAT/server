@@ -1,12 +1,15 @@
 ﻿const SocketRoute = require('../socketRoute.js')
 const Cmd = require('../cmd.js')
+const RoomPhase = require('../../models/roomPhase')
 
 /**
  * Checks if this route should be taken
  * @type {RoutePredicate}
  */
-const isInLobby = (hub, playerId) =>
-  hub.getPlayerById(playerId).inInRoom
+const isInLobby = (hub, playerId) => {
+  const player = hub.getPlayerById(playerId)
+  return player.inInRoom && hub.getRoomPhase(player.roomId) === RoomPhase.LOBBY
+}
 
 /**
  * Event handler for when a player joined a lobby
@@ -57,7 +60,8 @@ const startGame = (hub, playerId) => {
   console.log(`Room ${player.roomId}' started playing "${gameName}".`)
 
   return [
-    hub,
+    hub
+      .changeRoomPhase(player.roomId, RoomPhase.GAMESETUP),
     [
       Cmd.emitToRoom(player.roomId, 'gameStarted', { gameName })
     ]

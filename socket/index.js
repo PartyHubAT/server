@@ -6,9 +6,10 @@ const Cmd = require('./cmd.js')
  * @type {SocketRoute[]}
  */
 const routes = [
-  require('./routes/unknown.js'),
-  require('./routes/lonely.js'),
-  require('./routes/lobby.js')
+  require('./routes/unknown'),
+  require('./routes/lonely'),
+  require('./routes/lobby'),
+  require('./routes/gameSetup')
 ]
 
 /**

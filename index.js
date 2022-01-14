@@ -45,7 +45,7 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
 
   // Setup socket
 
-  require('./socketRoutes/index.js')(io)
+  require('./socket/index.js')(io)
 
   io.on('connection', socket => {
     /**

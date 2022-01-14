@@ -1,5 +1,6 @@
 ﻿const { randBetween } = require('../core/mathUtil.js')
 const { List } = require('immutable')
+const RoomPhase = require('./roomPhase')
 
 /**
  * @typedef {number} RoomId
@@ -23,11 +24,17 @@ class Room {
    * @type {string}
    */
   #gameName
+  /**
+   * The phase the room is in
+   * @type {RoomPhase}
+   */
+  #phase
 
-  constructor (id, playerIds, gameName) {
+  constructor (id, playerIds, gameName, phase) {
     this.#id = id
     this.#playerIds = playerIds
     this.#gameName = gameName
+    this.#phase = phase
   }
 
   /**
@@ -36,7 +43,7 @@ class Room {
    */
   static openNew () {
     const id = randBetween(100000, 999999)
-    return new Room(id, List(), '')
+    return new Room(id, List(), '', RoomPhase.LOBBY)
   }
 
   /**
@@ -64,12 +71,20 @@ class Room {
   }
 
   /**
+   * The current phase
+   * @return {RoomPhase}
+   */
+  get phase () {
+    return this.#phase
+  }
+
+  /**
    * Makes a new version of this room with the given players
    * @param playerIds The new player-ids
    * @return {Room} A new room with the new players
    */
   #withPlayers (playerIds) {
-    return new Room(this.id, playerIds, this.gameName)
+    return new Room(this.id, playerIds, this.gameName, this.phase)
   }
 
   /**
@@ -78,7 +93,16 @@ class Room {
    * @return {Room} A new room with the changed game
    */
   withGameName (gameName) {
-    return new Room(this.id, this.#playerIds, gameName)
+    return new Room(this.id, this.#playerIds, gameName, this.phase)
+  }
+
+  /**
+   * Makes a new version of this room with the phase
+   * @param {RoomPhase} phase The new phase
+   * @return {Room} A new room with the changed phase
+   */
+  withPhase (phase) {
+    return new Room(this.id, this.#playerIds, this.gameName, phase)
   }
 
   /**

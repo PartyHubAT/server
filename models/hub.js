@@ -1,4 +1,5 @@
 ﻿const Player = require('./player')
+const RoomPhase = require('./roomPhase')
 const { Map } = require('immutable')
 
 /**
@@ -247,6 +248,52 @@ class Hub {
         return playerIds[0] === playerId ? 'HOST' : 'GUEST'
       } else { return undefined }
     } else { return undefined }
+  }
+
+  /**
+   * Gets the phase of a room
+   * @param {RoomId} roomId The id of the room
+   * @return {RoomPhase|undefined} The id of the room or undefined if not found
+   */
+  getRoomPhase (roomId) {
+    return this.getRoomById(roomId)?.phase
+  }
+
+  /**
+   * Changes the phase of a room
+   * @param {RoomId} roomId The id of the room
+   * @param {RoomPhase} phase The new phase
+   * @return {Hub} A new hub with the changed room
+   */
+  changeRoomPhase (roomId, phase) {
+    return this.#mapRoom(roomId, room => room.withPhase(phase))
+  }
+
+  /**
+   * Checks if a room has set up the game
+   * @param {RoomId} roomId The id of the room
+   * @return {boolean|undefined} Whether the room has set up the game or undefined if the room was not found
+   */
+  roomHasGameSetup (roomId) {
+    const players = this.getPlayersInRoom(roomId)
+    return players?.every(it => it.hasSetupGame)
+  }
+
+  /**
+   * Sets whether a player has their game setup and changes the rooms phase accordingly
+   * @param {PlayerId} playerId The id of the player
+   * @param {boolean} hasGameSetup Whether the player has their game setup
+   * @return {Hub} A new hub with the changed player
+   */
+  setPlayerHasGameSetup (playerId, hasGameSetup) {
+    const newHub = this.#mapPlayer(playerId, player => player.withSetupGame(hasGameSetup))
+    const player = this.getPlayerById(playerId)
+
+    if (newHub.roomHasGameSetup(player.roomId)) {
+      return newHub.changeRoomPhase(player.roomId, RoomPhase.INGAME)
+    } else {
+      return newHub
+    }
   }
 }
 
