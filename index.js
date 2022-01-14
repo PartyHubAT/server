@@ -5,10 +5,6 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
-const playerRepo = require('./repos/PlayerRepo')(mongoose)
-const playerService = require('./services/PlayerService')(playerRepo)
-const roomRepo = require('./repos/RoomRepo')(mongoose)
-const roomService = require('./services/RoomService')(roomRepo, playerService)
 
 ;(async function () {
   // Setup globals
@@ -46,71 +42,6 @@ const roomService = require('./services/RoomService')(roomRepo, playerService)
   // Setup socket
 
   require('./socket/index.js')(io)
-
-  io.on('connection', socket => {
-    /**
-     * Send a message to all sockets in the room
-     * @param {RoomId} roomId The id of the room to emit to
-     * @param {string} event The name of the event
-     * @param {Object} data The data to emit
-     */
-    function emitToRoom (roomId, event, data) {
-      const socketRoomName = roomService.getSocketRoomName(roomId)
-      io.to(socketRoomName).emit(event, data)
-    }
-
-    /**
-     * Gets all sockets inside a room
-     * @param {RoomId} roomId The id of the room
-     * @returns {Socket<any, any, any, any>[]} The sockets
-     */
-    function getSocketsInRoom (roomId) {
-      const socketRoomName = roomService.getSocketRoomName(roomId)
-
-      return Array.from(io.sockets.adapter.rooms.get(socketRoomName))
-        .map(socketId => io.sockets.sockets.get(socketId))
-    }
-
-    function endGameInRoom (roomId) {
-      throw new Error('Ending games is not implemented')
-    }
-
-    /**
-     * Starts the game
-     */
-    async function startGame (roomId, gameName) {
-      console.log('Initializing game...')
-
-      function emitToAll (event, data) {
-        emitToRoom(roomId, event, data)
-      }
-
-      function emitToOne (playerId, event, data) {
-        io.sockets.sockets.get(playerId).emit(event, data)
-      }
-
-      function endGame () {
-        endGameInRoom(roomId)
-      }
-
-      const players = await roomService.getPlayersInRoom(roomId)
-      const game = library.getGameByName(gameName)
-      const gameServer = game.serverLogic(emitToAll, emitToOne, endGame, players, game.defaultSettings)
-
-      getSocketsInRoom(roomId).forEach(socket => {
-        const events = gameServer.events
-        Object.keys(events).forEach(event => {
-          socket.on(event, data => {
-            events[event](data)
-          })
-        })
-      })
-
-      console.log('Starting game...')
-
-      gameServer.startGame()
-    }
-  })
 
   // Start server
 
