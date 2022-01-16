@@ -13,7 +13,7 @@ module.exports = (repo, playerService) => {
    */
   function generateRoomId () {
     // This does not check for duplicates
-    return mathUtil.randBetween(10000, 999999)
+    return mathUtil.randBetween(100000, 999999)
   }
 
   /**
