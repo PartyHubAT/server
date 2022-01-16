@@ -161,10 +161,14 @@ io.on('connection', socket => {
     const playerId = socket.id
     const player = await playerService.getPlayerById(playerId)
     const { gameName } = data
+
+    const playerRole = await roomService.getPlayerRole(player.roomId, player._id)
+    if (playerRole !== 'HOST') {
+      console.error(`Invalid selectGame request from Player "${player.name}" in room ${player.roomId}`)
+      return
+    }
     await roomService.selectGame(player.roomId, gameName)
-
     console.log(`Player "${player.name}" changed room ${player.roomId}' game to "${gameName}".`)
-
     emitToRoom(player.roomId, 'gameSelected', { gameName })
   })
 
