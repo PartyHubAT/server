@@ -9,8 +9,9 @@ async function loadMongoose (mongoose) {
   console.log('Connected to mongo-db.')
   if (process.env.RESETDBONLAUNCH && JSON.parse(process.env.RESETDBONLAUNCH)) {
     const collections = await mongoose.connection.db.collections()
+    const DELETECOLLECTIONS = ['players', 'rooms', 'games']
     for (const collection of collections) {
-      if (['players', 'rooms', 'games'].includes(collection.namespace)) await collection.deleteMany({})
+      if (DELETECOLLECTIONS.some(c => collection.namespace.includes(c))) await collection.deleteMany({})
     }
     console.log('Reset database and all collections.')
   }
