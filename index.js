@@ -182,7 +182,7 @@ io.on('connection', socket => {
   socket.on('gameLoaded', async () => {
     const playerId = socket.id
     const player = await playerService.tryGetPlayerById(playerId)
-    await playerService.tryGameLoaded(playerId)
+    await playerService.trySetPlayerGameLoaded(playerId, true)
     console.log(`Game loaded for ${player.name}`)
     const players = await roomService.tryGetPlayersInRoom(player.roomId)
     const gameName = await roomService.tryGetSelectedGameName(player.roomId)

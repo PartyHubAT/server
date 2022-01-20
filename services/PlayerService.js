@@ -51,13 +51,13 @@ class PlayerService {
   }
 
   /**
-   * Sets a players room
+   * Sets the flag of whether a player has their game loaded
    * @param {PlayerId} id The id of the player
-   * @param {RoomId} roomId The id of the room
+   * @param {boolean} loaded Whether the player has their game loaded or not
    * @returns {Promise}
    */
-  async tryGameLoaded (id) {
-    await this.#playerRepo.tryUpdateById(id, { gameLoaded: true })
+  async trySetPlayerGameLoaded (id, loaded) {
+    await this.#playerRepo.tryUpdateById(id, { gameLoaded: loaded })
   }
 
   /**
