@@ -6,7 +6,7 @@ const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
 const gameRepo = new (require('./repos/GameRepo'))(mongoose)
-const gameService = require('./services/GameService')(gameRepo)
+const gameService = new (require('./services/GameService'))(gameRepo)
 const playerRepo = require('./repos/PlayerRepo')(mongoose)
 const playerService = require('./services/PlayerService')(playerRepo)
 const roomRepo = require('./repos/RoomRepo')(mongoose)
@@ -37,7 +37,7 @@ app.use('/game/', express.static(gamesPath))
 
 // Gets info on all games on the server
 app.get('/games', async (_, res) => {
-  res.send({ games: (await gameService.getGameInfo()) })
+  res.send({ games: (await gameService.getAllGames()) })
 })
 
 // Setup socket
