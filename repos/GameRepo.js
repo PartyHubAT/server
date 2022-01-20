@@ -3,6 +3,9 @@
  * @property {String} name
  */
 
+/**
+ * Stores and retrieves games
+ */
 class GameRepo {
   /**
    * Model of the game-type
