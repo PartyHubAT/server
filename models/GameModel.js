@@ -1,7 +1,11 @@
 ﻿/**
+ * @typedef {String} GameName
+ */
+
+/**
  * @typedef {Object} Game
  * @property {ObjectId} _id
- * @property {String} name
+ * @property {GameName} name
  */
 
 /**

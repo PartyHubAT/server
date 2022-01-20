@@ -1,6 +1,6 @@
 ﻿/**
  * @typedef {Object} NewGame
- * @property {String} name
+ * @property {GameName} name
  */
 
 /**
@@ -40,7 +40,7 @@ class GameRepo {
 
   /**
    * Gets the names of all games from the database
-   * @return {Promise<String[]>}
+   * @return {Promise<GameName[]>}
    */
   async getNamesOfAll () {
     return this.#gameModel

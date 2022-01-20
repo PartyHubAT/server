@@ -88,7 +88,7 @@ class RoomService {
   /**
    * Gets the name of the selected game in a room
    * @param {RoomId} roomId The id of the room
-   * @returns {Promise<string|undefined>} The name of the game or undefined if the room was not found
+   * @returns {Promise<GameName|undefined>} The name of the game or undefined if the room was not found
    */
   async getSelectedGameName (roomId) {
     const room = await this.#getRoom(roomId)
@@ -157,7 +157,7 @@ class RoomService {
   /**
    * Selects a game in a room
    * @param {RoomId} roomId The id of the room
-   * @param {string} gameName The name of the game to be selected
+   * @param {GameName} gameName The name of the game to be selected
    * @returns {Promise<void>}
    */
   async selectGame (roomId, gameName) {

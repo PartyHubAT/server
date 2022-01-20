@@ -19,7 +19,7 @@ class GameService {
   /**
    * Gets a specific game resource
    * @param {string} gamesPath The path where all games are stored
-   * @param {string} gameName The name of the game
+   * @param {GameName} gameName The name of the game
    * @param {string} resourceName The file-name of the resource
    * @returns {Promise<any|undefined>} The resource or undefined if not found
    */
@@ -50,7 +50,7 @@ class GameService {
 
   /**
    * Gets the names of all games on this server
-   * @returns {Promise<string[]>} The names of the games
+   * @returns {Promise<GameName[]>} The names of the games
    */
   async getGameNames () {
     return this.#gameRepo.getNamesOfAll()
@@ -59,7 +59,7 @@ class GameService {
   /**
    * Gets the server-logic for a specific game
    * @param {string} gamesPath The path where all games are stored
-   * @param {string} gameName The name of the game
+   * @param {GameName} gameName The name of the game
    * @returns {GameLogicInit|undefined} A function to initialize the game-server or undefined if the game is not found
    */
   async getServerLogicFor (gamesPath, gameName) {
@@ -69,7 +69,7 @@ class GameService {
   /**
    * Gets the default settings for a game
    * @param {string} gamesPath The path where all games are stored
-   * @param {string} gameName The name of the game
+   * @param {GameName} gameName The name of the game
    * @returns {Object|undefined} The default settings or undefined if the game was not found
    */
   async getDefaultGameSettings (gamesPath, gameName) {
