@@ -10,7 +10,7 @@ const gameService = new (require('./services/GameService'))(gameRepo)
 const playerRepo = new (require('./repos/PlayerRepo'))(mongoose)
 const playerService = new (require('./services/PlayerService'))(playerRepo)
 const roomRepo = new (require('./repos/RoomRepo'))(mongoose)
-const roomService = require('./services/RoomService')(roomRepo, playerService)
+const roomService = new (require('./services/RoomService'))(roomRepo, playerService)
 
 // Setup globals
 
