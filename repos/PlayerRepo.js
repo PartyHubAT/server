@@ -1,4 +1,4 @@
-﻿const PlayerNotFoundError = require('./errors/PlayerNotFoundError')
+﻿const PlayerNotFoundError = require('../errors/PlayerNotFoundError')
 
 /**
  * Stores and retrieves players
