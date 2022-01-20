@@ -117,6 +117,7 @@ io.on('connection', socket => {
     }
 
     const players = await roomService.tryGetPlayersInRoom(roomId)
+
     const initServerLogic = await GameService.tryGetServerLogicFor(gamesPath, gameName)
     const settings = await GameService.tryGetDefaultGameSettings(gamesPath, gameName)
     const gameServer = initServerLogic(emitToAll, emitToOne, endGame, players, settings)
@@ -131,7 +132,6 @@ io.on('connection', socket => {
     })
 
     console.log('Starting game...')
-
     gameServer.startGame()
   }
 
@@ -179,14 +179,23 @@ io.on('connection', socket => {
     emitToRoom(player.roomId, 'gameSelected', { gameName })
   })
 
+  socket.on('gameLoaded', async () => {
+    const playerId = socket.id
+    const player = await playerService.tryGetPlayerById(playerId)
+    await playerService.tryGameLoaded(playerId)
+    console.log(`Game loaded for ${player.name}`)
+    const players = await roomService.tryGetPlayersInRoom(player.roomId)
+    const gameName = await roomService.tryGetSelectedGameName(player.roomId)
+    if (players.every(it => it?.gameLoaded)) {
+      await startGame(player.roomId, gameName)
+      console.log(`Room ${player.roomId}' started playing "${gameName}".`)
+    }
+  })
+
   socket.on('startGame', async () => {
     const playerId = socket.id
     const player = await playerService.tryGetPlayerById(playerId)
     const gameName = await roomService.tryGetSelectedGameName(player.roomId)
-    await startGame(player.roomId, gameName)
-
-    console.log(`Room ${player.roomId}' started playing "${gameName}".`)
-
     emitToRoom(player.roomId, 'gameStarted', { gameName })
   })
 
