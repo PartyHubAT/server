@@ -43,6 +43,32 @@ class RoomRepo {
   async updateById (id, update) {
     await this.#roomModel.findByIdAndUpdate(id, update)
   }
+
+  /**
+   * Gets the name of the selected game in a room
+   * @param {RoomId} roomId The id of the room
+   * @returns {Promise<GameName|undefined>} The name of the game or undefined if the room was not found
+   */
+  async getSelectedGameName (roomId) {
+    return this.#roomModel
+      .findById(roomId)
+      .select('gameName')
+      .exec()
+      .then(r => r.gameName)
+  }
+
+  /**
+   * Gets the ids of all players in a room
+   * @param {RoomId} roomId The id of the room
+   * @returns {Promise<PlayerId[]>} The ids or an empty array if the room is not found
+   */
+  async getPlayerIdsInRoom (roomId) {
+    return this.#roomModel
+      .findById(roomId)
+      .select('playerIds')
+      .exec()
+      .then(r => r.playerIds)
+  }
 }
 
 module.exports = RoomRepo

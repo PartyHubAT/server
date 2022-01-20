@@ -45,16 +45,6 @@ class RoomService {
   }
 
   /**
-   * Gets the ids of all players in a room
-   * @param {RoomId} roomId The id of the room
-   * @returns {Promise<string[]>} The ids or an empty array if the room is not found
-   */
-  async #getPlayerIdsInRoom (roomId) {
-    const room = await this.#getRoom(roomId)
-    return room ? room.playerIds : []
-  }
-
-  /**
    * Gets the id of the host in a room
    * @param {RoomId} roomId The id of the room
    * @returns {Promise<String|undefined>} The id or undefined if the room is not found or empty
@@ -92,8 +82,7 @@ class RoomService {
    * @returns {Promise<GameName|undefined>} The name of the game or undefined if the room was not found
    */
   async getSelectedGameName (roomId) {
-    const room = await this.#getRoom(roomId)
-    return room ? room.gameName : undefined
+    return this.#roomRepo.getSelectedGameName(roomId)
   }
 
   /**
@@ -103,7 +92,7 @@ class RoomService {
    * @returns {Promise<void>}
    */
   async addPlayerToRoom (roomId, playerId) {
-    const ids = await this.#getPlayerIdsInRoom(roomId)
+    const ids = await this.#roomRepo.getPlayerIdsInRoom(roomId)
     await this.#roomRepo.updateById(roomId, { playerIds: ids.concat(playerId) })
     await this.#playerService.joinRoom(playerId, roomId)
   }
@@ -114,7 +103,7 @@ class RoomService {
    * @returns {Promise<(Player|undefined)[]>} The players or an empty array if the room is not found. Players may also be undefined if they are not found
    */
   async getPlayersInRoom (roomId) {
-    const playerIds = await this.#getPlayerIdsInRoom(roomId)
+    const playerIds = await this.#roomRepo.getPlayerIdsInRoom(roomId)
     return Promise.all(playerIds.map(id => this.#playerService.getPlayerById(id)))
   }
 
@@ -151,7 +140,7 @@ class RoomService {
    * @returns {Promise<void>}
    */
   async removePlayerFromRoom (roomId, playerId) {
-    const ids = await this.#getPlayerIdsInRoom(roomId)
+    const ids = await this.#roomRepo.getPlayerIdsInRoom(roomId)
     await this.#roomRepo.updateById(roomId, { playerIds: ids.filter(it => it !== playerId) })
   }
 
