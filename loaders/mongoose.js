@@ -10,7 +10,7 @@ async function loadMongoose (mongoose) {
   if (process.env.RESETDBONLAUNCH && JSON.parse(process.env.RESETDBONLAUNCH)) {
     const collections = await mongoose.connection.db.collections()
     for (const collection of collections) {
-      await collection.deleteMany({})
+      if (['players', 'rooms', 'games'].includes(collection.namespace)) await collection.deleteMany({})
     }
     console.log('Reset database and all collections.')
   }
