@@ -18,7 +18,7 @@ class PlayerService {
 
   /**
    * Creates a new player
-   * @param {string} id The id of the new player
+   * @param {PlayerId} id The id of the new player
    * @param {string} name The name of the new player
    * @returns {Promise<void>}
    */
@@ -32,7 +32,7 @@ class PlayerService {
 
   /**
    * Gets a player by id
-   * @param {string} id The id of the player
+   * @param {PlayerId} id The id of the player
    * @returns {Promise<Player|undefined>} The player or undefined if not found
    */
   async getPlayerById (id) {
@@ -41,8 +41,8 @@ class PlayerService {
 
   /**
    * Sets a players room
-   * @param {string} id The id of the player
-   * @param {number} roomId The id of the room
+   * @param {PlayerId} id The id of the player
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<void>}
    */
   async joinRoom (id, roomId) {
@@ -51,7 +51,7 @@ class PlayerService {
 
   /**
    * Removes a player
-   * @param {string} id The id of the player
+   * @param {PlayerId} id The id of the player
    * @returns {Promise<void>}
    */
   async remove (id) {

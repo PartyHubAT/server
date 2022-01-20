@@ -1,8 +1,12 @@
 ﻿/**
+ * @typedef {string} PlayerId
+ */
+
+/**
  * @typedef {Object} Player
  * @property {String} _id
- * @property {String} name
- * @property {Number} roomId
+ * @property {PlayerId} name
+ * @property {RoomId|undefined} roomId
  */
 
 /**

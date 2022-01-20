@@ -17,7 +17,7 @@
 /**
  * Emits a message to a specific player
  * @callback EmitToOne
- * @param {string} playerId The id of the player to emit to
+ * @param {PlayerId} playerId The id of the player to emit to
  * @param {string} event The name of the event to emit
  * @param {Object} data The data to event
  */

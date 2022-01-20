@@ -77,7 +77,7 @@ class RoomService {
   /**
    * Gets the role of a specific player in a room
    * @param {RoomId} roomId The id of the room
-   * @param {string} playerId The id of the player
+   * @param {PlayerId} playerId The id of the player
    * @returns {Promise<string|undefined>} The role of the player or undefined if the room was not found or empty
    */
   async getPlayerRole (roomId, playerId) {
@@ -98,7 +98,7 @@ class RoomService {
   /**
    * Adds a player to a room
    * @param {RoomId} roomId The id of the room
-   * @param {string} playerId The id of the player
+   * @param {PlayerId} playerId The id of the player
    * @returns {Promise<void>}
    */
   async addPlayerToRoom (roomId, playerId) {
@@ -129,7 +129,7 @@ class RoomService {
 
   /**
    * Opens a new room with a specific player as host
-   * @param {string} hostId The id of the host player
+   * @param {PlayerId} hostId The id of the host player
    * @returns {Promise<RoomId>} The id of the opened room
    */
   async openNewWithHost (hostId) {
@@ -146,7 +146,7 @@ class RoomService {
   /**
    * Removes a player from a room
    * @param {RoomId} roomId The id of the room
-   * @param {string} playerId The id of the player
+   * @param {PlayerId} playerId The id of the player
    * @returns {Promise<void>}
    */
   async removePlayerFromRoom (roomId, playerId) {
