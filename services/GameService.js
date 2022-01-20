@@ -23,7 +23,7 @@ class GameService {
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
    * @param {string} resourceName The file-name of the resource
-   * @return {Promise<any>} The resource
+   * @returns {Promise<any>} The resource
    * @throws {GameResourceLoadError} When the resource could not be loaded
    */
   static async #tryGetGameResource (gamesPath, gameName, resourceName) {
@@ -39,7 +39,7 @@ class GameService {
    * Gets the server-logic for a specific game
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
-   * @return {Promise<GameLogicInit>} The game initializer
+   * @returns {Promise<GameLogicInit>} The game initializer
    * @throws {GameResourceLoadError} When the resource could not be loaded
    */
   static async tryGetServerLogicFor (gamesPath, gameName) {
@@ -50,7 +50,7 @@ class GameService {
    * Gets the default settings for a game
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
-   * @return {Promise<Object>} The default settings
+   * @returns {Promise<Object>} The default settings
    * @throws {GameResourceLoadError} When the resource could not be loaded
    */
   static async tryGetDefaultGameSettings (gamesPath, gameName) {
@@ -61,7 +61,7 @@ class GameService {
   /**
    * Adds a new game
    * @param {NewGame} game The game to add
-   * @return {Promise}
+   * @returns {Promise}
    */
   async addGame (game) {
     await this.#gameRepo.putNew(game)
@@ -69,7 +69,7 @@ class GameService {
 
   /**
    * Gets all games
-   * @return {Promise<Game[]>} The games
+   * @returns {Promise<Game[]>} The games
    */
   async getAllGames () {
     return this.#gameRepo.getAll()
@@ -77,7 +77,7 @@ class GameService {
 
   /**
    * Gets the names of all games on this server
-   * @return {Promise<GameName[]>} The names of the games
+   * @returns {Promise<GameName[]>} The names of the games
    */
   async getGameNames () {
     return this.#gameRepo.getNamesOfAll()
