@@ -32,6 +32,27 @@ class GameService {
   }
 
   /**
+   * Gets the server-logic for a specific game
+   * @param {string} gamesPath The path where all games are stored
+   * @param {GameName} gameName The name of the game
+   * @returns {Promise<GameLogicInit>} The game initializer
+   */
+  static async tryGetServerLogicFor (gamesPath, gameName) {
+    return GameService.#tryGetGameResource(gamesPath, gameName, 'server.js')
+  }
+
+  /**
+   * Gets the default settings for a game
+   * @param {string} gamesPath The path where all games are stored
+   * @param {GameName} gameName The name of the game
+   * @returns {Promise<Object>} The default settings
+   */
+  static async tryGetDefaultGameSettings (gamesPath, gameName) {
+    const settings = await GameService.#tryGetGameResource(gamesPath, gameName, 'settings.js')
+    return settings.defaultValues
+  }
+
+  /**
    * Adds a new game
    * @param {NewGame} game The game to add
    * @returns {Promise<void>}
@@ -54,27 +75,6 @@ class GameService {
    */
   async getGameNames () {
     return this.#gameRepo.getNamesOfAll()
-  }
-
-  /**
-   * Gets the server-logic for a specific game
-   * @param {string} gamesPath The path where all games are stored
-   * @param {GameName} gameName The name of the game
-   * @returns {Promise<GameLogicInit>} The game initializer
-   */
-  async tryGetServerLogicFor (gamesPath, gameName) {
-    return GameService.#tryGetGameResource(gamesPath, gameName, 'server.js')
-  }
-
-  /**
-   * Gets the default settings for a game
-   * @param {string} gamesPath The path where all games are stored
-   * @param {GameName} gameName The name of the game
-   * @returns {Promise<Object>} The default settings
-   */
-  async tryGetDefaultGameSettings (gamesPath, gameName) {
-    const settings = await GameService.#tryGetGameResource(gamesPath, gameName, 'settings.js')
-    return settings.defaultValues
   }
 }
 

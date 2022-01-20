@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
+const GameService = require('./services/GameService')
 const RoomService = require('./services/RoomService')
 const gameRepo = new (require('./repos/GameRepo'))(mongoose)
 const gameService = new (require('./services/GameService'))(gameRepo)
@@ -116,8 +117,8 @@ io.on('connection', socket => {
     }
 
     const players = await roomService.tryGetPlayersInRoom(roomId)
-    const initServerLogic = await gameService.tryGetServerLogicFor(gamesPath, gameName)
-    const settings = await gameService.tryGetDefaultGameSettings(gamesPath, gameName)
+    const initServerLogic = await GameService.tryGetServerLogicFor(gamesPath, gameName)
+    const settings = await GameService.tryGetDefaultGameSettings(gamesPath, gameName)
     const gameServer = initServerLogic(emitToAll, emitToOne, endGame, players, settings)
 
     getSocketsInRoom(roomId).forEach(socket => {
