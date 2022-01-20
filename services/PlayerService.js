@@ -23,7 +23,7 @@ module.exports = (repo) => {
     /**
      * Gets a player by id
      * @param {string} id The id of the player
-     * @returns {Promise<any|undefined>} The player or undefined if not found
+     * @returns {Promise<Player|undefined>} The player or undefined if not found
      */
     async getPlayerById (id) {
       try {

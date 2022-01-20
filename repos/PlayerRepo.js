@@ -4,25 +4,25 @@
  * @returns {Object|{putNew(Object): Promise<Object>, getById(string): Promise<Object|undefined>, deleteById(string): Promise<void>, updateById(string, Object): Promise<void>}}
  */
 module.exports = (mongoose) => {
-  const Player = require('../models/Player.js')(mongoose)
+  const PlayerModel = require('../models/PlayerModel.js')(mongoose)
 
   return {
     /**
      * Puts a new player into the database
-     * @param {Object} player The player to put
-     * @returns {Promise<Object>} The created player
+     * @param {Player} player The player to put
+     * @returns {Promise<Player>} The created player
      */
     async putNew (player) {
-      return Player.create(player)
+      return PlayerModel.create(player)
     },
 
     /**
      * Gets a player by id
      * @param {string} id The id of the player
-     * @returns {Promise<Object|undefined>} The player or undefined if not found
+     * @returns {Promise<Player|undefined>} The player or undefined if not found
      */
     async getById (id) {
-      return Player.findById(id)
+      return PlayerModel.findById(id)
     },
 
     /**
@@ -31,17 +31,17 @@ module.exports = (mongoose) => {
      * @returns {Promise<void>}
      */
     async deleteById (id) {
-      await Player.findByIdAndDelete(id)
+      await PlayerModel.findByIdAndDelete(id)
     },
 
     /**
      * Updates a specific player in the database
      * @param {string} id The id of the player
-     * @param {Object} update The new player data
+     * @param {Player} update The new player data
      * @returns {Promise<void>}
      */
     async updateById (id, update) {
-      await Player.findByIdAndUpdate(id, update)
+      await PlayerModel.findByIdAndUpdate(id, update)
     }
   }
 }
