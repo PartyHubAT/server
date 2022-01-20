@@ -1,4 +1,6 @@
-﻿/**
+﻿const GameResourceLoadError = require('../errors/GameResourceLoadError')
+
+/**
  * Allows interaction with games
  */
 class GameService {
@@ -18,24 +20,29 @@ class GameService {
 
   /**
    * Gets a specific game resource
+   * @async
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
    * @param {string} resourceName The file-name of the resource
-   * @returns {Promise<any>} The resource or undefined if not found
+   * @returns {any} The resource
+   * @throws {GameResourceLoadError} When the resource could not be loaded
    */
   static async #tryGetGameResource (gamesPath, gameName, resourceName) {
+    const path = `${gamesPath}/${gameName}/${resourceName}`
     try {
-      return require(`${gamesPath}/${gameName}/${resourceName}`)
+      return require(path)
     } catch (e) {
-      throw Error()
+      throw new GameResourceLoadError(path, e)
     }
   }
 
   /**
    * Gets the server-logic for a specific game
+   * @async
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
-   * @returns {Promise<GameLogicInit>} The game initializer
+   * @returns {GameLogicInit} The game initializer
+   * @throws {GameResourceLoadError} When the resource could not be loaded
    */
   static async tryGetServerLogicFor (gamesPath, gameName) {
     return GameService.#tryGetGameResource(gamesPath, gameName, 'server.js')
@@ -43,9 +50,11 @@ class GameService {
 
   /**
    * Gets the default settings for a game
+   * @async
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
-   * @returns {Promise<Object>} The default settings
+   * @returns {Object} The default settings
+   * @throws {GameResourceLoadError} When the resource could not be loaded
    */
   static async tryGetDefaultGameSettings (gamesPath, gameName) {
     const settings = await GameService.#tryGetGameResource(gamesPath, gameName, 'settings.js')
@@ -54,8 +63,8 @@ class GameService {
 
   /**
    * Adds a new game
+   * @async
    * @param {NewGame} game The game to add
-   * @returns {Promise<void>}
    */
   async addGame (game) {
     await this.#gameRepo.putNew(game)
@@ -63,7 +72,8 @@ class GameService {
 
   /**
    * Gets all games
-   * @returns {Promise<Game[]>} The games
+   * @async
+   * @returns {Game[]} The games
    */
   async getAllGames () {
     return this.#gameRepo.getAll()
@@ -71,7 +81,8 @@ class GameService {
 
   /**
    * Gets the names of all games on this server
-   * @returns {Promise<GameName[]>} The names of the games
+   * @async
+   * @returns {GameName[]} The names of the games
    */
   async getGameNames () {
     return this.#gameRepo.getNamesOfAll()
