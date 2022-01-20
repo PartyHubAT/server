@@ -1,9 +1,9 @@
 ﻿/**
  * Connects to the mongodb database
- * @param mongoose The servers mongoose instance
- * @returns {Promise<void>}
+ * @param {module:mongoose} mongoose The servers mongoose instance
+ * @returns {Promise}
  */
-module.exports = async (mongoose) => {
+async function loadMongoose (mongoose) {
   console.log(`Connecting to mongo-db (${process.env.DBCONNECTION})...`)
   await mongoose.connect(process.env.DBCONNECTION)
   console.log('Connected to mongo-db.')
@@ -15,3 +15,5 @@ module.exports = async (mongoose) => {
     console.log('Reset database and all collections.')
   }
 }
+
+module.exports = loadMongoose
