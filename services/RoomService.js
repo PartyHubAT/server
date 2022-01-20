@@ -1,4 +1,5 @@
 ﻿const mathUtil = require('../core/mathUtil')
+const PlayerRole = require('../PlayerRole')
 
 /**
  * Allows interaction with rooms
@@ -78,11 +79,11 @@ class RoomService {
    * Gets the role of a specific player in a room
    * @param {RoomId} roomId The id of the room
    * @param {PlayerId} playerId The id of the player
-   * @returns {Promise<string|undefined>} The role of the player or undefined if the room was not found or empty
+   * @returns {Promise<PlayerRole|undefined>} The role of the player or undefined if the room was not found or empty
    */
   async getPlayerRole (roomId, playerId) {
     const hostId = await this.#getHostId(roomId)
-    return hostId ? (hostId === playerId ? 'HOST' : 'GUEST') : undefined
+    return hostId ? (hostId === playerId ? PlayerRole.HOST : PlayerRole.GUEST) : undefined
   }
 
   /**

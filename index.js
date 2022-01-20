@@ -11,6 +11,7 @@ const playerRepo = new (require('./repos/PlayerRepo'))(mongoose)
 const playerService = new (require('./services/PlayerService'))(playerRepo)
 const roomRepo = new (require('./repos/RoomRepo'))(mongoose)
 const roomService = new (require('./services/RoomService'))(roomRepo, playerService)
+const PlayerRole = require('./PlayerRole')
 
 // Setup globals
 
@@ -167,7 +168,7 @@ io.on('connection', socket => {
     const { gameName } = data
 
     const playerRole = await roomService.getPlayerRole(player.roomId, player._id)
-    if (playerRole !== 'HOST') {
+    if (playerRole !== PlayerRole.HOST) {
       console.error(`Invalid selectGame request from Player "${player.name}" in room ${player.roomId}`)
       return
     }
