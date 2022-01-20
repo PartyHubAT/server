@@ -46,7 +46,7 @@ class PlayerRepo {
   /**
    * Updates a specific player in the database
    * @param {string} id The id of the player
-   * @param {Player} update The new player data
+   * @param {Object} update The new player data
    * @returns {Promise<void>}
    */
   async updateById (id, update) {
