@@ -36,6 +36,15 @@ class RoomService {
   }
 
   /**
+   * Gets the socket-room name of a room
+   * @param {RoomId} roomId The id of the room
+   * @returns {string} The socket-room name
+   */
+  static getSocketRoomName (roomId) {
+    return `Room-${roomId}`
+  }
+
+  /**
    * Gets a room by id
    * @param {RoomId} roomId The id of the room
    * @returns {Promise<Room|undefined>} A promise of the room or undefined if the room was not found
@@ -54,15 +63,6 @@ class RoomService {
     return ids.length > 0
       ? ids[0] // The first player in the room is the host
       : undefined
-  }
-
-  /**
-   * Gets the socket-room name of a room
-   * @param {RoomId} roomId The id of the room
-   * @returns {string} The socket-room name
-   */
-  getSocketRoomName (roomId) {
-    return `Room-${roomId}`
   }
 
   /**

@@ -5,12 +5,13 @@ const mongoose = require('mongoose')
 const fs = require('fs')
 const http = require('http')
 const { Server } = require('socket.io')
+const RoomService = require('./services/RoomService')
 const gameRepo = new (require('./repos/GameRepo'))(mongoose)
 const gameService = new (require('./services/GameService'))(gameRepo)
 const playerRepo = new (require('./repos/PlayerRepo'))(mongoose)
 const playerService = new (require('./services/PlayerService'))(playerRepo)
 const roomRepo = new (require('./repos/RoomRepo'))(mongoose)
-const roomService = new (require('./services/RoomService'))(roomRepo, playerService)
+const roomService = new RoomService(roomRepo, playerService)
 const PlayerRole = require('./PlayerRole')
 
 // Setup globals
@@ -51,7 +52,7 @@ io.on('connection', socket => {
    * @param {Object} data The data to emit
    */
   function emitToRoom (roomId, event, data) {
-    const socketRoomName = roomService.getSocketRoomName(roomId)
+    const socketRoomName = RoomService.getSocketRoomName(roomId)
     io.to(socketRoomName).emit(event, data)
   }
 
@@ -71,7 +72,7 @@ io.on('connection', socket => {
    * @returns {Promise<void>}
    */
   async function joinSocketRoom (roomId) {
-    const socketRoomName = roomService.getSocketRoomName(roomId)
+    const socketRoomName = RoomService.getSocketRoomName(roomId)
     socket.join(socketRoomName)
 
     // Whenever a new player joins, send the new player-names to all players in socket
@@ -84,7 +85,7 @@ io.on('connection', socket => {
    * @returns {Socket<any, any, any, any>[]} The sockets
    */
   function getSocketsInRoom (roomId) {
-    const socketRoomName = roomService.getSocketRoomName(roomId)
+    const socketRoomName = RoomService.getSocketRoomName(roomId)
 
     return Array.from(io.sockets.adapter.rooms.get(socketRoomName))
       .map(socketId => io.sockets.sockets.get(socketId))
