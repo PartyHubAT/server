@@ -53,8 +53,7 @@ class GameService {
    * @returns {Promise<string[]>} The names of the games
    */
   async getGameNames () {
-    const games = await this.getAllGames()
-    return games.map(it => it.name)
+    return this.#gameRepo.getNamesOfAll()
   }
 
   /**

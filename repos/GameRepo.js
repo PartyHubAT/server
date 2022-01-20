@@ -35,7 +35,19 @@ class GameRepo {
    * @return {Promise<Game[]>}
    */
   async getAll () {
-    return this.#gameModel.find({})
+    return this.#gameModel.find({}).exec()
+  }
+
+  /**
+   * Gets the names of all games from the database
+   * @return {Promise<String[]>}
+   */
+  async getNamesOfAll () {
+    return this.#gameModel
+      .find({})
+      .select('name')
+      .exec()
+      .then(games => games.map(g => g.name))
   }
 }
 
