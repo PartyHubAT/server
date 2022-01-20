@@ -4,7 +4,7 @@
  * @returns {{putNew(Object): Promise<Object>, getById(*): Promise<Object|undefined>, updateById(number, Object): Promise<void>}}
  */
 module.exports = (mongoose) => {
-  const Room = require('../models/Room.js')(mongoose)
+  const RoomModel = require('../models/RoomModel.js')(mongoose)
 
   return {
     /**
@@ -13,7 +13,7 @@ module.exports = (mongoose) => {
      * @returns {Promise<Object>} The created room
      */
     async putNew (room) {
-      return Room.create(room)
+      return RoomModel.create(room)
     },
 
     /**
@@ -22,7 +22,7 @@ module.exports = (mongoose) => {
      * @returns {Promise<Object|undefined>} The room or undefined if not found
      */
     async getById (id) {
-      return Room.findById(id)
+      return RoomModel.findById(id)
     },
 
     /**
@@ -32,7 +32,7 @@ module.exports = (mongoose) => {
      * @returns {Promise<void>}
      */
     async updateById (id, update) {
-      await Room.findByIdAndUpdate(id, update)
+      await RoomModel.findByIdAndUpdate(id, update)
     }
   }
 }
