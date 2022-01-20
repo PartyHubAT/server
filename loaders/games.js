@@ -1,11 +1,11 @@
 ﻿/**
  * Loads all games from the filesystem into the database
- * @param {Object} gameService Games-service for storing the games
- * @param {Object} fs File-system
- * @param {Object} gamesPath The path to the games
- * @returns {Promise<void>}
+ * @param {GameService} gameService Games-service for storing the games
+ * @param {module:fs} fs File-system
+ * @param {string} gamesPath The path to the games
+ * @returns {Promise}
  */
-module.exports = async (gameService, fs, gamesPath) => {
+async function loadGames (gameService, fs, gamesPath) {
   console.log('Load games...')
 
   try {
@@ -22,3 +22,5 @@ module.exports = async (gameService, fs, gamesPath) => {
     console.warn(`No games found on path '${gamesPath}'`)
   }
 }
+
+module.exports = loadGames
