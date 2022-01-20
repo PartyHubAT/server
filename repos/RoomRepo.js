@@ -1,38 +1,48 @@
 ﻿/**
- * Repository for interacting with rooms in the database
- * @param mongoose The mongoose instance on this server
- * @returns {{putNew(Object): Promise<Object>, getById(*): Promise<Object|undefined>, updateById(number, Object): Promise<void>}}
+ * Stores and retrieves rooms
  */
-module.exports = (mongoose) => {
-  const RoomModel = require('../models/RoomModel.js')(mongoose)
+class RoomRepo {
+  /**
+   * Model of the room-type
+   * @type {Model<Room>}
+   */
+  #roomModel = null
 
-  return {
-    /**
-     * Puts a new room into the database
-     * @param {Room} room The room to put
-     * @returns {Promise<Room>} The created room
-     */
-    async putNew (room) {
-      return RoomModel.create(room)
-    },
+  /**
+   * Initialize a new room-repo
+   * @param {Mongoose} mongoose The mongoose instance used to connect to the database
+   */
+  constructor (mongoose) {
+    this.#roomModel = require('../models/RoomModel')(mongoose)
+  }
 
-    /**
-     * Gets a specific room by id
-     * @param id The id of the room
-     * @returns {Promise<Room|undefined>} The room or undefined if not found
-     */
-    async getById (id) {
-      return RoomModel.findById(id)
-    },
+  /**
+   * Puts a new room into the database
+   * @param {Room} room The room to put
+   * @returns {Promise<void>}
+   */
+  async putNew (room) {
+    await this.#roomModel.create(room)
+  }
 
-    /**
-     * Updates a room in the database
-     * @param {number} id The id of the room
-     * @param {Object} update The updated room data
-     * @returns {Promise<void>}
-     */
-    async updateById (id, update) {
-      await RoomModel.findByIdAndUpdate(id, update)
-    }
+  /**
+   * Gets a specific room by id
+   * @param {number} id The id of the room
+   * @returns {Promise<Room|undefined>} The room or undefined if not found
+   */
+  async getById (id) {
+    return this.#roomModel.findById(id).exec()
+  }
+
+  /**
+   * Updates a room in the database
+   * @param {number} id The id of the room
+   * @param {Object} update The updated room data
+   * @returns {Promise<void>}
+   */
+  async updateById (id, update) {
+    await this.#roomModel.findByIdAndUpdate(id, update)
   }
 }
+
+module.exports = RoomRepo
