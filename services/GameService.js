@@ -60,7 +60,7 @@ class GameService {
    * Gets the server-logic for a specific game
    * @param {string} gamesPath The path where all games are stored
    * @param {string} gameName The name of the game
-   * @returns {Function|undefined} A function to initialize the game-server or undefined if the game is not found
+   * @returns {GameLogicInit|undefined} A function to initialize the game-server or undefined if the game is not found
    */
   async getServerLogicFor (gamesPath, gameName) {
     return GameService.#getGameResource(gamesPath, gameName, 'server.js')
