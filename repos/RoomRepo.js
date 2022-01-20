@@ -19,7 +19,7 @@ class RoomRepo {
   /**
    * Puts a new room into the database
    * @param {Room} room The room to put
-   * @returns {Promise<void>}
+   * @returns {Promise}
    */
   async putNew (room) {
     await this.#roomModel.create(room)
@@ -28,9 +28,9 @@ class RoomRepo {
   /**
    * Gets a specific room by id
    * @param {RoomId} id The id of the room
-   * @returns {Promise<Room|undefined>} The room or undefined if not found
+   * @returns {Promise<Room>} The room
    */
-  async getById (id) {
+  async tryGetById (id) {
     return this.#roomModel.findById(id).exec()
   }
 
@@ -38,18 +38,18 @@ class RoomRepo {
    * Updates a room in the database
    * @param {RoomId} id The id of the room
    * @param {Object} update The updated room data
-   * @returns {Promise<void>}
+   * @returns {Promise}
    */
-  async updateById (id, update) {
+  async tryUpdateById (id, update) {
     await this.#roomModel.findByIdAndUpdate(id, update)
   }
 
   /**
    * Gets the name of the selected game in a room
    * @param {RoomId} roomId The id of the room
-   * @returns {Promise<GameName|undefined>} The name of the game or undefined if the room was not found
+   * @returns {Promise<GameName>} The name of the game
    */
-  async getSelectedGameName (roomId) {
+  async tryGetSelectedGameName (roomId) {
     return this.#roomModel
       .findById(roomId)
       .select('gameName')
@@ -60,9 +60,9 @@ class RoomRepo {
   /**
    * Gets the ids of all players in a room
    * @param {RoomId} roomId The id of the room
-   * @returns {Promise<PlayerId[]>} The ids or an empty array if the room is not found
+   * @returns {Promise<PlayerId[]>} The ids
    */
-  async getPlayerIdsInRoom (roomId) {
+  async tryGetPlayerIdsInRoom (roomId) {
     return this.#roomModel
       .findById(roomId)
       .select('playerIds')

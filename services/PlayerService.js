@@ -20,9 +20,9 @@ class PlayerService {
    * Creates a new player
    * @param {PlayerId} id The id of the new player
    * @param {string} name The name of the new player
-   * @returns {Promise<void>}
+   * @returns {Promise}
    */
-  async createNew (id, name) {
+  async createNewPlayer (id, name) {
     await this.#playerRepo.putNew({
       _id: id,
       name: name,
@@ -33,29 +33,29 @@ class PlayerService {
   /**
    * Gets a player by id
    * @param {PlayerId} id The id of the player
-   * @returns {Promise<Player|undefined>} The player or undefined if not found
+   * @returns {Promise<Player>} The player
    */
-  async getPlayerById (id) {
-    return this.#playerRepo.getById(id)
+  async tryGetPlayerById (id) {
+    return this.#playerRepo.tryGetById(id)
   }
 
   /**
    * Sets a players room
    * @param {PlayerId} id The id of the player
    * @param {RoomId} roomId The id of the room
-   * @returns {Promise<void>}
+   * @returns {Promise}
    */
-  async joinRoom (id, roomId) {
-    return this.#playerRepo.updateById(id, { roomId })
+  async tryJoinRoom (id, roomId) {
+    await this.#playerRepo.tryUpdateById(id, { roomId })
   }
 
   /**
    * Removes a player
    * @param {PlayerId} id The id of the player
-   * @returns {Promise<void>}
+   * @returns {Promise}
    */
-  async remove (id) {
-    await this.#playerRepo.deleteById(id)
+  async tryRemove (id) {
+    await this.#playerRepo.tryDeleteById(id)
   }
 }
 

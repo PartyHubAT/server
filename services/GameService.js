@@ -21,13 +21,13 @@ class GameService {
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
    * @param {string} resourceName The file-name of the resource
-   * @returns {Promise<any|undefined>} The resource or undefined if not found
+   * @returns {Promise<any>} The resource or undefined if not found
    */
-  static async #getGameResource (gamesPath, gameName, resourceName) {
+  static async #tryGetGameResource (gamesPath, gameName, resourceName) {
     try {
       return require(`${gamesPath}/${gameName}/${resourceName}`)
     } catch (e) {
-      return undefined
+      throw Error()
     }
   }
 
@@ -60,20 +60,20 @@ class GameService {
    * Gets the server-logic for a specific game
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
-   * @returns {GameLogicInit|undefined} A function to initialize the game-server or undefined if the game is not found
+   * @returns {Promise<GameLogicInit>} The game initializer
    */
-  async getServerLogicFor (gamesPath, gameName) {
-    return GameService.#getGameResource(gamesPath, gameName, 'server.js')
+  async tryGetServerLogicFor (gamesPath, gameName) {
+    return GameService.#tryGetGameResource(gamesPath, gameName, 'server.js')
   }
 
   /**
    * Gets the default settings for a game
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
-   * @returns {Object|undefined} The default settings or undefined if the game was not found
+   * @returns {Promise<Object>} The default settings
    */
-  async getDefaultGameSettings (gamesPath, gameName) {
-    const settings = await GameService.#getGameResource(gamesPath, gameName, 'settings.js')
+  async tryGetDefaultGameSettings (gamesPath, gameName) {
+    const settings = await GameService.#tryGetGameResource(gamesPath, gameName, 'settings.js')
     return settings.defaultValues
   }
 }

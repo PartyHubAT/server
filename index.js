@@ -62,7 +62,7 @@ io.on('connection', socket => {
    * @returns {Promise<void>}
    */
   async function sendNewPlayerNames (roomId) {
-    const playerNames = await roomService.getPlayerNamesInRoom(roomId)
+    const playerNames = await roomService.tryGetPlayerNamesInRoom(roomId)
     emitToRoom(roomId, 'playersChanged', { playerNames })
   }
 
@@ -115,9 +115,9 @@ io.on('connection', socket => {
       endGameInRoom(roomId)
     }
 
-    const players = await roomService.getPlayersInRoom(roomId)
-    const initServerLogic = await gameService.getServerLogicFor(gamesPath, gameName)
-    const settings = await gameService.getDefaultGameSettings(gamesPath, gameName)
+    const players = await roomService.tryGetPlayersInRoom(roomId)
+    const initServerLogic = await gameService.tryGetServerLogicFor(gamesPath, gameName)
+    const settings = await gameService.tryGetDefaultGameSettings(gamesPath, gameName)
     const gameServer = initServerLogic(emitToAll, emitToOne, endGame, players, settings)
 
     getSocketsInRoom(roomId).forEach(socket => {
@@ -137,10 +137,10 @@ io.on('connection', socket => {
   socket.on('newRoom', async data => {
     const { playerName } = data
     const playerId = socket.id
-    await playerService.createNew(playerId, playerName)
-    const roomId = await roomService.openNewWithHost(playerId)
+    await playerService.createNewPlayer(playerId, playerName)
+    const roomId = await roomService.tryOpenNewWithHost(playerId)
     // Is always host probably, so could hard-code, but get it from db just to be safe
-    const playerRole = await roomService.getPlayerRole(roomId, playerId)
+    const playerRole = await roomService.tryGetPlayerRole(roomId, playerId)
 
     console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
 
@@ -152,9 +152,9 @@ io.on('connection', socket => {
   socket.on('joinRoom', async data => {
     const { playerName, roomId } = data
     const playerId = socket.id
-    await playerService.createNew(playerId, playerName)
-    await roomService.addPlayerToRoom(roomId, playerId)
-    const selectedGameName = await roomService.getSelectedGameName(roomId)
+    await playerService.createNewPlayer(playerId, playerName)
+    await roomService.tryAddPlayerToRoom(roomId, playerId)
+    const selectedGameName = await roomService.tryGetSelectedGameName(roomId)
 
     console.log(`Player "${playerName}" joined room ${roomId}.`)
 
@@ -165,23 +165,23 @@ io.on('connection', socket => {
 
   socket.on('selectGame', async data => {
     const playerId = socket.id
-    const player = await playerService.getPlayerById(playerId)
+    const player = await playerService.tryGetPlayerById(playerId)
     const { gameName } = data
 
-    const playerRole = await roomService.getPlayerRole(player.roomId, player._id)
+    const playerRole = await roomService.tryGetPlayerRole(player.roomId, player._id)
     if (playerRole !== PlayerRole.HOST) {
       console.error(`Invalid selectGame request from Player "${player.name}" in room ${player.roomId}`)
       return
     }
-    await roomService.selectGame(player.roomId, gameName)
+    await roomService.trySelectGame(player.roomId, gameName)
     console.log(`Player "${player.name}" changed room ${player.roomId}' game to "${gameName}".`)
     emitToRoom(player.roomId, 'gameSelected', { gameName })
   })
 
   socket.on('startGame', async () => {
     const playerId = socket.id
-    const player = await playerService.getPlayerById(playerId)
-    const gameName = await roomService.getSelectedGameName(player.roomId)
+    const player = await playerService.tryGetPlayerById(playerId)
+    const gameName = await roomService.tryGetSelectedGameName(player.roomId)
     await startGame(player.roomId, gameName)
 
     console.log(`Room ${player.roomId}' started playing "${gameName}".`)
@@ -190,16 +190,14 @@ io.on('connection', socket => {
   })
 
   socket.on('disconnect', async () => {
-    const player = await playerService.getPlayerById(socket.id)
-    if (player) {
-      if (player.roomId) {
-        await roomService.removePlayerFromRoom(player.roomId, player._id)
+    const player = await playerService.tryGetPlayerById(socket.id)
+    if (player.roomId) {
+      await roomService.tryRemovePlayerFromRoom(player.roomId, player._id)
 
-        await sendNewPlayerNames(player.roomId)
-        console.log(`"${player.name}" has disconnected from room ${player.roomId}.`)
-      }
-      await playerService.remove(player._id)
+      await sendNewPlayerNames(player.roomId)
+      console.log(`"${player.name}" has disconnected from room ${player.roomId}.`)
     }
+    await playerService.tryRemove(player._id)
   })
 })
 
