@@ -15,7 +15,7 @@ class GameRepo {
 
   /**
    * Initialize a new game-repo
-   * @param {Mongoose} mongoose The mongoose instance used to connect to the database
+   * @param {module:mongoose} mongoose The mongoose instance used to connect to the database
    */
   constructor (mongoose) {
     this.#gameModel = require('../models/GameModel')(mongoose)

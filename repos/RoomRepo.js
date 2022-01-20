@@ -12,7 +12,7 @@ class RoomRepo {
 
   /**
    * Initialize a new room-repo
-   * @param {Mongoose} mongoose The mongoose instance used to connect to the database
+   * @param {module:mongoose} mongoose The mongoose instance used to connect to the database
    */
   constructor (mongoose) {
     this.#roomModel = require('../models/RoomModel')(mongoose)

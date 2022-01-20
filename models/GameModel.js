@@ -10,10 +10,15 @@
 
 /**
  * Initializes the model for games
- * @param mongoose The mongoose instance on this server
+ * @param {module:mongoose} mongoose The mongoose instance on this server
  * @returns {Model<Game>} The model
  */
-module.exports = (mongoose) => mongoose.model('Game', new mongoose.Schema({
-  name: { type: String, required: true }
-},
-{ collection: 'games' }))
+module.exports = (mongoose) => {
+  const schema = new mongoose.Schema({
+    name: {
+      type: String,
+      required: true
+    }
+  })
+  return mongoose.model('Game', schema, 'games')
+}
