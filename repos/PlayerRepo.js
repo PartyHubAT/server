@@ -1,47 +1,57 @@
 ﻿/**
- * Repository for interacting with players in the database
- * @param mongoose The mongoose instance on this server
- * @returns {Object|{putNew(Object): Promise<Object>, getById(string): Promise<Object|undefined>, deleteById(string): Promise<void>, updateById(string, Object): Promise<void>}}
+ * Stores and retrieves players
  */
-module.exports = (mongoose) => {
-  const PlayerModel = require('../models/PlayerModel.js')(mongoose)
+class PlayerRepo {
+  /**
+   * Model of the player-type
+   * @type {Model<Player>}
+   */
+  #playerModel = null
 
-  return {
-    /**
-     * Puts a new player into the database
-     * @param {Player} player The player to put
-     * @returns {Promise<Player>} The created player
-     */
-    async putNew (player) {
-      return PlayerModel.create(player)
-    },
+  /**
+   * Initialize a new player-repo
+   * @param {Mongoose} mongoose The mongoose instance used to connect to the database
+   */
+  constructor (mongoose) {
+    this.#playerModel = require('../models/PlayerModel')(mongoose)
+  }
 
-    /**
-     * Gets a player by id
-     * @param {string} id The id of the player
-     * @returns {Promise<Player|undefined>} The player or undefined if not found
-     */
-    async getById (id) {
-      return PlayerModel.findById(id)
-    },
+  /**
+   * Puts a new player into the database
+   * @param {Player} player The player to put
+   * @returns {Promise}
+   */
+  async putNew (player) {
+    await this.#playerModel.create(player)
+  }
 
-    /**
-     * Deletes a specific player
-     * @param {string} id The id of the player to delete
-     * @returns {Promise<void>}
-     */
-    async deleteById (id) {
-      await PlayerModel.findByIdAndDelete(id)
-    },
+  /**
+   * Gets a player by their id
+   * @param {string} id The id of the player
+   * @returns {Promise<Player|undefined>} The player or undefined if not found
+   */
+  async getById (id) {
+    return this.#playerModel.findById(id).exec()
+  }
 
-    /**
-     * Updates a specific player in the database
-     * @param {string} id The id of the player
-     * @param {Player} update The new player data
-     * @returns {Promise<void>}
-     */
-    async updateById (id, update) {
-      await PlayerModel.findByIdAndUpdate(id, update)
-    }
+  /**
+   * Deletes a specific player
+   * @param {string} id The id of the player to delete
+   * @returns {Promise<void>}
+   */
+  async deleteById (id) {
+    await this.#playerModel.findByIdAndDelete(id).exec()
+  }
+
+  /**
+   * Updates a specific player in the database
+   * @param {string} id The id of the player
+   * @param {Player} update The new player data
+   * @returns {Promise<void>}
+   */
+  async updateById (id, update) {
+    await this.#playerModel.findByIdAndUpdate(id, update).exec()
   }
 }
+
+module.exports = PlayerRepo
