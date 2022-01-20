@@ -7,6 +7,7 @@
  * @property {String} _id
  * @property {PlayerId} name
  * @property {RoomId|undefined} roomId
+ * @property {Boolean} gameLoaded
  */
 
 /**
@@ -17,6 +18,7 @@
 module.exports = (mongoose) => mongoose.model('Player', new mongoose.Schema({
   _id: { type: String, required: true },
   name: { type: String, required: true },
-  roomId: { type: Number }
+  roomId: { type: Number },
+  gameLoaded: { type: Boolean }
 },
 { collection: 'players' }))
