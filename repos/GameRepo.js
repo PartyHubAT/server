@@ -23,8 +23,9 @@ class GameRepo {
 
   /**
    * Puts a new game into the database
+   * @async
    * @param {NewGame} newGame The game to add
-   * @return {Promise<Game>}
+   * @return {Game}
    */
   async putNew (newGame) {
     return this.#gameModel.create(newGame)
@@ -32,7 +33,8 @@ class GameRepo {
 
   /**
    * Gets all games from the database
-   * @return {Promise<Game[]>}
+   * @async
+   * @return {Game[]}
    */
   async getAll () {
     return this.#gameModel.find({}).exec()
@@ -40,7 +42,8 @@ class GameRepo {
 
   /**
    * Gets the names of all games from the database
-   * @return {Promise<GameName[]>}
+   * @async
+   * @return {GameName[]}
    */
   async getNamesOfAll () {
     return this.#gameModel
