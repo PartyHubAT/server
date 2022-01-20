@@ -3,7 +3,7 @@
  * @property {String} name
  */
 
-class GamesRepo {
+class GameRepo {
   /**
    * Model of the game-type
    * @type {Model<Game>}
@@ -36,4 +36,4 @@ class GamesRepo {
   }
 }
 
-module.exports = GamesRepo
+module.exports = GameRepo
