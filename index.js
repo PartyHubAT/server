@@ -132,7 +132,8 @@ io.on('connection', socket => {
 
   socket.on('newRoom', async data => {
     const { playerName } = data
-    const playerId = await playerService.createNew(socket.id, playerName)
+    const playerId = socket.id
+    await playerService.createNew(playerId, playerName)
     const roomId = await roomService.openNewWithHost(playerId)
     // Is always host probably, so could hard-code, but get it from db just to be safe
     const playerRole = await roomService.getPlayerRole(roomId, playerId)
@@ -146,7 +147,8 @@ io.on('connection', socket => {
 
   socket.on('joinRoom', async data => {
     const { playerName, roomId } = data
-    const playerId = await playerService.createNew(socket.id, playerName)
+    const playerId = socket.id
+    await playerService.createNew(playerId, playerName)
     await roomService.addPlayerToRoom(roomId, playerId)
     const selectedGameName = await roomService.getSelectedGameName(roomId)
 
