@@ -27,7 +27,7 @@ class RoomRepo {
 
   /**
    * Gets a specific room by id
-   * @param {number} id The id of the room
+   * @param {RoomId} id The id of the room
    * @returns {Promise<Room|undefined>} The room or undefined if not found
    */
   async getById (id) {
@@ -36,7 +36,7 @@ class RoomRepo {
 
   /**
    * Updates a room in the database
-   * @param {number} id The id of the room
+   * @param {RoomId} id The id of the room
    * @param {Object} update The updated room data
    * @returns {Promise<void>}
    */

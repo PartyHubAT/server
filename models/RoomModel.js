@@ -1,6 +1,10 @@
 ﻿/**
+ * @typedef {number} RoomId
+ */
+
+/**
  * @typedef {Object} Room
- * @property {number} _id Uniquely identifies the room
+ * @property {RoomId} _id Uniquely identifies the room
  * @property {string} gameName The name of the currently selected game
  * @property {string[]} playerIds The ids the players in the room
  */

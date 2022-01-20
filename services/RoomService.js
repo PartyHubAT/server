@@ -27,7 +27,7 @@ class RoomService {
 
   /**
    * Generates a random room-id
-   * @returns {number} The id
+   * @returns {RoomId} The id
    */
   static #generateRoomId () {
     // This does not check for duplicates
@@ -36,7 +36,7 @@ class RoomService {
 
   /**
    * Gets a room by id
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<Room|undefined>} A promise of the room or undefined if the room was not found
    */
   async #getRoom (roomId) {
@@ -45,7 +45,7 @@ class RoomService {
 
   /**
    * Gets the ids of all players in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<string[]>} The ids or an empty array if the room is not found
    */
   async #getPlayerIdsInRoom (roomId) {
@@ -55,7 +55,7 @@ class RoomService {
 
   /**
    * Gets the id of the host in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<String|undefined>} The id or undefined if the room is not found or empty
    */
   async #getHostId (roomId) {
@@ -67,7 +67,7 @@ class RoomService {
 
   /**
    * Gets the socket-room name of a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {string} The socket-room name
    */
   getSocketRoomName (roomId) {
@@ -76,7 +76,7 @@ class RoomService {
 
   /**
    * Gets the role of a specific player in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @param {string} playerId The id of the player
    * @returns {Promise<string|undefined>} The role of the player or undefined if the room was not found or empty
    */
@@ -87,7 +87,7 @@ class RoomService {
 
   /**
    * Gets the name of the selected game in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<string|undefined>} The name of the game or undefined if the room was not found
    */
   async getSelectedGameName (roomId) {
@@ -97,7 +97,7 @@ class RoomService {
 
   /**
    * Adds a player to a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @param {string} playerId The id of the player
    * @returns {Promise<void>}
    */
@@ -109,7 +109,7 @@ class RoomService {
 
   /**
    * Gets all players in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<(Player|undefined)[]>} The players or an empty array if the room is not found. Players may also be undefined if they are not found
    */
   async getPlayersInRoom (roomId) {
@@ -119,7 +119,7 @@ class RoomService {
 
   /**
    * Gets the names of all players in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @returns {Promise<(string|undefined)[]>} The names of the players or empty array if the room was not found
    */
   async getPlayerNamesInRoom (roomId) {
@@ -130,7 +130,7 @@ class RoomService {
   /**
    * Opens a new room with a specific player as host
    * @param {string} hostId The id of the host player
-   * @returns {Promise<number>} The id of the opened room
+   * @returns {Promise<RoomId>} The id of the opened room
    */
   async openNewWithHost (hostId) {
     const roomId = RoomService.#generateRoomId()
@@ -145,7 +145,7 @@ class RoomService {
 
   /**
    * Removes a player from a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @param {string} playerId The id of the player
    * @returns {Promise<void>}
    */
@@ -156,7 +156,7 @@ class RoomService {
 
   /**
    * Selects a game in a room
-   * @param {number} roomId The id of the room
+   * @param {RoomId} roomId The id of the room
    * @param {string} gameName The name of the game to be selected
    * @returns {Promise<void>}
    */
