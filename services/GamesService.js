@@ -22,7 +22,7 @@ module.exports = (repo) => {
   return {
     /**
      * Adds a new game
-     * @param {Object} game The game
+     * @param {Game} game The game
      * @returns {Promise<void>}
      */
     async addGame (game) {
@@ -31,7 +31,7 @@ module.exports = (repo) => {
 
     /**
      * Gets info on all games on this server
-     * @returns {Promise<Object[]>} The games
+     * @returns {Promise<Game[]>} The games
      */
     async getGameInfo () {
       return repo.getAll()
