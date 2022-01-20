@@ -1,27 +1,39 @@
 ﻿/**
- * Repository for interacting with games in the database
- * @param mongoose The mongoose instance on this server
- * @returns {{getAll(): Promise<Game[]>, putNew(Game): Promise<Game>}}
+ * @typedef {Object} NewGame
+ * @property {String} name
  */
-module.exports = (mongoose) => {
-  const GameModel = require('../models/GameModel.js')(mongoose)
 
-  return {
-    /**
-     * Puts a new game into the database
-     * @param {Game} game The game to put
-     * @returns {Promise<Game>} The created game
-     */
-    async putNew (game) {
-      return GameModel.create(game)
-    },
+class GamesRepo {
+  /**
+   * Model of the game-type
+   * @type {Model<Game>}
+   */
+  #gameModel = null
 
-    /**
-     * Gets all games in the database
-     * @returns {Promise<Game[]>}
-     */
-    async getAll () {
-      return GameModel.find()
-    }
+  /**
+   * Initialize a new game-repo
+   * @param {Mongoose} mongoose The mongoose instance used to connect to the database
+   */
+  constructor (mongoose) {
+    this.#gameModel = require('../models/GameModel')(mongoose)
+  }
+
+  /**
+   * Puts a new game into the database
+   * @param {NewGame} newGame The game to add
+   * @return {Promise<Game>}
+   */
+  async putNew (newGame) {
+    return this.#gameModel.create(newGame)
+  }
+
+  /**
+   * Gets all games from the database
+   * @return {Promise<Game[]>}
+   */
+  async getAll () {
+    return this.#gameModel.find({})
   }
 }
+
+module.exports = GamesRepo
