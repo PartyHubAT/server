@@ -35,6 +35,7 @@ class PlayerService {
    * Gets a player by id
    * @param {PlayerId} id The id of the player
    * @returns {Promise<Player>} The player
+   * @throws {PlayerNotFoundError} When no player with the id was found
    */
   async tryGetPlayerById (id) {
     return this.#playerRepo.tryGetById(id)
@@ -45,6 +46,7 @@ class PlayerService {
    * @param {PlayerId} id The id of the player
    * @param {RoomId} roomId The id of the room
    * @returns {Promise}
+   * @throws {PlayerNotFoundError} When no player with the id was found
    */
   async tryJoinRoom (id, roomId) {
     await this.#playerRepo.tryUpdateById(id, { roomId })
@@ -55,6 +57,7 @@ class PlayerService {
    * @param {PlayerId} id The id of the player
    * @param {boolean} loaded Whether the player has their game loaded or not
    * @returns {Promise}
+   * @throws {PlayerNotFoundError} When no player with the id was found
    */
   async trySetPlayerGameLoaded (id, loaded) {
     await this.#playerRepo.tryUpdateById(id, { gameLoaded: loaded })
@@ -64,6 +67,7 @@ class PlayerService {
    * Removes a player
    * @param {PlayerId} id The id of the player
    * @returns {Promise}
+   * @throws {PlayerNotFoundError} When no player with the id was found
    */
   async tryRemove (id) {
     await this.#playerRepo.tryDeleteById(id)
