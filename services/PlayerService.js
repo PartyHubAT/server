@@ -26,7 +26,8 @@ class PlayerService {
     await this.#playerRepo.putNew({
       _id: id,
       name: name,
-      roomId: undefined
+      roomId: undefined,
+      gameLoaded: false
     })
   }
 
@@ -47,6 +48,16 @@ class PlayerService {
    */
   async tryJoinRoom (id, roomId) {
     await this.#playerRepo.tryUpdateById(id, { roomId })
+  }
+
+  /**
+   * Sets a players room
+   * @param {PlayerId} id The id of the player
+   * @param {RoomId} roomId The id of the room
+   * @returns {Promise}
+   */
+  async tryGameLoaded (id) {
+    await this.#playerRepo.tryUpdateById(id, { gameLoaded: true })
   }
 
   /**
