@@ -48,6 +48,7 @@ class RoomService {
    * Gets the id of the host in a room
    * @param {RoomId} roomId The id of the room
    * @returns {Promise<PlayerId>} The id
+   * @throws {RoomNotFoundError} When no room with the given id was found
    */
   async #tryGetHostId (roomId) {
     const ids = await this.#roomRepo.tryGetPlayerIdsInRoom(roomId)
@@ -61,6 +62,7 @@ class RoomService {
    * @param {RoomId} roomId The id of the room
    * @param {PlayerId} playerId The id of the player
    * @returns {Promise<PlayerRole>} The role of the player
+   * @throws {RoomNotFoundError} When no room with the given id was found
    */
   async tryGetPlayerRole (roomId, playerId) {
     const hostId = await this.#tryGetHostId(roomId)
@@ -71,6 +73,7 @@ class RoomService {
    * Gets the name of the selected game in a room
    * @param {RoomId} roomId The id of the room
    * @returns {Promise<GameName>} The name of the game
+   * @throws {RoomNotFoundError} When no room with the given id was found
    */
   async tryGetSelectedGameName (roomId) {
     return this.#roomRepo.tryGetSelectedGameName(roomId)
@@ -81,6 +84,8 @@ class RoomService {
    * @param {RoomId} roomId The id of the room
    * @param {PlayerId} playerId The id of the player
    * @returns {Promise}
+   * @throws {RoomNotFoundError} When no room with the given id was found
+   * @throws {PlayerNotFoundError} When no player with the given id was found
    */
   async tryAddPlayerToRoom (roomId, playerId) {
     const ids = await this.#roomRepo.tryGetPlayerIdsInRoom(roomId)
@@ -92,6 +97,8 @@ class RoomService {
    * Gets all players in a room
    * @param {RoomId} roomId The id of the room
    * @returns {Promise<Player[]>} The players
+   * @throws {RoomNotFoundError} When no room with the given id was found
+   * @throws {PlayerNotFoundError} When no player could be found for any of the ids in the room
    */
   async tryGetPlayersInRoom (roomId) {
     const playerIds = await this.#roomRepo.tryGetPlayerIdsInRoom(roomId)
@@ -101,7 +108,9 @@ class RoomService {
   /**
    * Gets the names of all players in a room
    * @param {RoomId} roomId The id of the room
-   * @returns {Promise<(string|undefined)[]>} The names of the players or empty array if the room was not found
+   * @returns {Promise<string[]>} The names of the players
+   * @throws {RoomNotFoundError} When no room with the given id was found
+   * @throws {PlayerNotFoundError} When no player could be found for any of the ids in the room
    */
   async tryGetPlayerNamesInRoom (roomId) {
     const players = await this.tryGetPlayersInRoom(roomId)
@@ -112,6 +121,7 @@ class RoomService {
    * Opens a new room with a specific player as host
    * @param {PlayerId} hostId The id of the host player
    * @returns {Promise<RoomId>} The id of the opened room
+   * @throws {PlayerNotFoundError} When no player with the given id was found
    */
   async tryOpenNewWithHost (hostId) {
     const roomId = RoomService.#generateRoomId()
@@ -128,7 +138,8 @@ class RoomService {
    * Removes a player from a room
    * @param {RoomId} roomId The id of the room
    * @param {PlayerId} playerId The id of the player
-   * @returns {Promise<void>}
+   * @returns {Promise}
+   * @throws {RoomNotFoundError} When no room with the given id was found
    */
   async tryRemovePlayerFromRoom (roomId, playerId) {
     const ids = await this.#roomRepo.tryGetPlayerIdsInRoom(roomId)
@@ -139,7 +150,8 @@ class RoomService {
    * Selects a game in a room
    * @param {RoomId} roomId The id of the room
    * @param {GameName} gameName The name of the game to be selected
-   * @returns {Promise<void>}
+   * @returns {Promise}
+   * @throws {RoomNotFoundError} When no room with the given id was found
    */
   async trySelectGame (roomId, gameName) {
     await this.#roomRepo.tryUpdateById(roomId, { gameName })
