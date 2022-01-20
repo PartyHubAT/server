@@ -9,8 +9,8 @@ module.exports = (mongoose) => {
   return {
     /**
      * Puts a new room into the database
-     * @param {Object} room The room to put
-     * @returns {Promise<Object>} The created room
+     * @param {Room} room The room to put
+     * @returns {Promise<Room>} The created room
      */
     async putNew (room) {
       return RoomModel.create(room)
@@ -19,7 +19,7 @@ module.exports = (mongoose) => {
     /**
      * Gets a specific room by id
      * @param id The id of the room
-     * @returns {Promise<Object|undefined>} The room or undefined if not found
+     * @returns {Promise<Room|undefined>} The room or undefined if not found
      */
     async getById (id) {
       return RoomModel.findById(id)

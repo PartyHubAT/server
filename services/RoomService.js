@@ -19,7 +19,7 @@ module.exports = (repo, playerService) => {
   /**
    * Gets a room by id
    * @param {number} roomId The id of the room
-   * @returns {Promise<any|undefined>} A promise of the room or undefined if the room was not found
+   * @returns {Promise<Room|undefined>} A promise of the room or undefined if the room was not found
    */
   async function getRoom (roomId) {
     return repo.getById(roomId)
