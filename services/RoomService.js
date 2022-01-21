@@ -118,6 +118,17 @@ class RoomService {
   }
 
   /**
+   * Gets the room with a certain id
+   * @param {RoomId} roomId The id of the room
+   * @returns {Promise<Room>} The names of the players
+   * @throws {RoomNotFoundError} When no room with the given id was found
+   */
+  async tryGetRoom (roomId) {
+    console.log('tryGetRoom')
+    return await this.#roomRepo.tryGetById(roomId)
+  }
+
+  /**
    * Opens a new room with a specific player as host
    * @param {PlayerId} hostId The id of the host player
    * @returns {Promise<RoomId>} The id of the opened room
