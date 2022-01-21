@@ -120,11 +120,10 @@ class RoomService {
   /**
    * Gets the room with a certain id
    * @param {RoomId} roomId The id of the room
-   * @returns {Promise<Room>} The names of the players
+   * @returns {Promise<Room>} The certain room
    * @throws {RoomNotFoundError} When no room with the given id was found
    */
   async tryGetRoom (roomId) {
-    console.log('tryGetRoom')
     return await this.#roomRepo.tryGetById(roomId)
   }
 
