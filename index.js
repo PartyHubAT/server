@@ -153,6 +153,11 @@ io.on('connection', socket => {
   socket.on('joinRoom', async data => {
     const { playerName, roomId } = data
     const playerId = socket.id
+    const room = await roomService.tryGetRoom(roomId)
+    if (!room) {
+      socket.emit('InvalidRoom', `No room found with id ${roomId}`)
+      return
+    }
     await playerService.createNewPlayer(playerId, playerName)
     await roomService.tryAddPlayerToRoom(roomId, playerId)
     const selectedGameName = await roomService.tryGetSelectedGameName(roomId)
