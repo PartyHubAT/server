@@ -145,7 +145,7 @@ io.on('connection', socket => {
 
     console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
 
-    socket.emit('roomCreated', { roomId })
+    socket.emit('joinSuccess', { roomId })
     socket.emit('roleChanged', { role: playerRole })
     await joinSocketRoom(roomId)
   })
