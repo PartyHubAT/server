@@ -59,6 +59,18 @@ class GameService {
   }
 
   /**
+   * Gets the default settings for a game
+   * @param {string} gamesPath The path where all games are stored
+   * @param {GameName} gameName The name of the game
+   * @returns {Promise<Object>} The default settings
+   * @throws {GameResourceLoadError} When the resource could not be loaded
+   */
+  static async tryGetGameSettings (gamesPath, gameName) {
+    const settings = await GameService.#tryGetGameResource(gamesPath, gameName, 'settings.js')
+    return settings
+  }
+
+  /**
    * Adds a new game
    * @param {NewGame} game The game to add
    * @returns {Promise}
@@ -72,7 +84,15 @@ class GameService {
    * @returns {Promise<Game[]>} The games
    */
   async getAllGames () {
-    return this.#gameRepo.getAll()
+    return await this.#gameRepo.getAll()
+  }
+
+  /**
+   * Gets certain game settings
+   * @returns {Promise<Settings[]>} The settings object
+   */
+  async getSettings (gamesPath, game) {
+    return await GameService.tryGetGameSettings(gamesPath, game)
   }
 
   /**
