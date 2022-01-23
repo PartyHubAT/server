@@ -46,7 +46,7 @@ app.get('/games', async (_, res) => {
 // Gets info on all games on the server
 app.get('/gameSettings/:name', async (req, res) => {
   const game = req.params.name
-  res.send({ games: (await gameService.getSettings(gamesPath, game)) })
+  res.send(await gameService.getSettings(gamesPath, game))
 })
 
 // Setup socket
