@@ -65,6 +65,21 @@ class RoomRepo {
   }
 
   /**
+   * Gets the settings of the room
+   * @param {RoomId} roomId The id of the room
+   * @return {Promise<Settings>} The settings object of the game
+   * @throws {RoomNotFoundError} When not room with the given id was found
+   */
+  async tryGetRoomSettings (roomId) {
+    return this.#roomModel
+      .findById(roomId)
+      .select('settings')
+      .exec()
+      .then(r => r.settings)
+      .catch(_ => { throw new RoomNotFoundError(roomId) })
+  }
+
+  /**
    * Gets the ids of all players in a room
    * @param {RoomId} roomId The id of the room
    * @return {Promise<PlayerId[]>} The ids
