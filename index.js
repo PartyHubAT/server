@@ -199,6 +199,7 @@ io.on('connection', socket => {
     const gameName = await roomService.tryGetSelectedGameName(player.roomId)
     if (players.every(it => it?.gameLoaded)) {
       const settings = await roomService.tryGetRoomSettings(player.roomId)
+      console.log(`Settings loaded: ${settings}`)
       await startGame(player.roomId, gameName, JSON.parse(settings))
       console.log(`Room ${player.roomId}' started playing "${gameName}".`)
     }
