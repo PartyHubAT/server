@@ -24,6 +24,9 @@ module.exports = (mongoose) => {
     playerIds: {
       type: [String],
       required: true
+    },
+    settings: {
+      type: String
     }
   })
   return mongoose.model('Room', schema, 'rooms')
