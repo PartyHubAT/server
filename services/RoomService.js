@@ -94,6 +94,26 @@ class RoomService {
   }
 
   /**
+   * Adds a player to a room
+   * @param {RoomId} roomId The id of the room
+   * @param {Settings} settings The id of the player
+   * @throws {RoomNotFoundError} When no room with the given id was found
+   */
+  async tryAddSettingsToRoom (roomId, settings) {
+    await this.#roomRepo.tryUpdateById(roomId, { settings: settings })
+  }
+
+  /**
+   * Gets the settings of the specific room
+   * @param {RoomId} roomId The id of the room
+   * @returns {Promise<Settings>} The settings object of the game
+   * @throws {RoomNotFoundError} When no room with the given id was found
+   */
+  async tryGetRoomSettings (roomId) {
+    return this.#roomRepo.tryGetRoomSettings(roomId)
+  }
+
+  /**
    * Gets all players in a room
    * @param {RoomId} roomId The id of the room
    * @returns {Promise<Player[]>} The players
