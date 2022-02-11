@@ -14,6 +14,7 @@ const playerService = new (require('./services/PlayerService'))(playerRepo)
 const roomRepo = new (require('./repos/RoomRepo'))(mongoose)
 const roomService = new RoomService(roomRepo, playerService)
 const PlayerRole = require('./PlayerRole')
+const ip = require('./core/ipUtil')
 
 // Setup globals
 
@@ -151,7 +152,8 @@ io.on('connection', socket => {
 
     console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
 
-    socket.emit('joinSuccess', { roomId })
+    const gateway = ip.getGatewayIp()
+    socket.emit('joinSuccess', { roomId, gateway })
     socket.emit('roleChanged', { role: playerRole })
     await joinSocketRoom(roomId)
   })
@@ -170,7 +172,8 @@ io.on('connection', socket => {
 
     console.log(`Player "${playerName}" joined room ${roomId}.`)
 
-    socket.emit('joinSuccess', { roomId })
+    const gateway = ip.getGatewayIp()
+    socket.emit('joinSuccess', { roomId, gateway })
     await joinSocketRoom(roomId)
     socket.emit('gameSelected', { gameName: selectedGameName })
   })
