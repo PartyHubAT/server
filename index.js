@@ -22,6 +22,7 @@ const publicPath = path.join(__dirname, 'public')
 const gamesPath = path.join(__dirname, process.env.GAMESPATH)
 const app = express()
 const server = http.createServer(app)
+const port = process.env.PORT || 3000
 const io = new Server(server, {
   cors: {
     origin: 'http://localhost:8080',
@@ -153,7 +154,7 @@ io.on('connection', socket => {
     console.log(`New room created by player "${playerName}". Assigned id ${roomId}.`)
 
     const gateway = ip.getGatewayIp()
-    socket.emit('joinSuccess', { roomId, gateway })
+    socket.emit('joinSuccess', { roomId, gateway, port })
     socket.emit('roleChanged', { role: playerRole })
     await joinSocketRoom(roomId)
   })
@@ -173,7 +174,7 @@ io.on('connection', socket => {
     console.log(`Player "${playerName}" joined room ${roomId}.`)
 
     const gateway = ip.getGatewayIp()
-    socket.emit('joinSuccess', { roomId, gateway })
+    socket.emit('joinSuccess', { roomId, gateway, port })
     await joinSocketRoom(roomId)
     socket.emit('gameSelected', { gameName: selectedGameName })
   })
@@ -241,7 +242,6 @@ io.on('connection', socket => {
   await (require('./loaders/mongoose'))(mongoose)
   await (require('./loaders/games'))(gameService, fs, gamesPath)
 
-  const port = process.env.PORT || 3000
   server.listen(port, () => {
     console.log(`Server listening on port ${port}`)
   })
