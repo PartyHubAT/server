@@ -128,7 +128,7 @@ io.on('connection', socket => {
 
     const initServerLogic = await GameService.tryGetServerLogicFor(gamesPath, gameName)
     if (!settings) settings = await GameService.tryGetDefaultGameSettings(gamesPath, gameName)
-    const gameServer = initServerLogic(emitToAll, emitToOne, endGame, players, settings)
+    const gameServer = initServerLogic(emitToAll, emitToOne, endGame, players, settings, mongoose)
 
     getSocketsInRoom(roomId).forEach(socket => {
       const events = gameServer.events
