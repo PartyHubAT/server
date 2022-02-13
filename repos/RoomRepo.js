@@ -20,7 +20,8 @@ class RoomRepo {
 
   /**
    * Puts a new room into the database
-   * @param {Promise<Room>} room The room to put
+   * @param {Room} room The room to put
+   * @returns {Promise}
    */
   async putNew (room) {
     await this.#roomModel.create(room)
