@@ -134,7 +134,7 @@ class RoomService {
    */
   async tryGetPlayerNamesInRoom (roomId) {
     const players = await this.tryGetPlayersInRoom(roomId)
-    return players.map(it => it?.name)
+    return players.map(it => it.name)
   }
 
   /**
