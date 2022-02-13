@@ -134,7 +134,7 @@ io.on('connection', socket => {
       const events = gameServer.events
       Object.keys(events).forEach(event => {
         socket.on(event, data => {
-          events[event](data)
+          events[event](socket.id, data)
         })
       })
     })
