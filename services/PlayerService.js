@@ -23,6 +23,7 @@ class PlayerService {
    * @returns {Promise}
    */
   async createNewPlayer (id, name) {
+    await this.tryRemove(id)
     await this.#playerRepo.putNew({
       _id: id,
       name: name,
