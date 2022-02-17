@@ -32,12 +32,10 @@ class GameRepo {
    loadGamesFromDir = async (fs, gamesPath) => {
      const filesInGamesDir = await fs.promises.readdir(gamesPath, { withFileTypes: true })
 
-     const games =
-      filesInGamesDir
-        .filter(it => it.isDirectory())
-        .map(it => require(`${gamesPath}/${it.name}/info.js`))
-
-     this.#games = games
+     this.#games =
+       filesInGamesDir
+         .filter(it => it.isDirectory())
+         .map(it => require(`${gamesPath}/${it.name}/info.js`))
    }
 
    /**
