@@ -71,20 +71,21 @@ class GameService {
   }
 
   /**
-   * Adds a new game
-   * @param {NewGame} game The game to add
+   * Loads all games from their directories
+   * @param {import('fs')} fs
+   * @param {string} gamesPath
    * @returns {Promise}
    */
-  async addGame (game) {
-    await this.#gameRepo.putNew(game)
+  loadGamesFromDir (fs, gamesPath) {
+    this.#gameRepo.loadGamesFromDir(fs, gamesPath)
   }
 
   /**
    * Gets all games
-   * @returns {Promise<Game[]>} The games
+   * @returns {Game[]} The games
    */
-  async getAllGames () {
-    return await this.#gameRepo.getAll()
+  getAllGames () {
+    return this.#gameRepo.getAll()
   }
 
   /**
@@ -97,9 +98,9 @@ class GameService {
 
   /**
    * Gets the names of all games on this server
-   * @returns {Promise<GameName[]>} The names of the games
+   * @returns {GameName[]} The names of the games
    */
-  async getGameNames () {
+  getGameNames () {
     return this.#gameRepo.getNamesOfAll()
   }
 }

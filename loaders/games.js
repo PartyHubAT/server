@@ -8,19 +8,9 @@
 async function loadGames (gameService, fs, gamesPath) {
   console.log('Load games...')
 
-  try {
-    const filesInGamesDir = await fs.promises.readdir(gamesPath, { withFileTypes: true })
-    const games =
-      filesInGamesDir
-        .filter(it => it.isDirectory())
-        .map(it => require(`${gamesPath}/${it.name}/info.js`))
+  await gameService.loadGamesFromDir(fs, gamesPath)
 
-    await Promise.all(games.map(async game => gameService.addGame(game)))
-
-    console.log(`Games loaded (${(await gameService.getGameNames()).join(', ')})`)
-  } catch (e) {
-    console.warn(`No games found on path '${gamesPath}'`)
-  }
+  console.log(`Games loaded (${(gameService.getGameNames()).join(', ')})`)
 }
 
 module.exports = loadGames

@@ -1,54 +1,62 @@
 ﻿/**
- * @typedef {Object} NewGame
+ * @typedef {string} GameName
+ */
+
+/**
+ * @typedef {Object} Game
  * @property {GameName} name
+ * @property {string} displayName
+ * @property {string} description
+ * @property {number} minPlayerCount
+ * @property {number} maxPlayerCount
+ *
  */
 
 /**
  * Stores and retrieves games
  */
+
 class GameRepo {
   /**
-   * Model of the game-type
-   * @type {Model<Game>}
+   * Array of all games in repo
+   * @type {Game[]}
    */
-  #gameModel = null
+  #games = []
 
   /**
-   * Initialize a new game-repo
-   * @param {module:mongoose} mongoose The mongoose instance used to connect to the database
+   * Loads all games from their directories
+   * @param {import('fs')} fs
+   * @param {string} gamesPath
+   * @returns {Promise}
    */
-  constructor (mongoose) {
-    this.#gameModel = require('../models/GameModel')(mongoose)
-  }
+   loadGamesFromDir = async (fs, gamesPath) => {
+     const filesInGamesDir = await fs.promises.readdir(gamesPath, { withFileTypes: true })
 
-  /**
-   * Puts a new game into the database
-   * @param {NewGame} newGame The game to add
-   * @return {Promise<Game>}
-   */
-  async putNew (newGame) {
-    return this.#gameModel.create(newGame)
-  }
+     const games =
+      filesInGamesDir
+        .filter(it => it.isDirectory())
+        .map(it => require(`${gamesPath}/${it.name}/info.js`))
 
-  /**
-   * Gets all games from the database
-   * @return {Promise<Game[]>}
-   */
-  async getAll () {
-    return this.#gameModel.find({}).exec()
-  }
+     this.#games = games
+   }
 
-  /**
-   * Gets the names of all games from the database
-   * @return {Promise<GameName[]>}
+   /**
+   * Returns all games
+   * @return {Game[]}
    */
-  async getNamesOfAll () {
-    return this.#gameModel
-      .find({})
-      .select('name')
-      .exec()
-      .then(games => games.map(g => g.name))
-  }
+   getAll () {
+     return JSON.parse(JSON.stringify(this.#games))
+   }
+
+   /**
+   * Gets the names of all games
+   * @return {GameName[]}
+   */
+   getNamesOfAll () {
+     return this.#games.map(game => {
+       return game.name
+     })
+   }
 }
 
 module.exports = GameRepo
