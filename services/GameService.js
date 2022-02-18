@@ -76,8 +76,8 @@ class GameService {
    * @param {string} gamesPath
    * @returns {Promise}
    */
-  loadGamesFromDir (fs, gamesPath) {
-    this.#gameRepo.loadGamesFromDir(fs, gamesPath)
+  async loadGamesFromDir (fs, gamesPath) {
+    await this.#gameRepo.loadGamesFromDir(fs, gamesPath)
   }
 
   /**
