@@ -117,7 +117,8 @@ io.on('connection', socket => {
     }
 
     function emitToOne (playerId, event, data) {
-      io.sockets.sockets.get(playerId).emit(event, data)
+      const playerSocket = io.sockets.sockets.get(playerId)
+      if (playerSocket) playerSocket.emit(event, data)
     }
 
     function endGame () {
