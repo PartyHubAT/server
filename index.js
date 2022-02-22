@@ -100,8 +100,13 @@ io.on('connection', socket => {
       .map(socketId => io.sockets.sockets.get(socketId))
   }
 
+  /**
+   * Ends the game in the room and sends the players back to the lobby
+   * @param {RoomId} roomId The id of the room
+   */
   function endGameInRoom (roomId) {
-    throw new Error('Ending games is not implemented')
+    console.log(`Room ${roomId} ended the game and returned to the lobby.`)
+    emitToRoom(roomId, 'returnToLobby', {})
   }
 
   /**
