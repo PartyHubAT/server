@@ -1,4 +1,4 @@
-﻿const mathUtil = require('../core/mathUtil')
+﻿const mathUtil = require('../util/mathUtil')
 const PlayerRole = require('../PlayerRole')
 
 /**

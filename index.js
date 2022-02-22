@@ -14,7 +14,7 @@ const playerService = new (require('./services/PlayerService'))(playerRepo)
 const roomRepo = new (require('./repos/RoomRepo'))(mongoose)
 const roomService = new RoomService(roomRepo, playerService)
 const PlayerRole = require('./PlayerRole')
-const ip = require('./core/ipUtil')
+const ip = require('./util/ipUtil')
 
 // Setup globals
 
