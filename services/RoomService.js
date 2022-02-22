@@ -1,5 +1,5 @@
 ﻿const mathUtil = require('../util/mathUtil')
-const PlayerRole = require('../PlayerRole')
+const PlayerRole = require('../types/PlayerRole')
 
 /**
  * Allows interaction with rooms
