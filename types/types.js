@@ -38,5 +38,6 @@
  * @param {EndGame} endGame
  * @param {Player[]} players
  * @param {Settings} settings
+ * @param {import('mongoose')} mongoose
  * @return {GameServer} The created game-server
  */

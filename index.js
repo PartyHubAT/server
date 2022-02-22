@@ -108,6 +108,7 @@ io.on('connection', socket => {
    * Starts the game
    * @param {RoomId} roomId
    * @param {GameName} gameName
+   * @param {Settings} settings
    */
   async function startGame (roomId, gameName, settings) {
     console.log('Initializing game...')
