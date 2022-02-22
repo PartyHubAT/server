@@ -7,8 +7,10 @@
  * @property {RoomId} _id Uniquely identifies the room
  * @property {GameName} gameName The name of the currently selected game
  * @property {PlayerId[]} playerIds The ids the players in the room
+ * @property {Settings} settings The current settings
  */
 
+const { Schema } = require('mongoose')
 /**
  * Initializes the model for rooms
  * @param {module:mongoose} mongoose The mongoose instance on this server
@@ -26,7 +28,8 @@ module.exports = (mongoose) => {
       required: true
     },
     settings: {
-      type: String
+      type: Schema.Types.Mixed,
+      required: true
     }
   })
   return mongoose.model('Room', schema, 'rooms')

@@ -205,8 +205,8 @@ io.on('connection', socket => {
     const gameName = await roomService.tryGetSelectedGameName(player.roomId)
     if (players.every(it => it?.gameLoaded)) {
       const settings = await roomService.tryGetRoomSettings(player.roomId)
-      console.log(`Settings loaded: ${settings}`)
-      await startGame(player.roomId, gameName, JSON.parse(settings))
+      console.log(`Settings loaded: ${JSON.stringify(settings)}`)
+      await startGame(player.roomId, gameName, settings)
       console.log(`Room ${player.roomId}' started playing "${gameName}".`)
     }
   })
@@ -215,9 +215,9 @@ io.on('connection', socket => {
     const playerId = socket.id
     const player = await playerService.tryGetPlayerById(playerId)
     const gameName = await roomService.tryGetSelectedGameName(player.roomId)
-    console.log('startGame ' + settings)
+    console.log(`startGame ${settings}`)
     if (settings) {
-      console.log('settings here ' + JSON.stringify(settings))
+      console.log(`Settings here ${JSON.stringify(settings)}`)
       await roomService.tryAddSettingsToRoom(player.roomId, JSON.stringify(settings))
     }
     emitToRoom(player.roomId, 'gameStarted', { gameName })

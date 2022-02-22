@@ -158,7 +158,8 @@ class RoomService {
     await this.#roomRepo.putNew({
       _id: roomId,
       gameName: '',
-      playerIds: []
+      playerIds: [],
+      settings: {}
     })
     await this.tryAddPlayerToRoom(roomId, hostId)
     return roomId
