@@ -50,7 +50,7 @@ class GameService {
    * Gets the default settings for a game
    * @param {string} gamesPath The path where all games are stored
    * @param {GameName} gameName The name of the game
-   * @returns {Promise<Object>} The default settings
+   * @returns {Promise<Settings>} The default settings
    * @throws {GameResourceLoadError} When the resource could not be loaded
    */
   static async tryGetDefaultGameSettings (gamesPath, gameName) {

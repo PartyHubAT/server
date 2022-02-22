@@ -215,10 +215,8 @@ io.on('connection', socket => {
     const playerId = socket.id
     const player = await playerService.tryGetPlayerById(playerId)
     const gameName = await roomService.tryGetSelectedGameName(player.roomId)
-    console.log(`startGame ${settings}`)
     if (settings) {
-      console.log(`Settings here ${JSON.stringify(settings)}`)
-      await roomService.tryAddSettingsToRoom(player.roomId, JSON.stringify(settings))
+      await roomService.tryAddSettingsToRoom(player.roomId, settings)
     }
     emitToRoom(player.roomId, 'gameStarted', { gameName })
   })
